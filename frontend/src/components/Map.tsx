@@ -24,50 +24,58 @@ interface Props {
   onMoveEnd?: (center: { lat: number; lon: number; zoom: number }) => void;
   onMapReady?: (handle: MapHandle) => void;
   scrubTime?: number | null; // unix ms timestamp; null = live (show all)
+  basemap?: Basemap; // active basemap mode
 }
 
 const EMPTY_FC = { type: "FeatureCollection", features: [] } as GeoJSON.FeatureCollection;
 
-function buildBasemapStyle(isDark: boolean) {
-  return {
-    version: 8 as const,
-    sources: {
-      "osm-tiles": {
-        type: "raster" as const,
-        tiles: ["https://tile.openstreetmap.org/{z}/{x}/{y}.png"],
-        tileSize: 256,
-        attribution: "© OpenStreetMap contributors",
-        maxzoom: 19,
-      },
+type Basemap = "dark" | "satellite" | "street";
+
+const INITIAL_STYLE = {
+  version: 8 as const,
+  sources: {
+    "osm-tiles": {
+      type: "raster" as const,
+      tiles: ["https://tile.openstreetmap.org/{z}/{x}/{y}.png"],
+      tileSize: 256,
+      attribution: "© OpenStreetMap contributors",
+      maxzoom: 19,
     },
-    layers: [
-      {
-        id: "background",
-        type: "background" as const,
-        paint: { "background-color": isDark ? "#0f172a" : "#dde8f0" },
-      },
-      {
-        id: "osm-tiles",
-        type: "raster" as const,
-        source: "osm-tiles",
-        paint: isDark
-          ? {
-              "raster-opacity": 0.35,
-              "raster-saturation": -1,
-              "raster-brightness-min": 0,
-              "raster-brightness-max": 0.3,
-            }
-          : {
-              "raster-opacity": 0.9,
-              "raster-saturation": -0.15,
-              "raster-brightness-min": 0.05,
-              "raster-brightness-max": 1.0,
-            },
-      },
-    ],
-    glyphs: "https://demotiles.maplibre.org/font/{fontstack}/{range}.pbf",
-  };
-}
+    "satellite-tiles": {
+      type: "raster" as const,
+      // ESRI World Imagery — free for non-commercial / dev use
+      tiles: ["https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"],
+      tileSize: 256,
+      attribution: "Tiles © Esri",
+      maxzoom: 19,
+    },
+  },
+  layers: [
+    { id: "background", type: "background" as const, paint: { "background-color": "#0f172a" } },
+    {
+      id: "basemap-dark",
+      type: "raster" as const,
+      source: "osm-tiles",
+      layout: { visibility: "visible" as const },
+      paint: { "raster-opacity": 0.35, "raster-saturation": -1, "raster-brightness-min": 0, "raster-brightness-max": 0.3 },
+    },
+    {
+      id: "basemap-street",
+      type: "raster" as const,
+      source: "osm-tiles",
+      layout: { visibility: "none" as const },
+      paint: { "raster-opacity": 0.9, "raster-saturation": -0.15, "raster-brightness-min": 0.05, "raster-brightness-max": 1.0 },
+    },
+    {
+      id: "basemap-satellite",
+      type: "raster" as const,
+      source: "satellite-tiles",
+      layout: { visibility: "none" as const },
+      paint: { "raster-opacity": 1.0 },
+    },
+  ],
+  glyphs: "https://demotiles.maplibre.org/font/{fontstack}/{range}.pbf",
+};
 
 function setSourceData(map: maplibregl.Map, sourceId: string, data: GeoJSONFeatureCollection | null) {
   const src = map.getSource(sourceId) as maplibregl.GeoJSONSource | undefined;
@@ -120,6 +128,7 @@ export default function Map({
   onMoveEnd,
   onMapReady,
   scrubTime = null,
+  basemap = "dark",
 }: Props) {
   const mapContainerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<maplibregl.Map | null>(null);
@@ -141,27 +150,15 @@ export default function Map({
   useEffect(() => {
     if (!mapContainerRef.current || mapRef.current) return;
 
-    const mq = window.matchMedia("(prefers-color-scheme: dark)");
     const map = new maplibregl.Map({
       container: mapContainerRef.current,
-      style: buildBasemapStyle(mq.matches),
+      style: INITIAL_STYLE,
       center: initialCenter,
       zoom: initialZoom,
       attributionControl: false,
     });
 
     mapRef.current = map;
-
-    // Update basemap paint on system theme change (without rebuilding data layers)
-    const onThemeChange = (e: MediaQueryListEvent) => {
-      const isDark = e.matches;
-      if (!map.isStyleLoaded()) return;
-      map.setPaintProperty("background", "background-color", isDark ? "#0f172a" : "#dde8f0");
-      map.setPaintProperty("osm-tiles", "raster-opacity", isDark ? 0.35 : 0.9);
-      map.setPaintProperty("osm-tiles", "raster-saturation", isDark ? -1 : -0.15);
-      map.setPaintProperty("osm-tiles", "raster-brightness-max", isDark ? 0.3 : 1.0);
-    };
-    mq.addEventListener("change", onThemeChange);
 
     map.addControl(new maplibregl.NavigationControl(), "bottom-right");
     map.addControl(new maplibregl.AttributionControl({ compact: true }), "bottom-left");
@@ -437,7 +434,6 @@ export default function Map({
     });
 
     return () => {
-      mq.removeEventListener("change", onThemeChange);
       loadedRef.current = false;
       map.remove();
       mapRef.current = null;
@@ -504,6 +500,17 @@ export default function Map({
     (mapRef.current.getSource("corridors-extension") as maplibregl.GeoJSONSource)
       ?.setData(buildBandFC(corridors, "extension") as GeoJSON.FeatureCollection);
   }, [corridors]);
+
+  // Switch basemap layer visibility
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map || !loadedRef.current) return;
+    (["dark", "street", "satellite"] as Basemap[]).forEach(b => {
+      map.setLayoutProperty(`basemap-${b}`, "visibility", b === basemap ? "visible" : "none");
+    });
+    const bg = basemap === "dark" ? "#0f172a" : basemap === "satellite" ? "#000000" : "#c8dce8";
+    map.setPaintProperty("background", "background-color", bg);
+  }, [basemap]);
 
   // Update layer visibility and alert tier filter
   useEffect(() => {

@@ -44,6 +44,7 @@ function PageContent() {
   const [layersOpen, setLayersOpen] = useState(false);
   const [activeAlertId, setActiveAlertId] = useState<string | null>(null);
   const [scrubTime, setScrubTime] = useState<number | null>(null);
+  const [basemap, setBasemap] = useState<"dark" | "satellite" | "street">("dark");
   useEffect(() => {
     if (window.innerWidth < 768) setSidebarOpen(false);
   }, []);
@@ -211,6 +212,7 @@ function PageContent() {
         onMoveEnd={handleMoveEnd}
         onMapReady={handleMapReady}
         scrubTime={scrubTime}
+        basemap={basemap}
       />
 
       {/* Mobile open-sidebar button — only shown when sidebar is closed */}
@@ -245,6 +247,8 @@ function PageContent() {
         onShare={handleShare}
         mobileOpen={layersOpen}
         onMobileOpenChange={openLayers}
+        basemap={basemap}
+        onBasemapChange={setBasemap}
       />
 
       <ProvenancePanel
@@ -256,7 +260,7 @@ function PageContent() {
       <LastUpdatedTicker lastUpdated={lastUpdated} />
 
       {/* Legend */}
-      <div className="absolute bottom-16 right-3 z-10 bg-gray-900/90 backdrop-blur rounded-lg border border-gray-700 p-3 text-xs max-h-[50vh] overflow-y-auto hidden md:block">
+      <div className="absolute bottom-44 right-3 z-10 bg-gray-900/90 backdrop-blur rounded-lg border border-gray-700 p-3 text-xs max-h-[45vh] overflow-y-auto hidden md:block">
         <div className="font-bold text-gray-300 mb-2 uppercase tracking-wider text-[10px]">NWS Alert Colors</div>
         <div className="space-y-1">
           {[

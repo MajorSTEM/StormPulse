@@ -169,7 +169,7 @@ export default function IncidentSidebar({ alerts, corridors, lsrs, onSelectIncid
 
   return (
     <div className="absolute top-16 left-3 z-10 bg-gray-900/85 backdrop-blur rounded-lg border border-gray-700 shadow-xl flex flex-col
-      max-h-[52vh] md:max-h-[calc(100vh-90px)]"
+      max-h-[52vh] md:max-h-[calc(100vh-130px)]"
       style={{ width: "min(272px, calc(100vw - 24px))" }}>
 
       {/* Header */}

@@ -3,6 +3,8 @@
 import { useState } from "react";
 import type { LayerVisibility } from "@/lib/types";
 
+type Basemap = "dark" | "satellite" | "street";
+
 interface Props {
   layers: LayerVisibility;
   onToggle: (layer: keyof LayerVisibility) => void;
@@ -12,6 +14,8 @@ interface Props {
   onShare: () => void;
   mobileOpen?: boolean;
   onMobileOpenChange?: (open: boolean) => void;
+  basemap: Basemap;
+  onBasemapChange: (b: Basemap) => void;
 }
 
 interface LayerDef {
@@ -36,7 +40,7 @@ const OTHER_LAYERS: LayerDef[] = [
   { key: "counties", label: "County Outlines",    color: "bg-gray-500" },
 ];
 
-export default function LayerControls({ layers, onToggle, hours, onHoursChange, onRefresh, onShare, mobileOpen, onMobileOpenChange }: Props) {
+export default function LayerControls({ layers, onToggle, hours, onHoursChange, onRefresh, onShare, mobileOpen, onMobileOpenChange, basemap, onBasemapChange }: Props) {
   const [open, setOpen] = useState(false);
   const isOpen = mobileOpen !== undefined ? mobileOpen : open;
   const setIsOpen = (val: boolean) => {
@@ -77,7 +81,27 @@ export default function LayerControls({ layers, onToggle, hours, onHoursChange, 
       </button>
 
       {/* Panel: always visible on desktop, toggled on mobile */}
-      <div className={`${isOpen ? "block" : "hidden"} md:block mt-1 md:mt-0 w-60 bg-gray-900/85 backdrop-blur rounded-lg border border-gray-700 shadow-xl`}>
+      <div className={`${isOpen ? "block" : "hidden"} md:block mt-1 md:mt-0 w-60 bg-gray-900/85 backdrop-blur rounded-lg border border-gray-700 shadow-xl overflow-y-auto max-h-[calc(100vh-200px)]`}>
+
+          {/* Basemap switcher */}
+        <div className="px-3 py-1.5 border-b border-gray-700">
+          <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Basemap</span>
+        </div>
+        <div className="px-3 py-2 border-b border-gray-700 flex gap-1">
+          {(["dark", "satellite", "street"] as Basemap[]).map(b => (
+            <button
+              key={b}
+              onClick={() => onBasemapChange(b)}
+              className={`flex-1 text-[10px] py-1.5 rounded transition capitalize ${
+                basemap === b
+                  ? "bg-orange-600 text-white"
+                  : "bg-gray-800 text-gray-400 hover:text-white hover:bg-gray-700"
+              }`}
+            >
+              {b === "dark" ? "Dark" : b === "satellite" ? "Satellite" : "Street"}
+            </button>
+          ))}
+        </div>
 
         {/* NWS Alerts section */}
         <div className="px-3 py-1.5 border-b border-gray-700">
