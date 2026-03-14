@@ -1,4 +1,6 @@
 YOU CAN VISIT THE REAL-TIME TRACKER HERE: https://stormpulse-frontend.onrender.com
+![NWS Alert with Inferred Layer](https://github.com/MajorSTEM/StormPulse/blob/main/StormPulse_Addon2.png)
+![NWS_Alert_Tab](https://github.com/MajorSTEM/StormPulse/blob/main/StormPulse_NWS_Alerts.png)
 
 # StormPulse — Tornado Response Map
 
