@@ -101,7 +101,11 @@ export interface HealthStatus {
 }
 
 export interface LayerVisibility {
-  alerts: boolean;
+  alertsRed: boolean;
+  alertsOrange: boolean;
+  alertsYellow: boolean;
+  alertsBlue: boolean;
+  alertsGray: boolean;
   lsr: boolean;
   corridors: boolean;
   counties: boolean;

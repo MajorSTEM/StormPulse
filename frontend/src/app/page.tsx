@@ -40,18 +40,35 @@ function PageContent() {
   const [hours, setHours] = useState(() => Number(searchParams.get("hours") || 48));
   // Start sidebar closed on mobile, open on desktop
   const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [layersOpen, setLayersOpen] = useState(false);
   const [activeAlertId, setActiveAlertId] = useState<string | null>(null);
   useEffect(() => {
     if (window.innerWidth < 768) setSidebarOpen(false);
   }, []);
+
+  // Mutual exclusion: opening sidebar closes layer panel on mobile, and vice versa
+  const openSidebar = useCallback(() => {
+    setSidebarOpen(true);
+    if (window.innerWidth < 768) setLayersOpen(false);
+  }, []);
+  const openLayers = useCallback((val: boolean) => {
+    setLayersOpen(val);
+    if (val && window.innerWidth < 768) setSidebarOpen(false);
+  }, []);
   const [layers, setLayers] = useState<LayerVisibility>(() => {
     const layerParam = searchParams.get("layers");
-    const active = layerParam ? layerParam.split(",") : ["alerts", "lsr", "corridors", "counties"];
+    const active = layerParam
+      ? layerParam.split(",")
+      : ["alertsRed", "alertsOrange", "alertsYellow", "lsr", "corridors", "counties"];
     return {
-      alerts: active.includes("alerts"),
-      lsr: active.includes("lsr"),
-      corridors: active.includes("corridors"),
-      counties: active.includes("counties"),
+      alertsRed:    active.includes("alertsRed"),
+      alertsOrange: active.includes("alertsOrange"),
+      alertsYellow: active.includes("alertsYellow"),
+      alertsBlue:   active.includes("alertsBlue"),
+      alertsGray:   active.includes("alertsGray"),
+      lsr:          active.includes("lsr"),
+      corridors:    active.includes("corridors"),
+      counties:     active.includes("counties"),
     };
   });
 
@@ -159,7 +176,7 @@ function PageContent() {
 
   const handleSelectAlert = useCallback((alertId: string) => {
     setActiveAlertId(alertId);
-    setSidebarOpen(true);
+    openSidebar();
     if (!alerts) return;
     const feature = alerts.features.find(
       (f) => (f.properties as { id: string }).id === alertId
@@ -182,7 +199,7 @@ function PageContent() {
           // Alert clicks → switch sidebar to alerts tab + highlight card
           if (props._layer === "alerts") {
             setActiveAlertId(props.id as string);
-            setSidebarOpen(true);
+            openSidebar();
             return;
           }
           setSelectedFeature(feature);
@@ -196,8 +213,8 @@ function PageContent() {
       {/* Mobile open-sidebar button — only shown when sidebar is closed */}
       {!sidebarOpen && (
         <button
-          onClick={() => setSidebarOpen(true)}
-          className="md:hidden absolute top-16 left-3 z-20 bg-gray-900 border border-gray-700 rounded-lg px-3 py-1.5 text-xs text-gray-300 flex items-center gap-1 shadow-lg"
+          onClick={openSidebar}
+          className="md:hidden absolute top-16 left-3 z-20 bg-gray-900/85 border border-gray-700 rounded-lg px-3 py-1.5 text-xs text-gray-300 flex items-center gap-1 shadow-lg"
         >
           <span>☰</span>
           <span>Situational Awareness</span>
@@ -223,6 +240,8 @@ function PageContent() {
         onHoursChange={setHours}
         onRefresh={loadData}
         onShare={handleShare}
+        mobileOpen={layersOpen}
+        onMobileOpenChange={openLayers}
       />
 
       <ProvenancePanel

@@ -168,31 +168,34 @@ export default function IncidentSidebar({ alerts, corridors, lsrs, onSelectIncid
     !!iso && Date.now() - new Date(iso).getTime() < 10 * 60 * 1000;
 
   return (
-    <div className="absolute top-16 left-3 z-10 bg-gray-900/95 backdrop-blur rounded-lg border border-gray-700 shadow-xl max-h-[calc(100vh-90px)] flex flex-col"
-      style={{ width: "min(288px, calc(100vw - 24px))" }}>
+    <div className="absolute top-16 left-3 z-10 bg-gray-900/85 backdrop-blur rounded-lg border border-gray-700 shadow-xl flex flex-col
+      max-h-[52vh] md:max-h-[calc(100vh-90px)]"
+      style={{ width: "min(272px, calc(100vw - 24px))" }}>
 
       {/* Header */}
-      <div className="px-3 py-2 border-b border-gray-700 flex-shrink-0">
+      <div className="px-2.5 py-1.5 border-b border-gray-700 flex-shrink-0">
         <div className="flex items-center justify-between mb-1">
-          <span className="text-xs font-bold text-gray-300 uppercase tracking-wider">Situational Awareness</span>
-          {onClose && (
-            <button onClick={onClose} className="md:hidden text-gray-400 hover:text-white text-lg leading-none -mr-1" aria-label="Close">✕</button>
-          )}
-          <div className="flex gap-2 text-[10px]">
-            <span className="text-orange-400 font-medium">{activeAlertCount} alerts</span>
-            {tornadoCount > 0 && <span className="text-red-400 font-medium">{tornadoCount} tornadoes</span>}
+          <div className="flex items-center gap-2 min-w-0">
+            <span className="text-xs font-bold text-gray-300 uppercase tracking-wider leading-none">Situational Awareness</span>
+            <div className="flex gap-1.5 text-[10px] flex-shrink-0">
+              <span className="text-orange-400 font-medium">{activeAlertCount} alerts</span>
+              {tornadoCount > 0 && <span className="text-red-400 font-medium">{tornadoCount} torn.</span>}
+            </div>
           </div>
+          {onClose && (
+            <button onClick={onClose} className="md:hidden text-gray-400 hover:text-white text-base leading-none ml-2 flex-shrink-0 w-6 h-6 flex items-center justify-center rounded hover:bg-gray-700" aria-label="Close">✕</button>
+          )}
         </div>
 
         <input
           type="text"
           value={search}
           onChange={e => setSearch(e.target.value)}
-          placeholder="Search county, state, event type..."
+          placeholder="Search county, state, event..."
           className="w-full bg-gray-800 border border-gray-600 rounded px-2 py-1 text-xs text-gray-200 placeholder-gray-500 focus:outline-none focus:border-orange-500 transition"
         />
 
-        <div className="flex mt-2 gap-0.5">
+        <div className="flex mt-1.5 gap-0.5">
           {(["live", "corridors", "alerts"] as Tab[]).map(t => (
             <button
               key={t}

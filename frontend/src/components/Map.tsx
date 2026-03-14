@@ -27,38 +27,46 @@ interface Props {
 
 const EMPTY_FC = { type: "FeatureCollection", features: [] } as GeoJSON.FeatureCollection;
 
-const BASEMAP_STYLE = {
-  version: 8 as const,
-  name: "StormPulse Dark",
-  sources: {
-    "osm-tiles": {
-      type: "raster" as const,
-      tiles: ["https://tile.openstreetmap.org/{z}/{x}/{y}.png"],
-      tileSize: 256,
-      attribution: "© OpenStreetMap contributors",
-      maxzoom: 19,
-    },
-  },
-  layers: [
-    {
-      id: "background",
-      type: "background" as const,
-      paint: { "background-color": "#0f172a" },
-    },
-    {
-      id: "osm-tiles",
-      type: "raster" as const,
-      source: "osm-tiles",
-      paint: {
-        "raster-opacity": 0.35,
-        "raster-saturation": -1,
-        "raster-brightness-min": 0,
-        "raster-brightness-max": 0.3,
+function buildBasemapStyle(isDark: boolean) {
+  return {
+    version: 8 as const,
+    sources: {
+      "osm-tiles": {
+        type: "raster" as const,
+        tiles: ["https://tile.openstreetmap.org/{z}/{x}/{y}.png"],
+        tileSize: 256,
+        attribution: "© OpenStreetMap contributors",
+        maxzoom: 19,
       },
     },
-  ],
-  glyphs: "https://demotiles.maplibre.org/font/{fontstack}/{range}.pbf",
-};
+    layers: [
+      {
+        id: "background",
+        type: "background" as const,
+        paint: { "background-color": isDark ? "#0f172a" : "#dde8f0" },
+      },
+      {
+        id: "osm-tiles",
+        type: "raster" as const,
+        source: "osm-tiles",
+        paint: isDark
+          ? {
+              "raster-opacity": 0.35,
+              "raster-saturation": -1,
+              "raster-brightness-min": 0,
+              "raster-brightness-max": 0.3,
+            }
+          : {
+              "raster-opacity": 0.9,
+              "raster-saturation": -0.15,
+              "raster-brightness-min": 0.05,
+              "raster-brightness-max": 1.0,
+            },
+      },
+    ],
+    glyphs: "https://demotiles.maplibre.org/font/{fontstack}/{range}.pbf",
+  };
+}
 
 function setSourceData(map: maplibregl.Map, sourceId: string, data: GeoJSONFeatureCollection | null) {
   const src = map.getSource(sourceId) as maplibregl.GeoJSONSource | undefined;
@@ -112,15 +120,27 @@ export default function Map({
   useEffect(() => {
     if (!mapContainerRef.current || mapRef.current) return;
 
+    const mq = window.matchMedia("(prefers-color-scheme: dark)");
     const map = new maplibregl.Map({
       container: mapContainerRef.current,
-      style: BASEMAP_STYLE,
+      style: buildBasemapStyle(mq.matches),
       center: initialCenter,
       zoom: initialZoom,
       attributionControl: false,
     });
 
     mapRef.current = map;
+
+    // Update basemap paint on system theme change (without rebuilding data layers)
+    const onThemeChange = (e: MediaQueryListEvent) => {
+      const isDark = e.matches;
+      if (!map.isStyleLoaded()) return;
+      map.setPaintProperty("background", "background-color", isDark ? "#0f172a" : "#dde8f0");
+      map.setPaintProperty("osm-tiles", "raster-opacity", isDark ? 0.35 : 0.9);
+      map.setPaintProperty("osm-tiles", "raster-saturation", isDark ? -1 : -0.15);
+      map.setPaintProperty("osm-tiles", "raster-brightness-max", isDark ? 0.3 : 1.0);
+    };
+    mq.addEventListener("change", onThemeChange);
 
     map.addControl(new maplibregl.NavigationControl(), "bottom-right");
     map.addControl(new maplibregl.AttributionControl({ compact: true }), "bottom-left");
@@ -301,10 +321,19 @@ export default function Map({
       const centerlinesFC = buildCenterlinesFC(corridorsRef.current);
       (map.getSource("centerlines") as maplibregl.GeoJSONSource)?.setData(centerlinesFC);
 
-      // Apply initial layer visibility
+      // Apply initial layer visibility and alert tier filter
       const vis = (v: boolean) => (v ? "visible" : "none") as "visible" | "none";
       const l = layersRef.current;
-      ["alerts-fill", "alerts-outline"].forEach(id => map.setLayoutProperty(id, "visibility", vis(l.alerts)));
+      const TIER_KEYS_INIT: Array<[keyof typeof l, string]> = [
+        ["alertsRed", "RED"], ["alertsOrange", "ORANGE"], ["alertsYellow", "YELLOW"],
+        ["alertsBlue", "BLUE"], ["alertsGray", "GRAY"],
+      ];
+      const initTiers = TIER_KEYS_INIT.filter(([k]) => l[k]).map(([, t]) => t);
+      const alertsVis = initTiers.length > 0;
+      ["alerts-fill", "alerts-outline"].forEach(id => {
+        map.setLayoutProperty(id, "visibility", vis(alertsVis));
+        if (alertsVis) map.setFilter(id, ["in", ["get", "severity_tier"], ["literal", initTiers]]);
+      });
       ["lsr-circles"].forEach(id => map.setLayoutProperty(id, "visibility", vis(l.lsr)));
       ["corridors-fill", "corridors-outline", "centerlines-line"].forEach(id => map.setLayoutProperty(id, "visibility", vis(l.corridors)));
 
@@ -334,6 +363,7 @@ export default function Map({
     });
 
     return () => {
+      mq.removeEventListener("change", onThemeChange);
       loadedRef.current = false;
       map.remove();
       mapRef.current = null;
@@ -359,12 +389,30 @@ export default function Map({
     (mapRef.current.getSource("centerlines") as maplibregl.GeoJSONSource)?.setData(centerlinesFC);
   }, [corridors]);
 
-  // Update layer visibility
+  // Update layer visibility and alert tier filter
   useEffect(() => {
     const map = mapRef.current;
     if (!map || !loadedRef.current) return;
     const vis = (v: boolean) => (v ? "visible" : "none") as "visible" | "none";
-    ["alerts-fill", "alerts-outline"].forEach(l => map.setLayoutProperty(l, "visibility", vis(layers.alerts)));
+
+    // Build list of active severity tiers from layer flags
+    const TIER_KEYS: Array<[keyof LayerVisibility, string]> = [
+      ["alertsRed", "RED"],
+      ["alertsOrange", "ORANGE"],
+      ["alertsYellow", "YELLOW"],
+      ["alertsBlue", "BLUE"],
+      ["alertsGray", "GRAY"],
+    ];
+    const activeTiers = TIER_KEYS.filter(([k]) => layers[k]).map(([, t]) => t);
+    const alertsVisible = activeTiers.length > 0;
+
+    ["alerts-fill", "alerts-outline"].forEach(l => {
+      map.setLayoutProperty(l, "visibility", vis(alertsVisible));
+      if (alertsVisible) {
+        map.setFilter(l, ["in", ["get", "severity_tier"], ["literal", activeTiers]]);
+      }
+    });
+
     ["lsr-circles"].forEach(l => map.setLayoutProperty(l, "visibility", vis(layers.lsr)));
     ["corridors-fill", "corridors-outline", "centerlines-line"].forEach(l => map.setLayoutProperty(l, "visibility", vis(layers.corridors)));
   }, [layers]);
