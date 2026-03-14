@@ -28,7 +28,7 @@ export default function LastUpdatedTicker({ lastUpdated }: Props) {
   const isStale = lastUpdated && Date.now() - lastUpdated.getTime() > 5 * 60 * 1000;
 
   return (
-    <div className="absolute top-16 left-1/2 -translate-x-1/2 z-10 pointer-events-none">
+    <div className="hidden md:block absolute top-16 left-1/2 -translate-x-1/2 z-10 pointer-events-none">
       <div className={`text-[10px] px-2 py-0.5 rounded-full border ${
         isStale
           ? "bg-red-950/80 border-red-700 text-red-400"

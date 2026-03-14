@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import type { LayerVisibility } from "@/lib/types";
 
 interface Props {
@@ -32,8 +33,21 @@ const TIER_COLORS: Record<string, string> = {
 };
 
 export default function LayerControls({ layers, onToggle, hours, onHoursChange, onRefresh, onShare }: Props) {
+  const [open, setOpen] = useState(false);
+
   return (
-    <div className="absolute top-16 right-3 z-10 w-56 bg-gray-900/95 backdrop-blur rounded-lg border border-gray-700 shadow-xl">
+    <div className="absolute top-16 right-3 z-10">
+      {/* Mobile toggle button — hidden on md+ */}
+      <button
+        onClick={() => setOpen(o => !o)}
+        className="md:hidden flex items-center gap-1.5 bg-gray-900/95 backdrop-blur border border-gray-700 rounded-lg px-3 py-1.5 text-xs text-gray-300 shadow-xl"
+      >
+        <span>{open ? "✕" : "⚙"}</span>
+        <span>{open ? "Close" : "Layers"}</span>
+      </button>
+
+      {/* Panel: always visible on desktop, toggled on mobile */}
+      <div className={`${open ? "block" : "hidden"} md:block mt-1 md:mt-0 w-56 bg-gray-900/95 backdrop-blur rounded-lg border border-gray-700 shadow-xl`}>
       <div className="px-3 py-2 border-b border-gray-700">
         <span className="text-xs font-bold text-gray-300 uppercase tracking-wider">Layers</span>
       </div>
@@ -92,6 +106,7 @@ export default function LayerControls({ layers, onToggle, hours, onHoursChange, 
           Share Link
         </button>
       </div>
+    </div>
     </div>
   );
 }

@@ -1,10 +1,17 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "StormPulse — Tornado Response Map",
-  description: "Open-source tornado damage mapping. NOAA/NWS data fusion for emergency responders.",
-  keywords: ["tornado", "emergency", "NOAA", "NWS", "damage", "response", "map"],
+  title: "StormPulse — Severe Weather Map",
+  description: "Real-time severe weather damage mapping. NWS alerts, storm reports, and inferred impact corridors.",
+  keywords: ["tornado", "emergency", "NOAA", "NWS", "damage", "response", "map", "severe weather"],
+};
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
 };
 
 export default function RootLayout({

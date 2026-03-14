@@ -187,7 +187,11 @@ export default function ProvenancePanel({ feature, onClose }: Props) {
   };
 
   return (
-    <div className="absolute bottom-4 left-4 z-20 w-80 bg-gray-900/97 backdrop-blur rounded-lg border border-gray-700 shadow-2xl max-h-[70vh] flex flex-col">
+    <div className="
+      fixed md:absolute z-20 bg-gray-900/97 backdrop-blur border-gray-700 shadow-2xl flex flex-col
+      bottom-0 left-0 right-0 rounded-t-xl border-t max-h-[60vh]
+      md:bottom-4 md:left-4 md:right-auto md:w-80 md:rounded-lg md:border md:max-h-[70vh]
+    ">
       {/* Header */}
       <div className="flex items-center justify-between px-3 py-2 border-b border-gray-700 flex-shrink-0">
         <div>

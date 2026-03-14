@@ -11,6 +11,7 @@ interface Props {
   onSelectIncident: (incidentId: string) => void;
   onSelectAlert: (alertId: string) => void;
   activeAlertId: string | null;
+  onClose?: () => void;
 }
 
 function timeAgo(iso: string | null | undefined): string {
@@ -92,7 +93,7 @@ function efColor(magnitude: number | null | undefined): string {
 
 type Tab = "live" | "corridors" | "alerts";
 
-export default function IncidentSidebar({ alerts, corridors, lsrs, onSelectIncident, onSelectAlert, activeAlertId }: Props) {
+export default function IncidentSidebar({ alerts, corridors, lsrs, onSelectIncident, onSelectAlert, activeAlertId, onClose }: Props) {
   const [tab, setTab] = useState<Tab>("live");
   const [search, setSearch] = useState("");
 
@@ -174,6 +175,9 @@ export default function IncidentSidebar({ alerts, corridors, lsrs, onSelectIncid
       <div className="px-3 py-2 border-b border-gray-700 flex-shrink-0">
         <div className="flex items-center justify-between mb-1">
           <span className="text-xs font-bold text-gray-300 uppercase tracking-wider">Situational Awareness</span>
+          {onClose && (
+            <button onClick={onClose} className="md:hidden text-gray-400 hover:text-white text-lg leading-none -mr-1" aria-label="Close">✕</button>
+          )}
           <div className="flex gap-2 text-[10px]">
             <span className="text-orange-400 font-medium">{activeAlertCount} alerts</span>
             {tornadoCount > 0 && <span className="text-red-400 font-medium">{tornadoCount} tornadoes</span>}

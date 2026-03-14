@@ -52,20 +52,36 @@ export default function SourceHealthBar() {
     <div className="absolute top-0 left-0 right-0 z-10">
       {isDegraded && (
         <div className="bg-yellow-600 text-black text-xs text-center py-1 px-4 font-medium">
-          &#9888; One or more data sources are delayed &mdash; map may not reflect latest conditions
+          &#9888; Data sources delayed &mdash; map may not reflect latest conditions
         </div>
       )}
-      <div className="flex items-center gap-3 bg-gray-900/90 backdrop-blur px-4 py-2 text-xs text-gray-300 border-b border-gray-700">
-        <span className="font-bold text-white">StormPulse</span>
-        <span className="text-gray-600">|</span>
-        {health.sources.map((source) => (
-          <div key={source.name} className="flex items-center gap-1.5">
-            <div className={`w-2 h-2 rounded-full ${statusColor(source.health)}`} />
-            <span>{SOURCE_LABELS[source.name] || source.name}</span>
-            <span className="text-gray-500">{formatLag(source.lag_seconds)}</span>
-          </div>
-        ))}
-        <span className="ml-auto text-gray-600 text-xs">
+      <div className="flex items-center bg-gray-900/90 backdrop-blur px-3 py-2 text-xs text-gray-300 border-b border-gray-700">
+        <span className="font-bold text-white mr-2">StormPulse</span>
+
+        {/* Mobile: status dots only */}
+        <div className="flex items-center gap-1.5 md:hidden">
+          {health.sources.map((source) => (
+            <div
+              key={source.name}
+              className={`w-2 h-2 rounded-full ${statusColor(source.health)}`}
+              title={`${SOURCE_LABELS[source.name]}: ${formatLag(source.lag_seconds)}`}
+            />
+          ))}
+        </div>
+
+        {/* Desktop: full labels */}
+        <div className="hidden md:flex items-center gap-3">
+          <span className="text-gray-600">|</span>
+          {health.sources.map((source) => (
+            <div key={source.name} className="flex items-center gap-1.5">
+              <div className={`w-2 h-2 rounded-full ${statusColor(source.health)}`} />
+              <span>{SOURCE_LABELS[source.name] || source.name}</span>
+              <span className="text-gray-500">{formatLag(source.lag_seconds)}</span>
+            </div>
+          ))}
+        </div>
+
+        <span className="ml-auto text-gray-600 text-[10px] hidden md:block">
           INFERRED CORRIDORS ARE NOT OFFICIAL NWS SURVEYS
         </span>
       </div>

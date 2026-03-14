@@ -38,8 +38,12 @@ function PageContent() {
   const [selectedFeature, setSelectedFeature] = useState<SelectedFeature>(null);
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
   const [hours, setHours] = useState(() => Number(searchParams.get("hours") || 48));
+  // Start sidebar closed on mobile, open on desktop
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [activeAlertId, setActiveAlertId] = useState<string | null>(null);
+  useEffect(() => {
+    if (window.innerWidth < 768) setSidebarOpen(false);
+  }, []);
   const [layers, setLayers] = useState<LayerVisibility>(() => {
     const layerParam = searchParams.get("layers");
     const active = layerParam ? layerParam.split(",") : ["alerts", "lsr", "corridors", "counties"];
@@ -189,14 +193,16 @@ function PageContent() {
         onMapReady={handleMapReady}
       />
 
-      {/* Mobile sidebar toggle */}
-      <button
-        onClick={() => setSidebarOpen(o => !o)}
-        className="md:hidden absolute top-16 left-3 z-20 bg-gray-900 border border-gray-700 rounded-lg px-3 py-1.5 text-xs text-gray-300 flex items-center gap-1"
-      >
-        <span>{sidebarOpen ? "✕" : "☰"}</span>
-        <span>{sidebarOpen ? "Hide" : "Situational Awareness"}</span>
-      </button>
+      {/* Mobile open-sidebar button — only shown when sidebar is closed */}
+      {!sidebarOpen && (
+        <button
+          onClick={() => setSidebarOpen(true)}
+          className="md:hidden absolute top-16 left-3 z-20 bg-gray-900 border border-gray-700 rounded-lg px-3 py-1.5 text-xs text-gray-300 flex items-center gap-1 shadow-lg"
+        >
+          <span>☰</span>
+          <span>Situational Awareness</span>
+        </button>
+      )}
 
       {sidebarOpen && (
         <IncidentSidebar
@@ -205,6 +211,7 @@ function PageContent() {
           lsrs={lsrs}
           onSelectIncident={handleSelectIncident}
           onSelectAlert={handleSelectAlert}
+          onClose={() => setSidebarOpen(false)}
           activeAlertId={activeAlertId}
         />
       )}
