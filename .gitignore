@@ -1,0 +1,34 @@
+# ── Python / Backend ─────────────────────────────────────────────────────────
+backend/.env
+backend/*.db
+backend/*.db-shm
+backend/*.db-wal
+backend/venv/
+backend/__pycache__/
+backend/**/__pycache__/
+backend/**/*.pyc
+backend/**/*.pyo
+backend/.pytest_cache/
+backend/dist/
+backend/*.egg-info/
+backend/nohup.out
+backend/backend.log
+
+# ── Node / Frontend ───────────────────────────────────────────────────────────
+frontend/.env.local
+frontend/.env.*.local
+frontend/node_modules/
+frontend/.next/
+frontend/out/
+frontend/build/
+frontend/.vercel/
+frontend/dev.log
+frontend/tsconfig.tsbuildinfo
+frontend/next-env.d.ts
+
+# ── General ───────────────────────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+*.log
+.idea/
+.vscode/

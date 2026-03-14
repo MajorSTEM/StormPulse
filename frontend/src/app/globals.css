@@ -1,0 +1,42 @@
+@import "maplibre-gl/dist/maplibre-gl.css";
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+* {
+  box-sizing: border-box;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  overflow: hidden;
+}
+
+#__next {
+  height: 100%;
+}
+
+.map-container {
+  width: 100%;
+  height: 100vh;
+}
+
+/* Confidence tier badges */
+.tier-t1 { @apply bg-green-600 text-white; }
+.tier-t2 { @apply bg-blue-600 text-white; }
+.tier-t3 { @apply bg-orange-500 text-white; }
+.tier-t4 { @apply bg-gray-500 text-white; }
+
+/* Inferred layer warning stripe pattern */
+.inferred-warning {
+  background: repeating-linear-gradient(
+    45deg,
+    #f97316,
+    #f97316 2px,
+    #fff7ed 2px,
+    #fff7ed 8px
+  );
+}
