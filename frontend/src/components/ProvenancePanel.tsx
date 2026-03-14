@@ -169,6 +169,27 @@ function CorridorDetail({ props }: { props: CorridorProperties }) {
         <div className="text-xs text-gray-400 uppercase tracking-wider mb-1">Generated</div>
         <div className="text-xs text-white">{formatTime(props.generated_at)}</div>
       </div>
+      {props.engine_version === "v2" && props.motion_consistency_score !== null && (
+        <div>
+          <div className="text-xs text-gray-400 uppercase tracking-wider mb-1">Track Linearity</div>
+          <div className="flex items-center gap-2">
+            <div className="flex-1 bg-gray-700 rounded-full h-1.5">
+              <div
+                className="bg-yellow-400 h-1.5 rounded-full"
+                style={{ width: `${((props.motion_consistency_score || 0) * 100)}%` }}
+              />
+            </div>
+            <span className="text-xs text-gray-300">
+              {((props.motion_consistency_score || 0) * 100).toFixed(0)}%
+            </span>
+          </div>
+          {(props.outlier_count ?? 0) > 0 && (
+            <div className="text-[10px] text-gray-500 mt-0.5">
+              {props.outlier_count} off-track report{props.outlier_count !== 1 ? "s" : ""} excluded
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
 }

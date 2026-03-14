@@ -78,6 +78,11 @@ export interface CorridorProperties {
   affected_structures_est: number;
   centerline_geojson: string | null;
   event_category: "TORNADO" | "WIND_DAMAGE" | "SEVERE_WEATHER" | "FLOOD_ZONE";
+  engine_version: string | null;
+  motion_consistency_score: number | null;
+  inlier_count: number | null;
+  outlier_count: number | null;
+  confidence_band_geojson: string | null;
   _layer: "corridors";
   _inferred: boolean;
   _disclaimer: string;

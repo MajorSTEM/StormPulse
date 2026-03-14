@@ -73,6 +73,25 @@ function setSourceData(map: maplibregl.Map, sourceId: string, data: GeoJSONFeatu
   if (src) src.setData((data || EMPTY_FC) as GeoJSON.FeatureCollection);
 }
 
+/** Extract a specific confidence band geometry from corridor feature properties */
+function buildBandFC(
+  corridors: GeoJSONFeatureCollection | null,
+  bandKey: "core" | "spread" | "extension",
+): GeoJSON.FeatureCollection {
+  if (!corridors) return EMPTY_FC;
+  const features: GeoJSON.Feature[] = [];
+  for (const f of corridors.features) {
+    const bandJson = (f.properties as Record<string, unknown>).confidence_band_geojson;
+    if (!bandJson || typeof bandJson !== "string") continue;
+    try {
+      const bands = JSON.parse(bandJson) as Record<string, unknown>;
+      const geom = bands[bandKey];
+      if (geom) features.push({ type: "Feature", geometry: geom as GeoJSON.Geometry, properties: f.properties });
+    } catch { /* skip */ }
+  }
+  return { type: "FeatureCollection", features };
+}
+
 /** Build a separate FeatureCollection of centerline geometries from corridor properties */
 function buildCenterlinesFC(corridors: GeoJSONFeatureCollection | null): GeoJSON.FeatureCollection {
   if (!corridors) return EMPTY_FC;
@@ -186,6 +205,50 @@ export default function Map({
           "line-color": corridorColor,
           "line-width": ["match", ["get", "event_category"], "TORNADO", 3, 2],
           "line-dasharray": ["match", ["get", "event_category"], "FLOOD_ZONE", ["literal", [3, 3]], ["literal", [4, 2]]],
+        },
+      });
+
+      // ── Confidence band layers (v2 engine: core track + forward extension) ───
+      map.addSource("corridors-core", { type: "geojson", data: EMPTY_FC });
+      map.addLayer({
+        id: "corridors-core-fill",
+        type: "fill",
+        source: "corridors-core",
+        paint: {
+          "fill-color": corridorColor,
+          "fill-opacity": 0.45,
+        },
+      });
+      map.addLayer({
+        id: "corridors-core-outline",
+        type: "line",
+        source: "corridors-core",
+        paint: {
+          "line-color": corridorColor,
+          "line-width": 2,
+        },
+      });
+
+      // Extension: forward-projected position (where storm is headed)
+      map.addSource("corridors-extension", { type: "geojson", data: EMPTY_FC });
+      map.addLayer({
+        id: "corridors-extension-fill",
+        type: "fill",
+        source: "corridors-extension",
+        paint: {
+          "fill-color": "#fbbf24",
+          "fill-opacity": 0.06,
+        },
+      });
+      map.addLayer({
+        id: "corridors-extension-outline",
+        type: "line",
+        source: "corridors-extension",
+        paint: {
+          "line-color": "#fbbf24",
+          "line-width": 1.5,
+          "line-dasharray": [4, 3],
+          "line-opacity": 0.6,
         },
       });
 
@@ -320,6 +383,10 @@ export default function Map({
       setSourceData(map, "corridors", corridorsRef.current);
       const centerlinesFC = buildCenterlinesFC(corridorsRef.current);
       (map.getSource("centerlines") as maplibregl.GeoJSONSource)?.setData(centerlinesFC);
+      (map.getSource("corridors-core") as maplibregl.GeoJSONSource)
+        ?.setData(buildBandFC(corridorsRef.current, "core") as GeoJSON.FeatureCollection);
+      (map.getSource("corridors-extension") as maplibregl.GeoJSONSource)
+        ?.setData(buildBandFC(corridorsRef.current, "extension") as GeoJSON.FeatureCollection);
 
       // Apply initial layer visibility and alert tier filter
       const vis = (v: boolean) => (v ? "visible" : "none") as "visible" | "none";
@@ -335,7 +402,12 @@ export default function Map({
         if (alertsVis) map.setFilter(id, ["in", ["get", "severity_tier"], ["literal", initTiers]]);
       });
       ["lsr-circles"].forEach(id => map.setLayoutProperty(id, "visibility", vis(l.lsr)));
-      ["corridors-fill", "corridors-outline", "centerlines-line"].forEach(id => map.setLayoutProperty(id, "visibility", vis(l.corridors)));
+      [
+        "corridors-fill", "corridors-outline",
+        "corridors-core-fill", "corridors-core-outline",
+        "corridors-extension-fill", "corridors-extension-outline",
+        "centerlines-line",
+      ].forEach(id => map.setLayoutProperty(id, "visibility", vis(l.corridors)));
 
       // Click handlers
       ["corridors-fill", "alerts-fill", "lsr-circles"].forEach((layerId) => {
@@ -387,6 +459,11 @@ export default function Map({
     setSourceData(mapRef.current, "corridors", corridors);
     const centerlinesFC = buildCenterlinesFC(corridors);
     (mapRef.current.getSource("centerlines") as maplibregl.GeoJSONSource)?.setData(centerlinesFC);
+    // Update v2 confidence band layers
+    (mapRef.current.getSource("corridors-core") as maplibregl.GeoJSONSource)
+      ?.setData(buildBandFC(corridors, "core") as GeoJSON.FeatureCollection);
+    (mapRef.current.getSource("corridors-extension") as maplibregl.GeoJSONSource)
+      ?.setData(buildBandFC(corridors, "extension") as GeoJSON.FeatureCollection);
   }, [corridors]);
 
   // Update layer visibility and alert tier filter
@@ -414,7 +491,12 @@ export default function Map({
     });
 
     ["lsr-circles"].forEach(l => map.setLayoutProperty(l, "visibility", vis(layers.lsr)));
-    ["corridors-fill", "corridors-outline", "centerlines-line"].forEach(l => map.setLayoutProperty(l, "visibility", vis(layers.corridors)));
+    [
+      "corridors-fill", "corridors-outline",
+      "corridors-core-fill", "corridors-core-outline",
+      "corridors-extension-fill", "corridors-extension-outline",
+      "centerlines-line",
+    ].forEach(l => map.setLayoutProperty(l, "visibility", vis(layers.corridors)));
   }, [layers]);
 
   return (

@@ -25,3 +25,9 @@ class Corridor(Base):
     updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
     confidence_tier = Column(String, default="T3")  # T3=Inferred
     event_category = Column(String, default="TORNADO")  # TORNADO, WIND_DAMAGE, SEVERE_WEATHER, FLOOD_ZONE
+    # v2 engine fields
+    engine_version = Column(String, nullable=True)           # "v2" or "official"
+    motion_consistency_score = Column(Float, nullable=True)  # 0-1; circular R of bearing pairs
+    inlier_count = Column(Integer, nullable=True)            # reports matching motion model
+    outlier_count = Column(Integer, nullable=True)           # reports rejected as off-track
+    confidence_band_geojson = Column(Text, nullable=True)    # JSON: {core, spread, extension}
