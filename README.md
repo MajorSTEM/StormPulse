@@ -2,6 +2,15 @@
 
 Open-source tornado damage mapping platform. Ingests NOAA/NWS public data and generates probable damage corridors for emergency responders.
 
+If you find StormPulse useful or even interesting, consider supporting development on Ko-fi.
+
+StormPulse is built independeltly using publicly available NOAA/NWS data with the goal of making severe weather information even more accessible and transparent. 
+
+☕ Support the project on Ko-fi:
+https://ko-fi.com/majorstem
+
+
+
 ## Quick Start
 
 ### Backend
@@ -53,6 +62,8 @@ No API keys needed for the MVP.
 ## Disclaimer
 
 Inferred corridors are system-generated probable damage estimates. They are NOT official NWS damage surveys. Always follow official emergency guidance.
+
+
 
 ## License
 
