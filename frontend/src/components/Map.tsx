@@ -23,6 +23,7 @@ interface Props {
   initialZoom?: number;
   onMoveEnd?: (center: { lat: number; lon: number; zoom: number }) => void;
   onMapReady?: (handle: MapHandle) => void;
+  scrubTime?: number | null; // unix ms timestamp; null = live (show all)
 }
 
 const EMPTY_FC = { type: "FeatureCollection", features: [] } as GeoJSON.FeatureCollection;
@@ -118,6 +119,7 @@ export default function Map({
   initialZoom = 4.5,
   onMoveEnd,
   onMapReady,
+  scrubTime = null,
 }: Props) {
   const mapContainerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<maplibregl.Map | null>(null);
@@ -451,8 +453,45 @@ export default function Map({
 
   useEffect(() => {
     if (!mapRef.current || !loadedRef.current) return;
-    setSourceData(mapRef.current, "lsr", lsrs);
-  }, [lsrs]);
+    // When not scrubbing, show all LSRs; scrub filtering handled by separate effect
+    if (scrubTime === null) {
+      setSourceData(mapRef.current, "lsr", lsrs);
+    }
+  }, [lsrs, scrubTime]);
+
+  // Timeline scrubber: filter LSR source to reports up to scrubTime
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map || !loadedRef.current) return;
+
+    const src = map.getSource("lsr") as maplibregl.GeoJSONSource | undefined;
+    if (!src) return;
+
+    if (scrubTime === null) {
+      // Live mode — restore full dataset
+      src.setData((lsrs || { type: "FeatureCollection", features: [] }) as GeoJSON.FeatureCollection);
+      // Restore corridor opacity
+      if (map.getLayer("corridors-fill")) map.setPaintProperty("corridors-fill", "fill-opacity", ["match", ["get", "event_category"], "FLOOD_ZONE", 0.2, 0.25]);
+      if (map.getLayer("corridors-outline")) map.setPaintProperty("corridors-outline", "line-opacity", 1.0);
+      if (map.getLayer("corridors-core-fill")) map.setPaintProperty("corridors-core-fill", "fill-opacity", 0.45);
+    } else {
+      // Scrub mode — filter to reports at or before scrubTime
+      const filtered = {
+        type: "FeatureCollection" as const,
+        features: (lsrs?.features || []).filter(f => {
+          const raw = (f.properties as Record<string, unknown>).event_time;
+          if (!raw) return false;
+          const ts = new Date(raw as string).getTime();
+          return !isNaN(ts) && ts <= scrubTime;
+        }),
+      };
+      src.setData(filtered as GeoJSON.FeatureCollection);
+      // Dim corridors to indicate they're the full reconstruction, not scrubbed
+      if (map.getLayer("corridors-fill")) map.setPaintProperty("corridors-fill", "fill-opacity", ["match", ["get", "event_category"], "FLOOD_ZONE", 0.08, 0.10]);
+      if (map.getLayer("corridors-outline")) map.setPaintProperty("corridors-outline", "line-opacity", 0.35);
+      if (map.getLayer("corridors-core-fill")) map.setPaintProperty("corridors-core-fill", "fill-opacity", 0.18);
+    }
+  }, [scrubTime, lsrs]);
 
   useEffect(() => {
     if (!mapRef.current || !loadedRef.current) return;

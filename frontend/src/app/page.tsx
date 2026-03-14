@@ -15,6 +15,7 @@ import ProvenancePanel from "@/components/ProvenancePanel";
 import IncidentSidebar from "@/components/IncidentSidebar";
 import SourceHealthBar from "@/components/SourceHealthBar";
 import LastUpdatedTicker from "@/components/LastUpdatedTicker";
+import TimelineScrubber from "@/components/TimelineScrubber";
 
 const Map = dynamic(() => import("@/components/Map"), {
   ssr: false,
@@ -42,6 +43,7 @@ function PageContent() {
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [layersOpen, setLayersOpen] = useState(false);
   const [activeAlertId, setActiveAlertId] = useState<string | null>(null);
+  const [scrubTime, setScrubTime] = useState<number | null>(null);
   useEffect(() => {
     if (window.innerWidth < 768) setSidebarOpen(false);
   }, []);
@@ -208,6 +210,7 @@ function PageContent() {
         initialZoom={mapStateRef.current.zoom}
         onMoveEnd={handleMoveEnd}
         onMapReady={handleMapReady}
+        scrubTime={scrubTime}
       />
 
       {/* Mobile open-sidebar button — only shown when sidebar is closed */}
@@ -309,8 +312,11 @@ function PageContent() {
         </div>
       </div>
 
-      {/* Disclaimer */}
-      <div className="absolute bottom-3 left-1/2 -translate-x-1/2 z-10 text-center">
+      {/* Timeline scrubber */}
+      <TimelineScrubber lsrs={lsrs} onScrubTime={setScrubTime} />
+
+      {/* Disclaimer — hidden on mobile when scrubber is present to avoid overlap */}
+      <div className="absolute bottom-3 left-1/2 -translate-x-1/2 z-10 text-center hidden md:block">
         <div className="text-[10px] text-gray-600 bg-gray-900/80 px-3 py-1 rounded">
           StormPulse is not affiliated with NOAA, NWS, or FEMA. Inferred corridors are NOT official damage surveys.
         </div>
