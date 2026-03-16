@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Depends, Query
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select
+from sqlalchemy import select, func
+from sqlalchemy.orm import defer
 from datetime import datetime, timezone, timedelta
 import json
 import math
@@ -65,7 +66,10 @@ async def get_corridors(
     cutoff = datetime.now(timezone.utc) - timedelta(hours=hours)
 
     result = await db.execute(
-        select(Corridor).where(Corridor.generated_at >= cutoff).order_by(Corridor.generated_at.desc())
+        select(Corridor)
+        .options(defer(Corridor.alert_ids))  # never used in response
+        .where(Corridor.generated_at >= cutoff)
+        .order_by(Corridor.generated_at.desc())
     )
     corridors = result.scalars().all()
 

@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Depends, Query
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
+from sqlalchemy.orm import defer
 from datetime import datetime, timezone, timedelta
 from typing import Optional
 import json
@@ -111,7 +112,13 @@ async def get_alerts(
     """Get NWS alerts as GeoJSON FeatureCollection."""
     cutoff = datetime.now(timezone.utc) - timedelta(hours=hours)
 
-    query = select(Alert).where(Alert.ingested_at >= cutoff)
+    # defer heavy blob columns never used in the GeoJSON response — eliminates
+    # ~15-20 KB/alert of unnecessary DB egress on every poll
+    query = (
+        select(Alert)
+        .options(defer(Alert.raw_payload), defer(Alert.description))
+        .where(Alert.ingested_at >= cutoff)
+    )
     if active_only:
         query = query.where(Alert.is_active == True)
     query = query.order_by(Alert.sent.desc())

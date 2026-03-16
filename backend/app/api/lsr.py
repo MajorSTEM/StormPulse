@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Depends, Query
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
+from sqlalchemy.orm import defer
 from datetime import datetime, timezone, timedelta
 from typing import Optional
 import json
@@ -32,7 +33,7 @@ async def get_lsrs(
     """Get Local Storm Reports as GeoJSON FeatureCollection."""
     cutoff = datetime.now(timezone.utc) - timedelta(hours=hours)
 
-    query = select(LSR).where(LSR.event_time >= cutoff)
+    query = select(LSR).options(defer(LSR.raw_payload)).where(LSR.event_time >= cutoff)
 
     if type_codes:
         codes = [c.strip().upper() for c in type_codes.split(",")]
