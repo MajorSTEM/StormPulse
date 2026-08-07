@@ -1,0 +1,33 @@
+# StormPulse V2 — local containerized deployment (free-tier independent).
+# See docs/DEPLOYMENT.md. Brings up the full platform on
+# http://localhost:3000 (map) and http://localhost:8000/docs (API docs).
+services:
+  backend:
+    build: ./backend
+    ports:
+      - "8000:8000"
+    environment:
+      DATABASE_URL: sqlite+aiosqlite:////data/stormpulse.db
+      CORS_ORIGINS: '["http://localhost:3000"]'
+      API_KEYS: stormpulse-demo-key:public-demo
+      RATE_LIMIT: 120/minute
+      NWS_USER_AGENT: StormPulse/2.0 local-deploy@example.com
+    volumes:
+      - stormpulse-data:/data
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: ./frontend
+      args:
+        # The browser calls the API directly, so this must be host-reachable.
+        NEXT_PUBLIC_API_URL: http://localhost:8000
+        NEXT_PUBLIC_API_KEY: stormpulse-demo-key
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+    restart: unless-stopped
+
+volumes:
+  stormpulse-data:
