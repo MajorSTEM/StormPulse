@@ -48,11 +48,18 @@ async def _run_migrations() -> None:
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    # Startup
+    # Startup — a temporarily unreachable database must not crash-loop the
+    # service: boot in degraded mode, surface it via /health, and let the
+    # ingestion cycle retry initialization until the DB returns (CP-10).
     logger.info("StormPulse V2 starting up...")
-    await init_db()
-    await _run_migrations()
-    await load_persisted_status()
+    try:
+        await init_db()
+        await _run_migrations()
+        await load_persisted_status()
+    except Exception as exc:
+        logger.error(
+            f"Database unavailable at startup — continuing in degraded mode: {exc}"
+        )
 
     if settings.enable_scheduler:
         # next_run_time=now fires the first ingestion immediately AFTER startup

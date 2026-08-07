@@ -94,6 +94,18 @@ def data_freshness() -> dict:
 
 async def run_ingestion_cycle():
     """Run all ingestion tasks in sequence."""
+    # Self-heal after a degraded boot: make sure tables exist before every
+    # cycle (CREATE TABLE IF NOT EXISTS — cheap when already initialized).
+    try:
+        from app.database import init_db
+        await init_db()
+    except Exception as exc:
+        logger.error(f"Database unavailable, skipping ingestion cycle: {exc}")
+        for status in ingestion_status.values():
+            status["last_error"] = f"database unavailable: {exc}"
+            status["status"] = "error"
+        return
+
     async with AsyncSessionLocal() as db:
         # Ingest alerts
         try:
