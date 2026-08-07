@@ -235,41 +235,168 @@ function cardinal(deg: number): string {
 }
 
 function HistoryDetail({ props }: { props: TornadoHistoryProperties }) {
+  const isSurvey = props.source === "NWS DAT";
+  const bearing = trackBearing(props);
+  const sweptMi2 = props.length_mi > 0 && props.width_yd > 0
+    ? props.length_mi * (props.width_yd / 1760)
+    : null;
+  const efInfo = props.ef >= 0 ? EF_SCALE[Math.min(5, props.ef)] : null;
+  const duration = durationMin(props.time, props.end_time);
+  const speedMph = duration && props.length_mi > 0
+    ? (props.length_mi / (duration / 60))
+    : null;
+  const searchQ = encodeURIComponent(
+    `${props.date} tornado ${props.state.split(",")[0] || ""}`.trim()
+  );
+
   return (
     <div className="space-y-3">
+      {/* Rating & source */}
       <div className="bg-amber-950/40 border border-amber-700 rounded p-2">
         <div className="text-xs text-amber-300 font-medium">
-          🌪 EF{props.ef >= 0 ? props.ef : "?"} · {props.date} · {props.state}
+          🌪 {props.ef >= 0 ? `EF${props.ef}` : "EF unrated"} · {props.date} · {props.state || "—"}
         </div>
         <div className="text-[10px] text-amber-200/80 mt-0.5">
-          SPC historical record #{props.om} ({props.year}) · touchdown {props.time}
+          {isSurvey
+            ? "NWS Damage Assessment Toolkit — official survey track"
+            : `SPC historical record #${props.om} (${props.year})`}
         </div>
       </div>
-      <div className="grid grid-cols-2 gap-2">
+
+      {/* Damage potential (official EF scale descriptors) */}
+      {efInfo && (
         <div>
-          <div className="text-xs text-gray-400 uppercase tracking-wider mb-1">Path Length</div>
-          <div className="text-xs text-white">{props.length_mi > 0 ? `${props.length_mi.toFixed(1)} mi` : "—"}</div>
-        </div>
-        <div>
-          <div className="text-xs text-gray-400 uppercase tracking-wider mb-1">Max Width</div>
-          <div className="text-xs text-white">{props.width_yd > 0 ? `${Math.round(props.width_yd)} yd` : "—"}</div>
-        </div>
-        <div>
-          <div className="text-xs text-gray-400 uppercase tracking-wider mb-1">Fatalities</div>
-          <div className="text-xs text-white">{props.fatalities}</div>
-        </div>
-        <div>
-          <div className="text-xs text-gray-400 uppercase tracking-wider mb-1">Injuries</div>
-          <div className="text-xs text-white">{props.injuries}</div>
-        </div>
-      </div>
-      {!props.has_path && (
-        <div className="text-[10px] text-gray-500">
-          Touchdown point only — no surveyed end point in the archive.
+          <div className="text-xs text-gray-400 uppercase tracking-wider mb-1">Rating &amp; Damage Class</div>
+          <div className="text-xs text-white">{efInfo.winds} winds — {efInfo.label}</div>
+          <div className="text-[10px] text-gray-400 mt-0.5 leading-relaxed">{efInfo.damage}</div>
+          {props.max_wind_mph && (
+            <div className="text-[10px] text-amber-300 mt-0.5">Surveyed max wind: {props.max_wind_mph} mph</div>
+          )}
         </div>
       )}
+
+      {/* Formation & track */}
+      <div>
+        <div className="text-xs text-gray-400 uppercase tracking-wider mb-1">Formation &amp; Track</div>
+        <div className="text-xs text-white">
+          Touched down {props.time ? `${props.time} UTC` : "(time unknown)"} at{" "}
+          {props.start_lat.toFixed(3)}, {props.start_lon.toFixed(3)}
+        </div>
+        {props.end_time && (
+          <div className="text-[10px] text-gray-300 mt-0.5">
+            Lifted {props.end_time} UTC{duration ? ` — on the ground ~${duration} min` : ""}
+          </div>
+        )}
+        <div className="text-[10px] text-gray-300 mt-0.5">
+          {props.length_mi > 0 ? `Traveled ${props.length_mi.toFixed(1)} mi` : "Path length not recorded"}
+          {bearing ? ` toward the ${bearing}` : ""}
+          {speedMph ? ` (~${Math.round(speedMph)} mph forward speed)` : ""}
+        </div>
+        <div className="text-[10px] text-gray-300 mt-0.5">
+          {props.width_yd > 0 ? `Max damage width ${Math.round(props.width_yd)} yd` : "Width not recorded"}
+          {sweptMi2 ? ` · ~${sweptMi2.toFixed(1)} mi² swept` : ""}
+        </div>
+        {isSurvey && props.has_path && (
+          <div className="text-[10px] text-gray-500 mt-0.5">Full surveyed track shown on map (not a straight-line estimate).</div>
+        )}
+      </div>
+
+      {/* Impact & aftermath */}
+      <div>
+        <div className="text-xs text-gray-400 uppercase tracking-wider mb-1">Impact &amp; Aftermath</div>
+        <div className="grid grid-cols-2 gap-2">
+          <div>
+            <div className="text-[10px] text-gray-500">Fatalities</div>
+            <div className={`text-xs font-medium ${props.fatalities > 0 ? "text-red-400" : "text-white"}`}>{props.fatalities}</div>
+          </div>
+          <div>
+            <div className="text-[10px] text-gray-500">Injuries</div>
+            <div className="text-xs text-white">{props.injuries}</div>
+          </div>
+        </div>
+        {lossText(props) && (
+          <div className="text-[10px] text-yellow-300 mt-1">{lossText(props)}</div>
+        )}
+      </div>
+
+      {/* Survey narrative */}
+      {props.remarks && (
+        <div>
+          <div className="text-xs text-gray-400 uppercase tracking-wider mb-1">Survey Notes</div>
+          <div className="text-[11px] text-gray-200 leading-relaxed max-h-36 overflow-y-auto">{props.remarks}</div>
+        </div>
+      )}
+
+      {/* Narrative / recovery reading */}
+      <div>
+        <div className="text-xs text-gray-400 uppercase tracking-wider mb-1">Read More (formation · aftermath · recovery)</div>
+        <div className="flex flex-wrap gap-1.5">
+          <a href={`https://en.wikipedia.org/w/index.php?search=${searchQ}`} target="_blank" rel="noopener noreferrer"
+            className="text-[10px] text-blue-400 hover:text-blue-300 underline">Wikipedia</a>
+          <a href={`https://www.google.com/search?q=${searchQ}+damage+aftermath+recovery`} target="_blank" rel="noopener noreferrer"
+            className="text-[10px] text-blue-400 hover:text-blue-300 underline">News search</a>
+          <a href="https://apps.dat.noaa.gov/StormDamage/DamageViewer/" target="_blank" rel="noopener noreferrer"
+            className="text-[10px] text-blue-400 hover:text-blue-300 underline">NWS Damage Viewer</a>
+        </div>
+      </div>
     </div>
   );
+}
+
+// Official EF-scale wind ranges and damage descriptions (NWS)
+const EF_SCALE: Record<number, { winds: string; label: string; damage: string }> = {
+  0: { winds: "65–85 mph", label: "Minor damage",
+       damage: "Peels surface off some roofs; gutter and siding damage; branches broken; shallow-rooted trees pushed over." },
+  1: { winds: "86–110 mph", label: "Moderate damage",
+       damage: "Roofs severely stripped; mobile homes overturned or badly damaged; exterior doors lost; windows broken." },
+  2: { winds: "111–135 mph", label: "Considerable damage",
+       damage: "Roofs torn off well-constructed houses; foundations shifted; mobile homes destroyed; large trees snapped or uprooted; cars lifted off the ground." },
+  3: { winds: "136–165 mph", label: "Severe damage",
+       damage: "Entire stories of well-constructed houses destroyed; severe damage to large buildings; trains overturned; heavy cars thrown." },
+  4: { winds: "166–200 mph", label: "Devastating damage",
+       damage: "Well-constructed houses leveled; structures blown some distance; cars and large objects thrown." },
+  5: { winds: ">200 mph", label: "Incredible damage",
+       damage: "Strong frame houses swept off foundations; steel-reinforced concrete structures critically damaged; total destruction along the core path." },
+};
+
+// SPC pre-1996 property loss is a 1-9 category; 1996+ is millions of dollars.
+const SPC_LOSS_CATEGORIES: Record<number, string> = {
+  1: "< $50", 2: "$50–$500", 3: "$500–$5K", 4: "$5K–$50K", 5: "$50K–$500K",
+  6: "$500K–$5M", 7: "$5M–$50M", 8: "$50M–$500M", 9: "$500M+",
+};
+
+function lossText(p: TornadoHistoryProperties): string | null {
+  if (p.source === "NWS DAT") {
+    if (p.prop_damage && p.prop_damage > 0) {
+      return `Reported property damage: $${p.prop_damage.toLocaleString()}`;
+    }
+    return null;
+  }
+  if (!p.loss || p.loss <= 0) return null;
+  if (p.year < 1996) {
+    const cat = SPC_LOSS_CATEGORIES[Math.round(p.loss)];
+    return cat ? `Est. property loss: ${cat} (SPC category ${Math.round(p.loss)})` : null;
+  }
+  return `Est. property loss: $${p.loss.toLocaleString()}M`;
+}
+
+function trackBearing(p: TornadoHistoryProperties): string | null {
+  if (!p.has_path || (p.end_lat === 0 && p.end_lon === 0)) return null;
+  const dLon = p.end_lon - p.start_lon;
+  const dLat = p.end_lat - p.start_lat;
+  if (dLon === 0 && dLat === 0) return null;
+  const deg = (Math.atan2(dLon, dLat) * 180 / Math.PI + 360) % 360;
+  return cardinal(deg);
+}
+
+function durationMin(start: string, end: string | null): number | null {
+  if (!start || !end) return null;
+  const [sh, sm] = start.split(":").map(Number);
+  const [eh, em] = end.split(":").map(Number);
+  if ([sh, sm, eh, em].some(Number.isNaN)) return null;
+  let mins = (eh * 60 + em) - (sh * 60 + sm);
+  if (mins < 0) mins += 24 * 60;
+  return mins > 0 ? mins : null;
 }
 
 export default function ProvenancePanel({ feature, onClose }: Props) {

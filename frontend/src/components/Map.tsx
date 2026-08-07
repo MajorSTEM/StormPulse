@@ -278,16 +278,29 @@ export default function Map({
         "#64748b",
       ];
       map.addSource("history", { type: "geojson", data: EMPTY_FC });
+      // Fat translucent halo first: easy click target + subtle glow
+      map.addLayer({
+        id: "history-paths-hit",
+        type: "line",
+        source: "history",
+        filter: ["!=", ["geometry-type"], "Point"],
+        layout: { visibility: "none", "line-cap": "round" },
+        paint: {
+          "line-color": efColor,
+          "line-width": 16,
+          "line-opacity": 0.10,
+        },
+      });
       map.addLayer({
         id: "history-paths",
         type: "line",
         source: "history",
-        filter: ["==", ["geometry-type"], "LineString"],
+        filter: ["!=", ["geometry-type"], "Point"],
         layout: { visibility: "none", "line-cap": "round" },
         paint: {
           "line-color": efColor,
-          "line-width": ["+", 1.5, ["max", 0, ["get", "ef"]]],
-          "line-opacity": 0.85,
+          "line-width": ["+", 3.5, ["*", 1.2, ["max", 0, ["get", "ef"]]]],
+          "line-opacity": 0.9,
         },
       });
       map.addLayer({
@@ -298,10 +311,10 @@ export default function Map({
         layout: { visibility: "none" },
         paint: {
           "circle-color": efColor,
-          "circle-radius": 3.5,
-          "circle-opacity": 0.85,
+          "circle-radius": 6,
+          "circle-opacity": 0.9,
           "circle-stroke-color": "#0f172a",
-          "circle-stroke-width": 1,
+          "circle-stroke-width": 1.5,
         },
       });
 
@@ -556,11 +569,11 @@ export default function Map({
         "centerlines-line",
         "prediction-cone-fill", "prediction-cone-outline", "prediction-cone-label",
       ].forEach(id => map.setLayoutProperty(id, "visibility", vis(l.corridors)));
-      ["history-paths", "history-points"].forEach(id =>
+      ["history-paths", "history-paths-hit", "history-points"].forEach(id =>
         map.setLayoutProperty(id, "visibility", vis(l.history)));
 
       // Click handlers
-      ["corridors-fill", "alerts-fill", "lsr-circles", "history-paths", "history-points"].forEach((layerId) => {
+      ["corridors-fill", "alerts-fill", "lsr-circles", "history-paths-hit", "history-points"].forEach((layerId) => {
         map.on("click", layerId, (e) => {
           const feature = e.features?.[0];
           if (feature) onFeatureClick(feature as unknown as SelectedFeature);
@@ -668,12 +681,17 @@ export default function Map({
     const source = map.getSource("replay") as maplibregl.GeoJSONSource | undefined;
     if (!source) return;
 
-    if (!replayTarget?.geometry || replayTarget.geometry.type !== "LineString") {
+    let coords: [number, number][] | null = null;
+    if (replayTarget?.geometry?.type === "LineString") {
+      coords = replayTarget.geometry.coordinates as [number, number][];
+    } else if (replayTarget?.geometry?.type === "MultiLineString") {
+      const parts = replayTarget.geometry.coordinates as [number, number][][];
+      coords = parts.reduce((a, b) => (b.length > a.length ? b : a), parts[0] ?? []);
+    }
+    if (!coords) {
       source.setData(EMPTY_FC);
       return;
     }
-
-    const coords = replayTarget.geometry.coordinates as [number, number][];
     if (coords.length < 2) {
       source.setData(EMPTY_FC);
       return;
@@ -782,7 +800,7 @@ export default function Map({
       "centerlines-line",
       "prediction-cone-fill", "prediction-cone-outline", "prediction-cone-label",
     ].forEach(l => map.setLayoutProperty(l, "visibility", vis(layers.corridors)));
-    ["history-paths", "history-points"].forEach(l =>
+    ["history-paths", "history-paths-hit", "history-points"].forEach(l =>
       map.setLayoutProperty(l, "visibility", vis(layers.history)));
   }, [layers]);
 

@@ -84,9 +84,19 @@ export interface TornadoHistoryProperties {
   ef: number;
   injuries: number;
   fatalities: number;
+  loss: number;
   length_mi: number;
   width_yd: number;
+  start_lat: number;
+  start_lon: number;
+  end_lat: number;
+  end_lon: number;
   has_path: boolean;
+  source: string;          // "SPC" | "NWS DAT"
+  end_time: string | null;
+  max_wind_mph: number | null;
+  prop_damage: number | null;
+  remarks: string | null;
   _layer: "history";
 }
 

@@ -236,7 +236,9 @@ function PageContent() {
   }, [corridors, flyToGeometry]);
 
   const handleHistorySelect = useCallback((feature: GeoJSONFeature) => {
-    setReplayTarget(feature.geometry?.type === "LineString" ? feature : null);
+    const geomType = feature.geometry?.type;
+    setReplayTarget(geomType === "LineString" || geomType === "MultiLineString" ? feature : null);
+    setSelectedFeature(feature as SelectedFeature);
     flyToGeometry(feature.geometry as { coordinates: unknown } | null);
   }, [flyToGeometry]);
 

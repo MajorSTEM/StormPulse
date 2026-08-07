@@ -32,8 +32,9 @@ const STATES = [
  * click a record to replay its surveyed path on the map.
  */
 export default function HistoryPanel({ data, loading, onQuery, onSelect, onClose, selectedId }: Props) {
+  const currentYear = new Date().getFullYear();
   const [yearFrom, setYearFrom] = useState(2000);
-  const [yearTo, setYearTo] = useState(2024);
+  const [yearTo, setYearTo] = useState(currentYear);
   const [state, setState] = useState("");
   const [efMin, setEfMin] = useState(2);
 
@@ -76,12 +77,12 @@ export default function HistoryPanel({ data, loading, onQuery, onSelect, onClose
         <div className="grid grid-cols-2 gap-1.5">
           <label className="text-[10px] text-gray-400">
             From (year)
-            <input type="number" min={1950} max={2024} value={yearFrom}
+            <input type="number" min={1950} max={currentYear} value={yearFrom}
               onChange={e => setYearFrom(Number(e.target.value))} className={inputCls} />
           </label>
           <label className="text-[10px] text-gray-400">
             To (year)
-            <input type="number" min={1950} max={2024} value={yearTo}
+            <input type="number" min={1950} max={currentYear} value={yearTo}
               onChange={e => setYearTo(Number(e.target.value))} className={inputCls} />
           </label>
           <label className="text-[10px] text-gray-400">
@@ -116,7 +117,7 @@ export default function HistoryPanel({ data, loading, onQuery, onSelect, onClose
       <div className="overflow-y-auto flex-1">
         {features.length === 0 && (
           <p className="text-center text-xs text-gray-500 py-8 px-4">
-            {loading ? "Reading archive…" : "Run a query to load historical tornadoes (SPC database, 1950–2024)."}
+            {loading ? "Reading archive…" : `Run a query to load historical tornadoes (1950–${currentYear}).`}
           </p>
         )}
         <div className="px-2 py-1.5 space-y-1">
@@ -141,7 +142,10 @@ export default function HistoryPanel({ data, loading, onQuery, onSelect, onClose
                     >
                       {p.ef >= 0 ? `EF${p.ef}` : "EF?"}
                     </span>
-                    <span className="text-gray-200 font-medium truncate">{p.date} · {p.state}</span>
+                    <span className="text-gray-200 font-medium truncate">{p.date} · {p.state.split(",")[0] || "—"}</span>
+                    {p.source === "NWS DAT" && (
+                      <span className="text-[8px] font-bold text-cyan-300 border border-cyan-800 rounded px-1 flex-shrink-0" title="Official NWS damage survey track">SURVEY</span>
+                    )}
                   </div>
                   <span className="text-[10px] text-gray-500 flex-shrink-0 tabular-nums">
                     {p.length_mi > 0 ? `${p.length_mi.toFixed(1)} mi` : "—"}
@@ -164,7 +168,7 @@ export default function HistoryPanel({ data, loading, onQuery, onSelect, onClose
       {/* Footer */}
       <div className="px-3 py-1.5 border-t border-gray-700 flex-shrink-0">
         <div className="text-[10px] text-gray-500">
-          SPC tornado database 1950–2024 · paths are surveyed start→end segments
+          SPC archive 1950–2024 + NWS DAT surveys 2025–present · SURVEY rows carry full tracks
         </div>
       </div>
     </div>
