@@ -8,6 +8,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 from app.models.lsr import LSR
 from app.config import settings
+from app.scoring.confidence import tier_for_lsr
 
 logger = logging.getLogger(__name__)
 
@@ -159,7 +160,7 @@ async def ingest_lsrs(db: AsyncSession, hours_back: int = 48) -> dict:
                         source_type="SPC Storm Reports",
                         wfo="",
                         raw_payload=str(row),
-                        confidence_tier="T1" if type_code == "T" else "T2",
+                        confidence_tier=tier_for_lsr(type_code).tier,
                     )
                     db.add(lsr)
                     ingested += 1

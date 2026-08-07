@@ -6,37 +6,11 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, update
 from app.models.alert import Alert
 from app.config import settings
+from app.scoring.confidence import tier_for_alert
 
 logger = logging.getLogger(__name__)
 
 NWS_ALERTS_URL = "https://api.weather.gov/alerts/active"
-
-# Confidence tier assignment by event type
-TIER_MAP = {
-    "Tornado Warning": "T1",
-    "Tornado Emergency": "T1",
-    "Tornado Watch": "T1",
-    "Severe Thunderstorm Warning": "T1",
-    "High Wind Warning": "T1",
-    "High Wind Watch": "T1",
-    "Wind Advisory": "T2",
-    "Extreme Wind Warning": "T1",
-    "Flash Flood Warning": "T1",
-    "Flash Flood Watch": "T1",
-    "Flood Warning": "T1",
-    "Flood Watch": "T1",
-    "Flood Advisory": "T2",
-    "Winter Storm Warning": "T1",
-    "Winter Storm Watch": "T1",
-    "Blizzard Warning": "T1",
-    "Ice Storm Warning": "T1",
-    "Freeze Warning": "T1",
-    "Special Weather Statement": "T2",
-    "Dense Fog Advisory": "T2",
-    "Heat Advisory": "T2",
-    "Excessive Heat Warning": "T1",
-    "Excessive Heat Watch": "T1",
-}
 
 
 def parse_dt(s):
@@ -105,7 +79,7 @@ async def ingest_nws_alerts(db: AsyncSession) -> dict:
                     existing.ends = parse_dt(props.get("ends"))
                     updated += 1
                 else:
-                    tier = TIER_MAP.get(event_type, "T2")
+                    tier = tier_for_alert(event_type).tier
                     nws_headline_list = props.get("parameters", {}).get("NWSheadline")
                     nws_headline = nws_headline_list[0] if nws_headline_list else ""
 

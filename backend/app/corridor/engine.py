@@ -19,6 +19,12 @@ from sqlalchemy import select, delete
 from app.models.lsr import LSR
 from app.models.alert import Alert
 from app.models.corridor import Corridor
+from app.scoring.confidence import (
+    compute_v2_tornado_confidence,
+    compute_wind_confidence,
+    compute_severe_confidence,
+    tier_for_corridor,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -440,65 +446,8 @@ def build_confidence_bands(
 
 
 # ── Confidence scoring ────────────────────────────────────────────────────────
-
-def _label(score: float) -> Tuple[float, str]:
-    if score >= 0.70:
-        return score, "HIGH"
-    elif score >= 0.40:
-        return score, "MEDIUM"
-    return score, "LOW"
-
-
-def compute_v2_tornado_confidence(
-    tornado_count: int,
-    wind_count: int,
-    has_warning: bool,
-    motion_consistency: float,
-    inlier_fraction: float,
-) -> Tuple[float, str]:
-    """
-    Phase 2: Motion-aware confidence scoring.
-    Replaces simple count-based v1 scoring with track quality metrics.
-    """
-    score = 0.0
-
-    # Report counts (capped to avoid one mega-outbreak inflating a single corridor)
-    score += min(tornado_count * 0.18, 0.45)
-    score += min(wind_count * 0.04, 0.12)
-
-    # Official backing
-    if has_warning:
-        score += 0.15
-
-    # Motion quality bonuses (v2-only)
-    if motion_consistency >= 0.85:
-        score += 0.18   # nearly perfectly linear track
-    elif motion_consistency >= 0.65:
-        score += 0.10
-    elif motion_consistency >= 0.40:
-        score += 0.04
-
-    # Inlier fraction: how many reports fit the motion model
-    if inlier_fraction >= 0.90:
-        score += 0.08
-    elif inlier_fraction >= 0.70:
-        score += 0.04
-
-    return _label(min(score, 1.0))
-
-
-def compute_wind_confidence(wind_count: int, has_warning: bool) -> Tuple[float, str]:
-    score = min(wind_count * 0.15, 0.60)
-    if has_warning:
-        score += 0.25
-    return _label(min(score, 1.0))
-
-
-def compute_severe_confidence(total_count: int, has_warning: bool) -> Tuple[float, str]:
-    score = min(total_count * 0.10, 0.50)
-    if has_warning:
-        score += 0.30
-    return _label(min(score, 1.0))
+# Tier assignment and confidence-strength scoring live in the dedicated
+# scoring module (app/scoring/confidence.py) — see docs/CONFIDENCE_SCORING.md.
 
 
 # ── Explanation builder ───────────────────────────────────────────────────────
@@ -689,7 +638,7 @@ async def generate_corridors(db: AsyncSession, hours_back: int = 48) -> dict:
                 county_list=json.dumps(counties),
                 motion_direction_deg=bearing_deg,
                 motion_speed_kts=speed_kts,
-                confidence_tier="T3",
+                confidence_tier=tier_for_corridor(is_official_geometry=False).tier,
                 event_category=CATEGORY_TORNADO,
                 engine_version=ENGINE_VERSION,
                 motion_consistency_score=consistency,
@@ -729,7 +678,7 @@ async def generate_corridors(db: AsyncSession, hours_back: int = 48) -> dict:
                 county_list=json.dumps(counties),
                 motion_direction_deg=None,
                 motion_speed_kts=None,
-                confidence_tier="T3",
+                confidence_tier=tier_for_corridor(is_official_geometry=False).tier,
                 event_category=CATEGORY_WIND,
                 engine_version=ENGINE_VERSION,
                 motion_consistency_score=0.0,
@@ -768,7 +717,7 @@ async def generate_corridors(db: AsyncSession, hours_back: int = 48) -> dict:
                 county_list=json.dumps(counties),
                 motion_direction_deg=None,
                 motion_speed_kts=None,
-                confidence_tier="T3",
+                confidence_tier=tier_for_corridor(is_official_geometry=False).tier,
                 event_category=CATEGORY_SEVERE,
                 engine_version=ENGINE_VERSION,
                 motion_consistency_score=0.0,
@@ -808,7 +757,7 @@ async def generate_corridors(db: AsyncSession, hours_back: int = 48) -> dict:
             county_list=json.dumps([alert.area_description or ""]),
             motion_direction_deg=None,
             motion_speed_kts=None,
-            confidence_tier="T2",
+            confidence_tier=tier_for_corridor(is_official_geometry=True).tier,
             event_category=CATEGORY_FLOOD,
             engine_version="official",
             motion_consistency_score=None,
