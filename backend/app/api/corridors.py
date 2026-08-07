@@ -8,6 +8,7 @@ import math
 
 from app.database import get_db
 from app.models.corridor import Corridor
+from app.corridor.prediction import build_prediction
 from app.ingestion.scheduler import data_freshness
 from app.scoring.confidence import T3_DISCLAIMER, TIER_LABELS
 
@@ -85,6 +86,26 @@ async def get_corridors(
         is_inferred = tier == "T3"
         tier_label = f"{tier} · INFERRED" if is_inferred else f"{tier} · OFFICIAL NWS"
 
+        # Predictive heading cone (T3): only for tornado corridors with a
+        # motion solution; apex is the last confirmed track position.
+        prediction = None
+        if (
+            corridor.event_category == "TORNADO"
+            and corridor.motion_direction_deg is not None
+            and corridor.centerline_geojson
+        ):
+            try:
+                centerline = json.loads(corridor.centerline_geojson)
+                last_lon, last_lat = centerline["coordinates"][-1]
+                prediction = build_prediction(
+                    last_lat, last_lon,
+                    corridor.motion_direction_deg,
+                    corridor.motion_speed_kts,
+                    getattr(corridor, "motion_consistency_score", None),
+                )
+            except Exception:
+                prediction = None
+
         feature = {
             "type": "Feature",
             "geometry": polygon,
@@ -115,6 +136,7 @@ async def get_corridors(
                 "confidence_band_geojson": getattr(corridor, "confidence_band_geojson", None),
                 "tier_label": tier_label,
                 "tier_description": TIER_LABELS.get(tier, tier),
+                "prediction": prediction,
                 "disclaimer": T3_DISCLAIMER if is_inferred else None,
                 "_layer": "corridors",
                 "_inferred": is_inferred,

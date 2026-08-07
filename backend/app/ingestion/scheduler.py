@@ -150,4 +150,16 @@ async def run_ingestion_cycle():
             logger.warning(f"Could not persist ingestion state: {e}")
 
 
+async def run_history_load():
+    """One-shot background load of the SPC historical tornado database
+    (skips itself when the table is already populated)."""
+    from app.ingestion.tornado_history import load_tornado_history
+    try:
+        async with AsyncSessionLocal() as db:
+            result = await load_tornado_history(db)
+            logger.info(f"Tornado history: {result}")
+    except Exception as exc:
+        logger.error(f"Tornado history load failed: {exc}")
+
+
 scheduler = AsyncIOScheduler()

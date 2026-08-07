@@ -1,6 +1,6 @@
 import logging
 from contextlib import asynccontextmanager
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 from fastapi import FastAPI, Security
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
@@ -10,10 +10,11 @@ from sqlalchemy import text
 
 from app.config import settings
 from app.database import init_db, AsyncSessionLocal
-from app.api import alerts, lsr, corridors, health
+from app.api import alerts, lsr, corridors, health, history
 from app.ingestion.scheduler import (
     scheduler,
     run_ingestion_cycle,
+    run_history_load,
     load_persisted_status,
 )
 from app.security import limiter, require_api_key, security_headers_middleware
@@ -74,6 +75,14 @@ async def lifespan(app: FastAPI):
             max_instances=1,
             coalesce=True,
             next_run_time=datetime.now(timezone.utc),
+        )
+        # One-shot: populate the SPC historical tornado table if empty,
+        # delayed so live ingestion gets the first crack at the DB.
+        scheduler.add_job(
+            run_history_load,
+            "date",
+            run_date=datetime.now(timezone.utc) + timedelta(seconds=45),
+            id="history_load",
         )
         scheduler.start()
 
@@ -136,6 +145,7 @@ protected = [Security(require_api_key)]
 app.include_router(alerts.router, prefix="/api/v1", tags=["alerts"], dependencies=protected)
 app.include_router(lsr.router, prefix="/api/v1", tags=["lsr"], dependencies=protected)
 app.include_router(corridors.router, prefix="/api/v1", tags=["corridors"], dependencies=protected)
+app.include_router(history.router, prefix="/api/v1", tags=["history"], dependencies=protected)
 app.include_router(health.router, prefix="/api/v1", tags=["health"])
 
 
