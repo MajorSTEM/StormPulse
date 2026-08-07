@@ -17,6 +17,9 @@ export interface GeoJSONFeatureCollection {
     hours: number;
     generated_at: string;
     disclaimer?: string;
+    stale?: boolean;
+    data_as_of?: string | null;
+    data_age_seconds?: number | null;
   };
 }
 
@@ -83,9 +86,12 @@ export interface CorridorProperties {
   inlier_count: number | null;
   outlier_count: number | null;
   confidence_band_geojson: string | null;
+  tier_label: string;
+  tier_description: string;
+  disclaimer: string | null;
   _layer: "corridors";
   _inferred: boolean;
-  _disclaimer: string;
+  _disclaimer: string | null;
 }
 
 export interface HealthSource {
@@ -100,6 +106,11 @@ export interface HealthSource {
 export interface HealthStatus {
   status: string;
   sources: HealthSource[];
+  freshness?: {
+    stale: boolean;
+    data_as_of: string | null;
+    data_age_seconds: number | null;
+  };
   server_time: string;
   app: string;
   version: string;

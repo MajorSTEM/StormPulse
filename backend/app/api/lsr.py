@@ -9,6 +9,8 @@ import math
 
 from app.database import get_db
 from app.models.lsr import LSR
+from app.ingestion.scheduler import data_freshness
+from app.scoring.confidence import tier_for_lsr
 
 router = APIRouter()
 
@@ -68,7 +70,7 @@ async def get_lsrs(
                 "event_time": lsr.event_time.isoformat() if lsr.event_time else None,
                 "source_type": lsr.source_type,
                 "wfo": lsr.wfo,
-                "confidence_tier": lsr.confidence_tier,
+                "confidence_tier": tier_for_lsr(lsr.type_code or "").tier,
                 "ingested_at": lsr.ingested_at.isoformat() if lsr.ingested_at else None,
                 "age_minutes": round(_age_minutes(lsr.event_time), 1),
                 "_layer": "lsr",
@@ -83,5 +85,6 @@ async def get_lsrs(
             "count": len(features),
             "hours": hours,
             "generated_at": datetime.now(timezone.utc).isoformat(),
+            **data_freshness(),
         }
     }

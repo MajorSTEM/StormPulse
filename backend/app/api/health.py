@@ -1,6 +1,6 @@
 from fastapi import APIRouter
 from datetime import datetime, timezone
-from app.ingestion.scheduler import ingestion_status
+from app.ingestion.scheduler import ingestion_status, data_freshness
 
 router = APIRouter()
 
@@ -44,7 +44,8 @@ async def get_health():
     return {
         "status": overall,
         "sources": sources,
+        "freshness": data_freshness(),
         "server_time": now.isoformat(),
         "app": "StormPulse",
-        "version": "1.0.0-mvp",
+        "version": "2.0.0",
     }

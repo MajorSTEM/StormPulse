@@ -8,6 +8,8 @@ import json
 
 from app.database import get_db
 from app.models.alert import Alert
+from app.ingestion.scheduler import data_freshness
+from app.scoring.confidence import tier_for_alert
 
 router = APIRouter()
 
@@ -145,7 +147,7 @@ async def get_alerts(
                 "area_description": alert.area_description,
                 "nws_headline": alert.nws_headline,
                 "is_active": alert.is_active,
-                "confidence_tier": alert.confidence_tier,
+                "confidence_tier": tier_for_alert(alert.event_type or "").tier,
                 "ingested_at": alert.ingested_at.isoformat() if alert.ingested_at else None,
                 "source_url": alert.source_url,
                 "severity_tier": tier,
@@ -161,5 +163,6 @@ async def get_alerts(
             "count": len(features),
             "hours": hours,
             "generated_at": datetime.now(timezone.utc).isoformat(),
+            **data_freshness(),
         }
     }

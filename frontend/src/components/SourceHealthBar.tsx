@@ -48,9 +48,20 @@ export default function SourceHealthBar() {
 
   if (!health) return null;
 
+  const isStale = health.freshness?.stale === true;
+  const dataAsOf = health.freshness?.data_as_of
+    ? new Date(health.freshness.data_as_of).toLocaleString()
+    : "unknown";
+
   return (
     <div className="absolute top-0 left-0 right-0 z-10">
-      {isDegraded && (
+      {isStale && (
+        <div className="bg-red-700 text-white text-xs text-center py-1 px-4 font-semibold">
+          &#9888; STALE DATA &mdash; upstream NWS/SPC feeds unavailable; showing locally
+          cached data as of {dataAsOf}
+        </div>
+      )}
+      {!isStale && isDegraded && (
         <div className="bg-yellow-600 text-black text-xs text-center py-1 px-4 font-medium">
           &#9888; Data sources delayed &mdash; map may not reflect latest conditions
         </div>
