@@ -12,6 +12,8 @@ interface Props {
   onSelectAlert: (alertId: string) => void;
   activeAlertId: string | null;
   onClose?: () => void;
+  onAckAlert?: (alertId: string) => void;
+  onAckAll?: () => void;
 }
 
 function timeAgo(iso: string | null | undefined): string {
@@ -93,7 +95,7 @@ function efColor(magnitude: number | null | undefined): string {
 
 type Tab = "live" | "corridors" | "alerts";
 
-export default function IncidentSidebar({ alerts, corridors, lsrs, onSelectIncident, onSelectAlert, activeAlertId, onClose }: Props) {
+export default function IncidentSidebar({ alerts, corridors, lsrs, onSelectIncident, onSelectAlert, activeAlertId, onClose, onAckAlert, onAckAll }: Props) {
   const [tab, setTab] = useState<Tab>("live");
   const [search, setSearch] = useState("");
 
@@ -183,7 +185,7 @@ export default function IncidentSidebar({ alerts, corridors, lsrs, onSelectIncid
             </div>
           </div>
           {onClose && (
-            <button onClick={onClose} className="md:hidden text-gray-400 hover:text-white text-base leading-none ml-2 flex-shrink-0 w-6 h-6 flex items-center justify-center rounded hover:bg-gray-700" aria-label="Close">✕</button>
+            <button onClick={onClose} className="text-gray-400 hover:text-white text-base leading-none ml-2 flex-shrink-0 w-6 h-6 flex items-center justify-center rounded hover:bg-gray-700" aria-label="Collapse panel" title="Collapse panel">–</button>
           )}
         </div>
 
@@ -334,6 +336,15 @@ export default function IncidentSidebar({ alerts, corridors, lsrs, onSelectIncid
           );
           return (
             <div className="px-2 pt-2 space-y-2">
+              {onAckAll && (
+                <button
+                  onClick={onAckAll}
+                  className="w-full text-[10px] font-bold uppercase tracking-wider border border-gray-600 text-gray-300 hover:border-orange-500 hover:text-orange-300 rounded py-1 transition"
+                  title="Acknowledge and hide all current alerts"
+                >
+                  ✓ ACK ALL ({totalActive})
+                </button>
+              )}
               {/* RED + ORANGE: individual clickable cards */}
               {TIERS_AS_CARDS.map(tier => {
                 const items = alertsByTier[tier];
@@ -359,11 +370,25 @@ export default function IncidentSidebar({ alerts, corridors, lsrs, onSelectIncid
                           >
                             <div className="flex items-start justify-between gap-1">
                               <span className="text-xs font-medium text-white truncate flex-1">{p.event_type}</span>
-                              {p.expires && (
-                                <span className="text-[10px] text-gray-500 flex-shrink-0 whitespace-nowrap">
-                                  exp {formatTime(p.expires)}
-                                </span>
-                              )}
+                              <span className="flex items-center gap-1 flex-shrink-0">
+                                {p.expires && (
+                                  <span className="text-[10px] text-gray-500 whitespace-nowrap">
+                                    exp {formatTime(p.expires)}
+                                  </span>
+                                )}
+                                {onAckAlert && (
+                                  <span
+                                    role="button"
+                                    tabIndex={0}
+                                    onClick={e => { e.stopPropagation(); onAckAlert(p.id); }}
+                                    onKeyDown={e => { if (e.key === "Enter") { e.stopPropagation(); onAckAlert(p.id); } }}
+                                    className="text-[9px] font-bold border border-gray-600 text-gray-400 hover:border-green-600 hover:text-green-400 rounded px-1 leading-4"
+                                    title="Acknowledge (hide) this alert"
+                                  >
+                                    ACK
+                                  </span>
+                                )}
+                              </span>
                             </div>
                             <div className="text-[10px] text-gray-400 mt-0.5 truncate">{p.area_description}</div>
                             {p.nws_headline && (
