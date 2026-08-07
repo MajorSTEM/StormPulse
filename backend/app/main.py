@@ -1,5 +1,6 @@
 import logging
 from contextlib import asynccontextmanager
+from datetime import datetime, timezone
 from fastapi import FastAPI, Security
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
@@ -54,6 +55,10 @@ async def lifespan(app: FastAPI):
     await load_persisted_status()
 
     if settings.enable_scheduler:
+        # next_run_time=now fires the first ingestion immediately AFTER startup
+        # completes instead of blocking it — the API must answer requests within
+        # seconds of boot (serving cached DB data) even when a full ingestion
+        # cycle takes minutes on constrained free-tier CPU.
         scheduler.add_job(
             run_ingestion_cycle,
             "interval",
@@ -61,12 +66,9 @@ async def lifespan(app: FastAPI):
             id="ingestion_cycle",
             max_instances=1,
             coalesce=True,
+            next_run_time=datetime.now(timezone.utc),
         )
         scheduler.start()
-
-        # Run initial ingestion
-        logger.info("Running initial data ingestion...")
-        await run_ingestion_cycle()
 
     yield
 
