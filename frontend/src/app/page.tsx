@@ -4,11 +4,15 @@ import { useEffect, useState, useCallback, useRef, Suspense } from "react";
 import dynamic from "next/dynamic";
 import { useSearchParams } from "next/navigation";
 import type {
+  GeoJSONFeature,
   GeoJSONFeatureCollection,
   LayerVisibility,
   SelectedFeature,
 } from "@/lib/types";
-import { fetchAlerts, fetchLSRs, fetchCorridors, buildShareableUrl } from "@/lib/api";
+import {
+  fetchAlerts, fetchLSRs, fetchCorridors, fetchTornadoHistory,
+  buildShareableUrl, type HistoryQuery,
+} from "@/lib/api";
 import type { MapHandle } from "@/components/Map";
 import LayerControls from "@/components/LayerControls";
 import ProvenancePanel from "@/components/ProvenancePanel";
@@ -16,6 +20,7 @@ import IncidentSidebar from "@/components/IncidentSidebar";
 import SourceHealthBar from "@/components/SourceHealthBar";
 import LastUpdatedTicker from "@/components/LastUpdatedTicker";
 import TimelineScrubber from "@/components/TimelineScrubber";
+import HistoryPanel from "@/components/HistoryPanel";
 
 const Map = dynamic(() => import("@/components/Map"), {
   ssr: false,
@@ -45,6 +50,13 @@ function PageContent() {
   const [activeAlertId, setActiveAlertId] = useState<string | null>(null);
   const [scrubTime, setScrubTime] = useState<number | null>(null);
   const [basemap, setBasemap] = useState<"dark" | "satellite" | "street">("dark");
+  // Historian (SPC tornado archive) + storm replay
+  const [historyOpen, setHistoryOpen] = useState(false);
+  const [history, setHistory] = useState<GeoJSONFeatureCollection | null>(null);
+  const [historyLoading, setHistoryLoading] = useState(false);
+  const [replayTarget, setReplayTarget] = useState<GeoJSONFeature | null>(null);
+  // Alarm-annunciator semantics: acknowledged alerts drop off feed + map
+  const [ackedAlertIds, setAckedAlertIds] = useState<Set<string>>(new Set());
   useEffect(() => {
     if (window.innerWidth < 768) setSidebarOpen(false);
   }, []);
@@ -72,6 +84,7 @@ function PageContent() {
       lsr:          active.includes("lsr"),
       corridors:    active.includes("corridors"),
       counties:     active.includes("counties"),
+      history:      active.includes("history"),
     };
   });
 
@@ -126,6 +139,51 @@ function PageContent() {
     return () => clearInterval(interval);
   }, [loadData]);
 
+  // Alerts visible on map + feed: drop acknowledged, expired (10 min grace),
+  // and cancelled alerts automatically.
+  const visibleAlerts = (() => {
+    if (!alerts) return null;
+    const now = Date.now();
+    const GRACE_MS = 10 * 60 * 1000;
+    const features = alerts.features.filter(f => {
+      const p = f.properties as Record<string, unknown>;
+      if (ackedAlertIds.has(p.id as string)) return false;
+      if (p.is_active === false) return false;
+      const expires = p.expires ? new Date(p.expires as string).getTime() : null;
+      if (expires !== null && expires + GRACE_MS < now) return false;
+      return true;
+    });
+    return { ...alerts, features };
+  })();
+
+  const handleAckAlert = useCallback((id: string) => {
+    setAckedAlertIds(prev => new Set(prev).add(id));
+  }, []);
+
+  const handleAckAllAlerts = useCallback(() => {
+    if (!alerts) return;
+    setAckedAlertIds(prev => {
+      const next = new Set(prev);
+      alerts.features.forEach(f => next.add((f.properties as { id: string }).id));
+      return next;
+    });
+  }, [alerts]);
+
+  const handleHistoryQuery = useCallback(async (q: HistoryQuery) => {
+    setHistoryLoading(true);
+    try {
+      const res = await fetchTornadoHistory(q);
+      if (res.ok) {
+        setHistory(await res.json());
+        setLayers(prev => ({ ...prev, history: true }));
+      }
+    } catch (err) {
+      console.error("History query failed:", err);
+    } finally {
+      setHistoryLoading(false);
+    }
+  }, []);
+
   const handleToggleLayer = useCallback((layer: keyof LayerVisibility) => {
     setLayers(prev => ({ ...prev, [layer]: !prev[layer] }));
   }, []);
@@ -177,6 +235,11 @@ function PageContent() {
     flyToGeometry(feature?.geometry as { coordinates: unknown } | null);
   }, [corridors, flyToGeometry]);
 
+  const handleHistorySelect = useCallback((feature: GeoJSONFeature) => {
+    setReplayTarget(feature.geometry?.type === "LineString" ? feature : null);
+    flyToGeometry(feature.geometry as { coordinates: unknown } | null);
+  }, [flyToGeometry]);
+
   const handleSelectAlert = useCallback((alertId: string) => {
     setActiveAlertId(alertId);
     openSidebar();
@@ -189,12 +252,22 @@ function PageContent() {
 
   return (
     <main className="relative w-full h-screen overflow-hidden bg-gray-950">
-      <SourceHealthBar />
+      <SourceHealthBar
+        historianOpen={historyOpen}
+        onToggleHistorian={() => {
+          setHistoryOpen(prev => {
+            if (prev) setReplayTarget(null);
+            return !prev;
+          });
+        }}
+      />
 
       <Map
-        alerts={alerts}
+        alerts={visibleAlerts}
         lsrs={lsrs}
         corridors={corridors}
+        history={history}
+        replayTarget={replayTarget}
         layers={layers}
         onFeatureClick={(feature) => {
           if (!feature) return;
@@ -204,6 +277,10 @@ function PageContent() {
             setActiveAlertId(props.id as string);
             openSidebar();
             return;
+          }
+          // Historical path clicks → replay + detail panel
+          if (props._layer === "history") {
+            setReplayTarget(feature.geometry?.type === "LineString" ? feature : null);
           }
           setSelectedFeature(feature);
         }}
@@ -215,26 +292,43 @@ function PageContent() {
         basemap={basemap}
       />
 
-      {/* Mobile open-sidebar button — only shown when sidebar is closed */}
+      {/* Open-sidebar button — shown whenever the sidebar is collapsed */}
       {!sidebarOpen && (
         <button
           onClick={openSidebar}
-          className="md:hidden absolute top-16 left-3 z-20 bg-gray-900/85 border border-gray-700 rounded-lg px-3 py-1.5 text-xs text-gray-300 flex items-center gap-1 shadow-lg"
+          className="absolute top-16 left-3 z-20 bg-gray-900/85 border border-gray-700 rounded-lg px-3 py-1.5 text-xs text-gray-300 flex items-center gap-1 shadow-lg hover:border-orange-500"
         >
           <span>☰</span>
           <span>Situational Awareness</span>
         </button>
       )}
 
+      {/* Historian panel (SPC tornado archive) */}
+      {historyOpen && (
+        <HistoryPanel
+          data={history}
+          loading={historyLoading}
+          onQuery={handleHistoryQuery}
+          onSelect={handleHistorySelect}
+          onClose={() => {
+            setHistoryOpen(false);
+            setReplayTarget(null);
+          }}
+          selectedId={replayTarget ? ((replayTarget.properties as { id?: number }).id ?? null) : null}
+        />
+      )}
+
       {sidebarOpen && (
         <IncidentSidebar
-          alerts={alerts}
+          alerts={visibleAlerts}
           corridors={corridors}
           lsrs={lsrs}
           onSelectIncident={handleSelectIncident}
           onSelectAlert={handleSelectAlert}
           onClose={() => setSidebarOpen(false)}
           activeAlertId={activeAlertId}
+          onAckAlert={handleAckAlert}
+          onAckAll={handleAckAllAlerts}
         />
       )}
 

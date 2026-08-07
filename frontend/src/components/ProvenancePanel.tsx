@@ -1,6 +1,6 @@
 "use client";
 
-import type { SelectedFeature, AlertProperties, LSRProperties, CorridorProperties } from "@/lib/types";
+import type { SelectedFeature, AlertProperties, LSRProperties, CorridorProperties, TornadoHistoryProperties } from "@/lib/types";
 import { format } from "date-fns";
 
 interface Props {
@@ -203,6 +203,71 @@ function CorridorDetail({ props }: { props: CorridorProperties }) {
           )}
         </div>
       )}
+      {props.prediction && (
+        <div className="bg-amber-950/40 border border-amber-700 rounded p-2">
+          <div className="text-xs text-amber-300 font-medium">⌁ Predicted Heading (T3)</div>
+          <div className="text-xs text-amber-100 mt-1">
+            {cardinal(props.prediction.bearing_deg)} ({Math.round(props.prediction.bearing_deg)}°)
+            at ~{Math.round(props.prediction.speed_kts)} kts ·
+            next {Math.round(props.prediction.projection_minutes)} min
+          </div>
+          <div className="flex gap-2 mt-1.5 text-[10px]">
+            <span className="text-amber-200 border border-amber-800 rounded px-1.5 py-0.5">
+              Straight {props.prediction.straight_pct}%
+            </span>
+            <span className="text-amber-200/80 border border-amber-900 rounded px-1.5 py-0.5">
+              Veer L {props.prediction.veer_left_pct}%
+            </span>
+            <span className="text-amber-200/80 border border-amber-900 rounded px-1.5 py-0.5">
+              Veer R {props.prediction.veer_right_pct}%
+            </span>
+          </div>
+          <div className="text-[10px] text-amber-200/70 mt-1.5">{props.prediction.disclaimer}</div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function cardinal(deg: number): string {
+  const dirs = ["N","NNE","NE","ENE","E","ESE","SE","SSE","S","SSW","SW","WSW","W","WNW","NW","NNW"];
+  return dirs[Math.round(deg / 22.5) % 16];
+}
+
+function HistoryDetail({ props }: { props: TornadoHistoryProperties }) {
+  return (
+    <div className="space-y-3">
+      <div className="bg-amber-950/40 border border-amber-700 rounded p-2">
+        <div className="text-xs text-amber-300 font-medium">
+          🌪 EF{props.ef >= 0 ? props.ef : "?"} · {props.date} · {props.state}
+        </div>
+        <div className="text-[10px] text-amber-200/80 mt-0.5">
+          SPC historical record #{props.om} ({props.year}) · touchdown {props.time}
+        </div>
+      </div>
+      <div className="grid grid-cols-2 gap-2">
+        <div>
+          <div className="text-xs text-gray-400 uppercase tracking-wider mb-1">Path Length</div>
+          <div className="text-xs text-white">{props.length_mi > 0 ? `${props.length_mi.toFixed(1)} mi` : "—"}</div>
+        </div>
+        <div>
+          <div className="text-xs text-gray-400 uppercase tracking-wider mb-1">Max Width</div>
+          <div className="text-xs text-white">{props.width_yd > 0 ? `${Math.round(props.width_yd)} yd` : "—"}</div>
+        </div>
+        <div>
+          <div className="text-xs text-gray-400 uppercase tracking-wider mb-1">Fatalities</div>
+          <div className="text-xs text-white">{props.fatalities}</div>
+        </div>
+        <div>
+          <div className="text-xs text-gray-400 uppercase tracking-wider mb-1">Injuries</div>
+          <div className="text-xs text-white">{props.injuries}</div>
+        </div>
+      </div>
+      {!props.has_path && (
+        <div className="text-[10px] text-gray-500">
+          Touchdown point only — no surveyed end point in the archive.
+        </div>
+      )}
     </div>
   );
 }
@@ -210,14 +275,16 @@ function CorridorDetail({ props }: { props: CorridorProperties }) {
 export default function ProvenancePanel({ feature, onClose }: Props) {
   if (!feature) return null;
 
-  const props = feature.properties as AlertProperties | LSRProperties | CorridorProperties;
-  const tier = (props.confidence_tier as string) || "T2";
+  const props = feature.properties as AlertProperties | LSRProperties | CorridorProperties | TornadoHistoryProperties;
+  const isHistory = (props as { _layer: string })._layer === "history";
+  const tier = isHistory ? "T1" : ((props as { confidence_tier?: string }).confidence_tier || "T2");
   const tierInfo = TIER_LABELS[tier] || TIER_LABELS["T2"];
 
   const layerTitle: Record<string, string> = {
     alerts: "NWS Alert",
     lsr: "Local Storm Report",
     corridors: "Probable Damage Corridor",
+    history: "Historical Tornado (SPC Archive)",
   };
 
   return (
@@ -253,6 +320,7 @@ export default function ProvenancePanel({ feature, onClose }: Props) {
         {(props as { _layer: string })._layer === "alerts" && <AlertDetail props={props as AlertProperties} />}
         {(props as { _layer: string })._layer === "lsr" && <LSRDetail props={props as LSRProperties} />}
         {(props as { _layer: string })._layer === "corridors" && <CorridorDetail props={props as CorridorProperties} />}
+        {isHistory && <HistoryDetail props={props as TornadoHistoryProperties} />}
       </div>
 
       {/* Provenance footer */}

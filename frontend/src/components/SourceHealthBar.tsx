@@ -26,7 +26,22 @@ const SOURCE_LABELS: Record<string, string> = {
   corridor_engine: "Corridor Engine",
 };
 
-export default function SourceHealthBar() {
+// OPC-style data-quality chip per source health (SCADA convention)
+function qualityLabel(health: string): { text: string; cls: string } {
+  switch (health) {
+    case "ok": return { text: "GOOD", cls: "text-green-400 border-green-800" };
+    case "degraded": return { text: "DEGRADED", cls: "text-yellow-400 border-yellow-800" };
+    case "stale": return { text: "STALE", cls: "text-red-400 border-red-800" };
+    default: return { text: "INIT", cls: "text-gray-400 border-gray-700" };
+  }
+}
+
+interface Props {
+  historianOpen?: boolean;
+  onToggleHistorian?: () => void;
+}
+
+export default function SourceHealthBar({ historianOpen, onToggleHistorian }: Props) {
   const [health, setHealth] = useState<HealthStatus | null>(null);
   const [isDegraded, setIsDegraded] = useState(false);
 
@@ -80,21 +95,41 @@ export default function SourceHealthBar() {
           ))}
         </div>
 
-        {/* Desktop: full labels */}
+        {/* Desktop: full labels with OPC-style quality chips */}
         <div className="hidden md:flex items-center gap-3">
           <span className="text-gray-600">|</span>
-          {health.sources.map((source) => (
-            <div key={source.name} className="flex items-center gap-1.5">
-              <div className={`w-2 h-2 rounded-full ${statusColor(source.health)}`} />
-              <span>{SOURCE_LABELS[source.name] || source.name}</span>
-              <span className="text-gray-500">{formatLag(source.lag_seconds)}</span>
-            </div>
-          ))}
+          {health.sources.map((source) => {
+            const q = qualityLabel(source.health);
+            return (
+              <div key={source.name} className="flex items-center gap-1.5">
+                <div className={`w-2 h-2 rounded-full ${statusColor(source.health)}`} />
+                <span>{SOURCE_LABELS[source.name] || source.name}</span>
+                <span className={`text-[9px] font-bold border px-1 rounded ${q.cls}`}>{q.text}</span>
+                <span className="text-gray-500">{formatLag(source.lag_seconds)}</span>
+              </div>
+            );
+          })}
         </div>
 
-        <span className="ml-auto text-gray-600 text-[10px] hidden md:block">
-          INFERRED CORRIDORS ARE NOT OFFICIAL NWS SURVEYS
-        </span>
+        <div className="ml-auto flex items-center gap-3">
+          {onToggleHistorian && (
+            <button
+              onClick={onToggleHistorian}
+              className={`flex items-center gap-1 border rounded px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider transition ${
+                historianOpen
+                  ? "border-amber-500 text-amber-300 bg-amber-950/50"
+                  : "border-amber-800 text-amber-400 hover:bg-amber-950/40"
+              }`}
+              title="Historical tornado archive (SPC 1950-2024)"
+            >
+              <span>🌪</span>
+              <span>Historian</span>
+            </button>
+          )}
+          <span className="text-gray-600 text-[10px] hidden md:block">
+            INFERRED CORRIDORS ARE NOT OFFICIAL NWS SURVEYS
+          </span>
+        </div>
       </div>
     </div>
   );

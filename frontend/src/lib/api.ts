@@ -30,6 +30,27 @@ export async function fetchCorridors(hours = 48): Promise<Response> {
   });
 }
 
+export interface HistoryQuery {
+  yearFrom?: number;
+  yearTo?: number;
+  state?: string;
+  efMin?: number;
+  limit?: number;
+}
+
+export async function fetchTornadoHistory(q: HistoryQuery = {}): Promise<Response> {
+  const params = new URLSearchParams();
+  if (q.yearFrom !== undefined) params.set("year_from", String(q.yearFrom));
+  if (q.yearTo !== undefined) params.set("year_to", String(q.yearTo));
+  if (q.state) params.set("state", q.state);
+  if (q.efMin !== undefined) params.set("ef_min", String(q.efMin));
+  params.set("limit", String(q.limit ?? 750));
+  return fetch(`${API_V1}/history/tornadoes?${params}`, {
+    headers: AUTH_HEADERS,
+    next: { revalidate: 3600 },
+  });
+}
+
 export async function fetchHealth(): Promise<Response> {
   // Health is an intentionally public read-only route (no key required).
   return fetch(`${API_V1}/health`, {

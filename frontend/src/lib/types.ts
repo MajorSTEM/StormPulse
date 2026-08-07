@@ -61,6 +61,35 @@ export interface LSRProperties {
   _layer: "lsr";
 }
 
+export interface CorridorPrediction {
+  cone_geojson: GeoJSONGeometry;
+  bearing_deg: number;
+  speed_kts: number;
+  projection_minutes: number;
+  cone_half_angle_deg: number;
+  straight_pct: number;
+  veer_left_pct: number;
+  veer_right_pct: number;
+  confidence_tier: string;
+  disclaimer: string;
+}
+
+export interface TornadoHistoryProperties {
+  id: number;
+  om: number;
+  year: number;
+  date: string;
+  time: string;
+  state: string;
+  ef: number;
+  injuries: number;
+  fatalities: number;
+  length_mi: number;
+  width_yd: number;
+  has_path: boolean;
+  _layer: "history";
+}
+
 export interface CorridorProperties {
   id: string;
   incident_id: string;
@@ -88,6 +117,7 @@ export interface CorridorProperties {
   confidence_band_geojson: string | null;
   tier_label: string;
   tier_description: string;
+  prediction: CorridorPrediction | null;
   disclaimer: string | null;
   _layer: "corridors";
   _inferred: boolean;
@@ -125,8 +155,9 @@ export interface LayerVisibility {
   lsr: boolean;
   corridors: boolean;
   counties: boolean;
+  history: boolean;
 }
 
 export type SelectedFeature = (GeoJSONFeature & {
-  properties: AlertProperties | LSRProperties | CorridorProperties;
+  properties: AlertProperties | LSRProperties | CorridorProperties | TornadoHistoryProperties;
 }) | null;

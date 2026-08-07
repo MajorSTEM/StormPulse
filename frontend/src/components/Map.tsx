@@ -4,6 +4,7 @@ import { useEffect, useRef } from "react";
 import maplibregl from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
 import type {
+  GeoJSONFeature,
   GeoJSONFeatureCollection,
   LayerVisibility,
   SelectedFeature,
@@ -17,6 +18,8 @@ interface Props {
   alerts: GeoJSONFeatureCollection | null;
   lsrs: GeoJSONFeatureCollection | null;
   corridors: GeoJSONFeatureCollection | null;
+  history?: GeoJSONFeatureCollection | null;
+  replayTarget?: GeoJSONFeature | null; // historical tornado to animate
   layers: LayerVisibility;
   onFeatureClick: (feature: SelectedFeature) => void;
   initialCenter?: [number, number];
@@ -117,10 +120,31 @@ function buildCenterlinesFC(corridors: GeoJSONFeatureCollection | null): GeoJSON
   return { type: "FeatureCollection", features };
 }
 
+/** Build a FeatureCollection of predictive heading cones from corridor props */
+function buildPredictionConesFC(corridors: GeoJSONFeatureCollection | null): GeoJSON.FeatureCollection {
+  if (!corridors) return EMPTY_FC;
+  const features: GeoJSON.Feature[] = [];
+  for (const f of corridors.features) {
+    const pred = (f.properties as Record<string, unknown>).prediction as
+      | { cone_geojson?: GeoJSON.Geometry; straight_pct?: number }
+      | null;
+    if (pred?.cone_geojson) {
+      features.push({
+        type: "Feature",
+        geometry: pred.cone_geojson,
+        properties: { ...f.properties, _cone_label: `PREDICTED · T3 (${pred.straight_pct ?? "?"}% straight)` },
+      });
+    }
+  }
+  return { type: "FeatureCollection", features };
+}
+
 export default function Map({
   alerts,
   lsrs,
   corridors,
+  history = null,
+  replayTarget = null,
   layers,
   onFeatureClick,
   initialCenter = [-96, 38],
@@ -138,11 +162,13 @@ export default function Map({
   const alertsRef = useRef(alerts);
   const lsrsRef = useRef(lsrs);
   const corridorsRef = useRef(corridors);
+  const historyRef = useRef(history);
   const layersRef = useRef(layers);
   const onMapReadyRef = useRef(onMapReady);
   alertsRef.current = alerts;
   lsrsRef.current = lsrs;
   corridorsRef.current = corridors;
+  historyRef.current = history;
   layersRef.current = layers;
   onMapReadyRef.current = onMapReady;
 
@@ -204,6 +230,101 @@ export default function Map({
           "line-color": corridorColor,
           "line-width": ["match", ["get", "event_category"], "TORNADO", 3, 2],
           "line-dasharray": ["match", ["get", "event_category"], "FLOOD_ZONE", ["literal", [3, 3]], ["literal", [4, 2]]],
+        },
+      });
+
+      // ── Predictive heading cones (T3 forward projection from storm motion) ──
+      map.addSource("prediction-cones", { type: "geojson", data: EMPTY_FC });
+      map.addLayer({
+        id: "prediction-cone-fill",
+        type: "fill",
+        source: "prediction-cones",
+        paint: { "fill-color": "#f59e0b", "fill-opacity": 0.10 },
+      });
+      map.addLayer({
+        id: "prediction-cone-outline",
+        type: "line",
+        source: "prediction-cones",
+        paint: {
+          "line-color": "#f59e0b",
+          "line-width": 1.5,
+          "line-dasharray": [2, 2],
+          "line-opacity": 0.8,
+        },
+      });
+      map.addLayer({
+        id: "prediction-cone-label",
+        type: "symbol",
+        source: "prediction-cones",
+        layout: {
+          "symbol-placement": "point",
+          "text-field": ["get", "_cone_label"],
+          "text-font": ["Noto Sans Regular"],
+          "text-size": 10,
+          "text-allow-overlap": false,
+        },
+        paint: {
+          "text-color": "#fbbf24",
+          "text-halo-color": "#0f172a",
+          "text-halo-width": 1.5,
+        },
+      });
+
+      // ── Historical tornado paths (SPC archive) colored by EF rating ─────────
+      const efColor: maplibregl.ExpressionSpecification = [
+        "match", ["get", "ef"],
+        5, "#7c3aed", 4, "#991b1b", 3, "#ef4444",
+        2, "#fb923c", 1, "#fde047", 0, "#86efac",
+        "#64748b",
+      ];
+      map.addSource("history", { type: "geojson", data: EMPTY_FC });
+      map.addLayer({
+        id: "history-paths",
+        type: "line",
+        source: "history",
+        filter: ["==", ["geometry-type"], "LineString"],
+        layout: { visibility: "none", "line-cap": "round" },
+        paint: {
+          "line-color": efColor,
+          "line-width": ["+", 1.5, ["max", 0, ["get", "ef"]]],
+          "line-opacity": 0.85,
+        },
+      });
+      map.addLayer({
+        id: "history-points",
+        type: "circle",
+        source: "history",
+        filter: ["==", ["geometry-type"], "Point"],
+        layout: { visibility: "none" },
+        paint: {
+          "circle-color": efColor,
+          "circle-radius": 3.5,
+          "circle-opacity": 0.85,
+          "circle-stroke-color": "#0f172a",
+          "circle-stroke-width": 1,
+        },
+      });
+
+      // ── Storm replay: animated marker + traveled trail ──────────────────────
+      map.addSource("replay", { type: "geojson", data: EMPTY_FC });
+      map.addLayer({
+        id: "replay-trail",
+        type: "line",
+        source: "replay",
+        filter: ["==", ["geometry-type"], "LineString"],
+        layout: { "line-cap": "round" },
+        paint: { "line-color": "#f43f5e", "line-width": 4, "line-opacity": 0.9 },
+      });
+      map.addLayer({
+        id: "replay-marker",
+        type: "circle",
+        source: "replay",
+        filter: ["==", ["geometry-type"], "Point"],
+        paint: {
+          "circle-color": "#fda4af",
+          "circle-radius": 7,
+          "circle-stroke-color": "#f43f5e",
+          "circle-stroke-width": 3,
         },
       });
 
@@ -410,6 +531,9 @@ export default function Map({
         ?.setData(buildBandFC(corridorsRef.current, "core") as GeoJSON.FeatureCollection);
       (map.getSource("corridors-extension") as maplibregl.GeoJSONSource)
         ?.setData(buildBandFC(corridorsRef.current, "extension") as GeoJSON.FeatureCollection);
+      (map.getSource("prediction-cones") as maplibregl.GeoJSONSource)
+        ?.setData(buildPredictionConesFC(corridorsRef.current));
+      setSourceData(map, "history", historyRef.current ?? null);
 
       // Apply initial layer visibility and alert tier filter
       const vis = (v: boolean) => (v ? "visible" : "none") as "visible" | "none";
@@ -430,10 +554,13 @@ export default function Map({
         "corridors-core-fill", "corridors-core-outline",
         "corridors-extension-fill", "corridors-extension-outline",
         "centerlines-line",
+        "prediction-cone-fill", "prediction-cone-outline", "prediction-cone-label",
       ].forEach(id => map.setLayoutProperty(id, "visibility", vis(l.corridors)));
+      ["history-paths", "history-points"].forEach(id =>
+        map.setLayoutProperty(id, "visibility", vis(l.history)));
 
       // Click handlers
-      ["corridors-fill", "alerts-fill", "lsr-circles"].forEach((layerId) => {
+      ["corridors-fill", "alerts-fill", "lsr-circles", "history-paths", "history-points"].forEach((layerId) => {
         map.on("click", layerId, (e) => {
           const feature = e.features?.[0];
           if (feature) onFeatureClick(feature as unknown as SelectedFeature);
@@ -523,7 +650,94 @@ export default function Map({
       ?.setData(buildBandFC(corridors, "core") as GeoJSON.FeatureCollection);
     (mapRef.current.getSource("corridors-extension") as maplibregl.GeoJSONSource)
       ?.setData(buildBandFC(corridors, "extension") as GeoJSON.FeatureCollection);
+    (mapRef.current.getSource("prediction-cones") as maplibregl.GeoJSONSource)
+      ?.setData(buildPredictionConesFC(corridors));
   }, [corridors]);
+
+  // Historical tornado archive layer
+  useEffect(() => {
+    if (!mapRef.current || !loadedRef.current) return;
+    setSourceData(mapRef.current, "history", history);
+  }, [history]);
+
+  // Storm replay: animate a marker along the selected historical path,
+  // drawing the traveled trail behind it. Loops until deselected.
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map || !loadedRef.current) return;
+    const source = map.getSource("replay") as maplibregl.GeoJSONSource | undefined;
+    if (!source) return;
+
+    if (!replayTarget?.geometry || replayTarget.geometry.type !== "LineString") {
+      source.setData(EMPTY_FC);
+      return;
+    }
+
+    const coords = replayTarget.geometry.coordinates as [number, number][];
+    if (coords.length < 2) {
+      source.setData(EMPTY_FC);
+      return;
+    }
+
+    const DURATION_MS = 5000;
+    const PAUSE_MS = 1200;
+    const start = performance.now();
+    let raf = 0;
+
+    // Cumulative segment lengths for distance-proportional interpolation
+    const segLengths: number[] = [];
+    let total = 0;
+    for (let i = 1; i < coords.length; i++) {
+      const dx = coords[i][0] - coords[i - 1][0];
+      const dy = coords[i][1] - coords[i - 1][1];
+      const d = Math.sqrt(dx * dx + dy * dy);
+      segLengths.push(d);
+      total += d;
+    }
+    if (total === 0) {
+      source.setData(EMPTY_FC);
+      return;
+    }
+
+    const frame = (now: number) => {
+      const cycle = (now - start) % (DURATION_MS + PAUSE_MS);
+      const t = Math.min(1, cycle / DURATION_MS);
+      const target = t * total;
+
+      const trail: [number, number][] = [coords[0]];
+      let travelled = 0;
+      let marker: [number, number] = coords[coords.length - 1];
+      for (let i = 0; i < segLengths.length; i++) {
+        if (travelled + segLengths[i] >= target) {
+          const f = segLengths[i] === 0 ? 0 : (target - travelled) / segLengths[i];
+          marker = [
+            coords[i][0] + (coords[i + 1][0] - coords[i][0]) * f,
+            coords[i][1] + (coords[i + 1][1] - coords[i][1]) * f,
+          ];
+          trail.push(marker);
+          break;
+        }
+        travelled += segLengths[i];
+        trail.push(coords[i + 1]);
+      }
+
+      source.setData({
+        type: "FeatureCollection",
+        features: [
+          { type: "Feature", geometry: { type: "LineString", coordinates: trail }, properties: {} },
+          { type: "Feature", geometry: { type: "Point", coordinates: marker }, properties: {} },
+        ],
+      } as GeoJSON.FeatureCollection);
+
+      raf = requestAnimationFrame(frame);
+    };
+    raf = requestAnimationFrame(frame);
+
+    return () => {
+      cancelAnimationFrame(raf);
+      source.setData(EMPTY_FC);
+    };
+  }, [replayTarget]);
 
   // Switch basemap layer visibility
   useEffect(() => {
@@ -566,7 +780,10 @@ export default function Map({
       "corridors-core-fill", "corridors-core-outline",
       "corridors-extension-fill", "corridors-extension-outline",
       "centerlines-line",
+      "prediction-cone-fill", "prediction-cone-outline", "prediction-cone-label",
     ].forEach(l => map.setLayoutProperty(l, "visibility", vis(layers.corridors)));
+    ["history-paths", "history-points"].forEach(l =>
+      map.setLayoutProperty(l, "visibility", vis(layers.history)));
   }, [layers]);
 
   return (
