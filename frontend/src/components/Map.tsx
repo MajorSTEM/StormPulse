@@ -207,6 +207,30 @@ export default function Map({
         },
       });
 
+      // Tier + disclaimer labels on corridor polygons (V2: T1/T2/T3 visible on map)
+      map.addLayer({
+        id: "corridors-tier-label",
+        type: "symbol",
+        source: "corridors",
+        layout: {
+          "symbol-placement": "point",
+          "text-field": ["get", "tier_label"],
+          "text-font": ["Noto Sans Regular"],
+          "text-size": 11,
+          "text-letter-spacing": 0.05,
+          "text-allow-overlap": false,
+        },
+        paint: {
+          "text-color": [
+            "match", ["get", "confidence_tier"],
+            "T3", "#fdba74",
+            "#67e8f9",
+          ],
+          "text-halo-color": "#0f172a",
+          "text-halo-width": 1.6,
+        },
+      });
+
       // ── Confidence band layers (v2 engine: core track + forward extension) ───
       map.addSource("corridors-core", { type: "geojson", data: EMPTY_FC });
       map.addLayer({
@@ -402,7 +426,7 @@ export default function Map({
       });
       ["lsr-circles"].forEach(id => map.setLayoutProperty(id, "visibility", vis(l.lsr)));
       [
-        "corridors-fill", "corridors-outline",
+        "corridors-fill", "corridors-outline", "corridors-tier-label",
         "corridors-core-fill", "corridors-core-outline",
         "corridors-extension-fill", "corridors-extension-outline",
         "centerlines-line",
@@ -538,7 +562,7 @@ export default function Map({
 
     ["lsr-circles"].forEach(l => map.setLayoutProperty(l, "visibility", vis(layers.lsr)));
     [
-      "corridors-fill", "corridors-outline",
+      "corridors-fill", "corridors-outline", "corridors-tier-label",
       "corridors-core-fill", "corridors-core-outline",
       "corridors-extension-fill", "corridors-extension-outline",
       "centerlines-line",

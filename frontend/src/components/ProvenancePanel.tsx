@@ -120,10 +120,23 @@ function LSRDetail({ props }: { props: LSRProperties }) {
 function CorridorDetail({ props }: { props: CorridorProperties }) {
   return (
     <div className="space-y-3">
-      <div className="bg-orange-900/40 border border-orange-600 rounded p-2">
-        <div className="text-xs text-orange-300 font-medium">&#9888; INFERRED LAYER</div>
-        <div className="text-xs text-orange-200 mt-0.5">{props._disclaimer}</div>
-      </div>
+      {props._inferred ? (
+        <div className="bg-orange-900/40 border border-orange-600 rounded p-2">
+          <div className="text-xs text-orange-300 font-medium">
+            &#9888; {props.tier_label || "T3 · INFERRED"}
+          </div>
+          <div className="text-xs text-orange-200 mt-0.5">{props.disclaimer || props._disclaimer}</div>
+        </div>
+      ) : (
+        <div className="bg-cyan-900/40 border border-cyan-600 rounded p-2">
+          <div className="text-xs text-cyan-300 font-medium">
+            {props.tier_label || "T2 · OFFICIAL NWS"}
+          </div>
+          <div className="text-xs text-cyan-200 mt-0.5">
+            Geometry from an official NWS warning product.
+          </div>
+        </div>
+      )}
       <div>
         <div className="text-xs text-gray-400 uppercase tracking-wider mb-1">Confidence</div>
         <div className="flex items-center gap-2">

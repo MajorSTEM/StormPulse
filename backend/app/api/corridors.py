@@ -8,6 +8,8 @@ import math
 
 from app.database import get_db
 from app.models.corridor import Corridor
+from app.ingestion.scheduler import data_freshness
+from app.scoring.confidence import T3_DISCLAIMER, TIER_LABELS
 
 router = APIRouter()
 
@@ -79,6 +81,10 @@ async def get_corridors(
         area_km2 = _polygon_area_km2(polygon)
         affected_structures_est = int(area_km2 * STRUCTURES_PER_KM2)
 
+        tier = corridor.confidence_tier or "T3"
+        is_inferred = tier == "T3"
+        tier_label = f"{tier} · INFERRED" if is_inferred else f"{tier} · OFFICIAL NWS"
+
         feature = {
             "type": "Feature",
             "geometry": polygon,
@@ -107,9 +113,12 @@ async def get_corridors(
                 "inlier_count": getattr(corridor, "inlier_count", None),
                 "outlier_count": getattr(corridor, "outlier_count", None),
                 "confidence_band_geojson": getattr(corridor, "confidence_band_geojson", None),
+                "tier_label": tier_label,
+                "tier_description": TIER_LABELS.get(tier, tier),
+                "disclaimer": T3_DISCLAIMER if is_inferred else None,
                 "_layer": "corridors",
-                "_inferred": True,
-                "_disclaimer": "INFERRED LAYER - Not an official NWS damage survey",
+                "_inferred": is_inferred,
+                "_disclaimer": T3_DISCLAIMER if is_inferred else None,
             }
         }
         features.append(feature)
@@ -121,6 +130,7 @@ async def get_corridors(
             "count": len(features),
             "hours": hours,
             "generated_at": datetime.now(timezone.utc).isoformat(),
-            "disclaimer": "Corridors are system-generated probable damage estimates. They are NOT official NWS surveys.",
+            "disclaimer": "Inferred (T3) corridors are system-generated probable damage estimates. They are NOT official NWS surveys.",
+            **data_freshness(),
         }
     }
