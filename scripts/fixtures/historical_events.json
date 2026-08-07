@@ -1,0 +1,185 @@
+{
+  "description": "Validation fixture set: 20 historical NWS events used to validate the StormPulse T1/T2/T3 weighted tier model. Each entry captures one claim (the object StormPulse would serve) at a stated observation snapshot, the evidence signals available at that snapshot, and the tier a NexAlert analyst assigns that claim under the documented rubric (docs/CONFIDENCE_SCORING.md). Run scripts/validate_scoring.py to compute tier alignment.",
+  "events": [
+    {
+      "id": 1,
+      "name": "Joplin, MO EF5 tornado",
+      "date": "2011-05-22",
+      "claim": "Damage corridor through Joplin, post-survey",
+      "snapshot": "After NWS Springfield damage survey published",
+      "signals": ["NWS_DAMAGE_SURVEY", "CONFIRMED_TORNADO_LSR", "OFFICIAL_WARNING_PRODUCT"],
+      "expected_tier": "T1"
+    },
+    {
+      "id": 2,
+      "name": "Moore, OK EF5 tornado",
+      "date": "2013-05-20",
+      "claim": "Damage corridor Newcastle-Moore, post-survey",
+      "snapshot": "After NWS Norman damage survey published",
+      "signals": ["NWS_DAMAGE_SURVEY", "CONFIRMED_TORNADO_LSR", "OFFICIAL_WARNING_PRODUCT"],
+      "expected_tier": "T1"
+    },
+    {
+      "id": 3,
+      "name": "Tuscaloosa-Birmingham, AL EF4 tornado",
+      "date": "2011-04-27",
+      "claim": "Damage corridor Tuscaloosa to Birmingham",
+      "snapshot": "After NWS Birmingham damage survey published",
+      "signals": ["NWS_DAMAGE_SURVEY", "CONFIRMED_TORNADO_LSR", "OFFICIAL_WARNING_PRODUCT"],
+      "expected_tier": "T1"
+    },
+    {
+      "id": 4,
+      "name": "Quad-State tornado (Mayfield, KY) EF4",
+      "date": "2021-12-10",
+      "claim": "Long-track damage corridor through western Kentucky",
+      "snapshot": "After NWS Paducah damage survey published",
+      "signals": ["NWS_DAMAGE_SURVEY", "CONFIRMED_TORNADO_LSR", "OFFICIAL_WARNING_PRODUCT"],
+      "expected_tier": "T1"
+    },
+    {
+      "id": 5,
+      "name": "Rolling Fork, MS EF4 tornado",
+      "date": "2023-03-24",
+      "claim": "Damage corridor through Rolling Fork and Silver City",
+      "snapshot": "After NWS Jackson damage survey published",
+      "signals": ["NWS_DAMAGE_SURVEY", "CONFIRMED_TORNADO_LSR", "OFFICIAL_WARNING_PRODUCT"],
+      "expected_tier": "T1"
+    },
+    {
+      "id": 6,
+      "name": "El Reno, OK EF3 tornado",
+      "date": "2013-05-31",
+      "claim": "Tornado occurrence near El Reno",
+      "snapshot": "During event: spotter-confirmed tornado LSRs relayed, warning active",
+      "signals": ["CONFIRMED_TORNADO_LSR", "OFFICIAL_WARNING_PRODUCT"],
+      "expected_tier": "T1"
+    },
+    {
+      "id": 7,
+      "name": "Greenfield, IA EF4 tornado",
+      "date": "2024-05-21",
+      "claim": "Tornado occurrence at Greenfield",
+      "snapshot": "During event: emergency-manager-confirmed tornado LSR, warning active",
+      "signals": ["CONFIRMED_TORNADO_LSR", "OFFICIAL_WARNING_PRODUCT"],
+      "expected_tier": "T1"
+    },
+    {
+      "id": 8,
+      "name": "Little Rock, AR EF3 tornado",
+      "date": "2023-03-31",
+      "claim": "Tornado occurrence in west Little Rock",
+      "snapshot": "During event: law-enforcement-confirmed tornado LSR, warning active",
+      "signals": ["CONFIRMED_TORNADO_LSR", "OFFICIAL_WARNING_PRODUCT"],
+      "expected_tier": "T1"
+    },
+    {
+      "id": 9,
+      "name": "Selma, AL tornado (radar-indicated phase)",
+      "date": "2023-01-12",
+      "claim": "Tornado threat over Selma",
+      "snapshot": "Warning active on radar debris signature; no ground confirmation yet",
+      "signals": ["OFFICIAL_WARNING_PRODUCT"],
+      "expected_tier": "T2"
+    },
+    {
+      "id": 10,
+      "name": "Midwest derecho (warning phase)",
+      "date": "2020-08-10",
+      "claim": "Destructive wind threat over Cedar Rapids, IA",
+      "snapshot": "Severe Thunderstorm Warnings active; wind reports still unverified",
+      "signals": ["OFFICIAL_WARNING_PRODUCT", "UNCONFIRMED_LSR"],
+      "expected_tier": "T2"
+    },
+    {
+      "id": 11,
+      "name": "Waverly, TN flash flood",
+      "date": "2021-08-21",
+      "claim": "Flood zone polygon over Humphreys County",
+      "snapshot": "Flash Flood Warning polygon re-served verbatim as flood-zone corridor",
+      "signals": ["OFFICIAL_WARNING_PRODUCT"],
+      "expected_tier": "T2"
+    },
+    {
+      "id": 12,
+      "name": "Eastern Kentucky flash flooding",
+      "date": "2022-07-28",
+      "claim": "Flood zone over Breathitt/Knott counties",
+      "snapshot": "Flash Flood Emergency active overnight",
+      "signals": ["OFFICIAL_WARNING_PRODUCT"],
+      "expected_tier": "T2"
+    },
+    {
+      "id": 13,
+      "name": "Derecho wind damage reports, Des Moines metro",
+      "date": "2020-08-10",
+      "claim": "Wind damage at reported points",
+      "snapshot": "SPC wind-damage LSRs streaming in, not yet verified",
+      "signals": ["UNCONFIRMED_LSR"],
+      "expected_tier": "T2"
+    },
+    {
+      "id": 14,
+      "name": "San Antonio, TX giant hail event",
+      "date": "2016-04-12",
+      "claim": "Large hail at reported points",
+      "snapshot": "Hail LSRs during active Severe Thunderstorm Warning",
+      "signals": ["UNCONFIRMED_LSR", "OFFICIAL_WARNING_PRODUCT"],
+      "expected_tier": "T2"
+    },
+    {
+      "id": 15,
+      "name": "Super Outbreak PDS Tornado Watch (pre-warning phase)",
+      "date": "2011-04-27",
+      "claim": "Tornado outbreak threat over central Alabama",
+      "snapshot": "Morning of outbreak: PDS Tornado Watch issued, no warnings yet",
+      "signals": ["OFFICIAL_WATCH_OR_ADVISORY"],
+      "expected_tier": "T2"
+    },
+    {
+      "id": 16,
+      "name": "Bremen, KY corridor (overnight reconstruction)",
+      "date": "2021-12-11",
+      "claim": "Inferred damage swath Bremen-Dawson Springs",
+      "snapshot": "Engine-reconstructed corridor overnight, before any survey covered the swath",
+      "signals": ["INFERRED_GEOMETRY"],
+      "expected_tier": "T3"
+    },
+    {
+      "id": 17,
+      "name": "Derecho damage swath estimate, IA-IL",
+      "date": "2020-08-10",
+      "claim": "Inferred 100-km wind damage swath",
+      "snapshot": "Engine-clustered swath polygon; no official product asserts the swath extent",
+      "signals": ["INFERRED_GEOMETRY"],
+      "expected_tier": "T3"
+    },
+    {
+      "id": 18,
+      "name": "Dayton, OH Memorial Day tornado corridor",
+      "date": "2019-05-27",
+      "claim": "Inferred corridor through Brookville-Trotwood-Dayton",
+      "snapshot": "Overnight, pre-survey: corridor geometry is model output only",
+      "signals": ["INFERRED_GEOMETRY"],
+      "expected_tier": "T3"
+    },
+    {
+      "id": 19,
+      "name": "Nashville, TN overnight tornado corridor",
+      "date": "2020-03-03",
+      "claim": "Inferred corridor East Nashville-Mt. Juliet",
+      "snapshot": "Pre-dawn, before daylight damage surveys began",
+      "signals": ["INFERRED_GEOMETRY"],
+      "expected_tier": "T3"
+    },
+    {
+      "id": 20,
+      "name": "Gaylord, MI tornado corridor",
+      "date": "2022-05-20",
+      "claim": "Inferred corridor through Gaylord",
+      "snapshot": "Hours after event, before NWS Gaylord survey published",
+      "signals": ["INFERRED_GEOMETRY"],
+      "expected_tier": "T3"
+    }
+  ]
+}
