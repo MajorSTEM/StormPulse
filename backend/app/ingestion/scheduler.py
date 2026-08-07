@@ -151,15 +151,21 @@ async def run_ingestion_cycle():
 
 
 async def run_history_load():
-    """One-shot background load of the SPC historical tornado database
-    (skips itself when the table is already populated)."""
-    from app.ingestion.tornado_history import load_tornado_history
+    """Background archive maintenance: one-shot SPC bulk load (skipped once
+    populated) plus a refresh of 2025-present NWS DAT survey tracks."""
+    from app.ingestion.tornado_history import load_tornado_history, load_recent_tornadoes
     try:
         async with AsyncSessionLocal() as db:
             result = await load_tornado_history(db)
-            logger.info(f"Tornado history: {result}")
+            logger.info(f"Tornado history (SPC): {result}")
     except Exception as exc:
-        logger.error(f"Tornado history load failed: {exc}")
+        logger.error(f"SPC history load failed: {exc}")
+    try:
+        async with AsyncSessionLocal() as db:
+            result = await load_recent_tornadoes(db)
+            logger.info(f"Tornado history (DAT): {result}")
+    except Exception as exc:
+        logger.error(f"DAT recent-tornado refresh failed: {exc}")
 
 
 scheduler = AsyncIOScheduler()

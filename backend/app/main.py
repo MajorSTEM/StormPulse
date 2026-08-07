@@ -36,6 +36,13 @@ async def _run_migrations() -> None:
         "ALTER TABLE corridors ADD COLUMN IF NOT EXISTS inlier_count INTEGER",
         "ALTER TABLE corridors ADD COLUMN IF NOT EXISTS outlier_count INTEGER",
         "ALTER TABLE corridors ADD COLUMN IF NOT EXISTS confidence_band_geojson TEXT",
+        # Tornado-history DAT survey columns
+        "ALTER TABLE tornado_history ADD COLUMN IF NOT EXISTS source VARCHAR",
+        "ALTER TABLE tornado_history ADD COLUMN IF NOT EXISTS end_time VARCHAR",
+        "ALTER TABLE tornado_history ADD COLUMN IF NOT EXISTS max_wind_mph INTEGER",
+        "ALTER TABLE tornado_history ADD COLUMN IF NOT EXISTS prop_damage FLOAT",
+        "ALTER TABLE tornado_history ADD COLUMN IF NOT EXISTS remarks TEXT",
+        "ALTER TABLE tornado_history ADD COLUMN IF NOT EXISTS path_geojson TEXT",
     ]
     try:
         async with AsyncSessionLocal() as session:
@@ -76,13 +83,17 @@ async def lifespan(app: FastAPI):
             coalesce=True,
             next_run_time=datetime.now(timezone.utc),
         )
-        # One-shot: populate the SPC historical tornado table if empty,
-        # delayed so live ingestion gets the first crack at the DB.
+        # Archive maintenance: SPC one-shot bulk load + DAT survey refresh.
+        # Runs shortly after boot (delayed so live ingestion goes first),
+        # then daily so newly surveyed tornadoes keep appearing.
         scheduler.add_job(
             run_history_load,
-            "date",
-            run_date=datetime.now(timezone.utc) + timedelta(seconds=45),
+            "interval",
+            hours=24,
             id="history_load",
+            max_instances=1,
+            coalesce=True,
+            next_run_time=datetime.now(timezone.utc) + timedelta(seconds=45),
         )
         scheduler.start()
 
