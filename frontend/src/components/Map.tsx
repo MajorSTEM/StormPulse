@@ -54,6 +54,14 @@ const INITIAL_STYLE = {
       attribution: "Tiles © Esri",
       maxzoom: 19,
     },
+    "night-lights-tiles": {
+      type: "raster" as const,
+      // NASA VIIRS Black Marble (earth at night) via GIBS — public, CORS-enabled
+      tiles: ["https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/VIIRS_Black_Marble/default/default/GoogleMapsCompatible_Level8/{z}/{y}/{x}.png"],
+      tileSize: 256,
+      attribution: "Night lights: NASA GIBS / VIIRS Black Marble",
+      maxzoom: 8,
+    },
   },
   layers: [
     { id: "background", type: "background" as const, paint: { "background-color": "#0f172a" } },
@@ -63,6 +71,13 @@ const INITIAL_STYLE = {
       source: "osm-tiles",
       layout: { visibility: "visible" as const },
       paint: { "raster-opacity": 0.35, "raster-saturation": -1, "raster-brightness-min": 0, "raster-brightness-max": 0.3 },
+    },
+    {
+      id: "night-lights",
+      type: "raster" as const,
+      source: "night-lights-tiles",
+      layout: { visibility: "visible" as const },
+      paint: { "raster-opacity": 0.95 },
     },
     {
       id: "basemap-street",
@@ -147,7 +162,7 @@ const OUTAGE_GRADUATED_COLOR: maplibregl.ExpressionSpecification = [
 ];
 
 /** Dark basemap: blackout-hole styling. Satellite/street: graduated circles. */
-function styleOutagesForBasemap(map: maplibregl.Map, basemap: Basemap, outagesVisible: boolean) {
+function styleOutagesForBasemap(map: maplibregl.Map, basemap: Basemap) {
   if (!map.getLayer("outages-live-circles")) return;
   const dark = basemap === "dark";
   map.setPaintProperty("outages-live-circles", "circle-color",
@@ -156,10 +171,8 @@ function styleOutagesForBasemap(map: maplibregl.Map, basemap: Basemap, outagesVi
   map.setPaintProperty("outages-live-circles", "circle-blur", dark ? 0.35 : 0);
   map.setPaintProperty("outages-live-circles", "circle-stroke-width", dark ? 0 : 1);
   map.setPaintProperty("outages-live-circles", "circle-radius", dark
-    ? ["interpolate", ["linear"], ["get", "affected"], 1, 4, 50, 6.5, 500, 11, 5000, 18]
+    ? ["interpolate", ["linear"], ["get", "affected"], 1, 5, 50, 8, 500, 13, 5000, 20]
     : ["interpolate", ["linear"], ["get", "affected"], 1, 2, 50, 3.5, 500, 6, 5000, 11]);
-  map.setLayoutProperty("outages-live-glow", "visibility",
-    dark && outagesVisible ? "visible" : "none");
 }
 
 export default function Map({
@@ -375,30 +388,6 @@ export default function Map({
       // warm "still-lit" rim against the illuminated map. Satellite/street:
       // graduated yellow→red circles (styleOutagesForBasemap switches modes).
       map.addSource("outages-live", { type: "geojson", data: EMPTY_FC });
-      // Warm ambient "energized area" glow (heatmap) — the light that the
-      // blackout cores punch holes into. Dark basemap only.
-      map.addLayer({
-        id: "outages-live-glow",
-        type: "heatmap",
-        source: "outages-live",
-        layout: { visibility: "none" },
-        paint: {
-          "heatmap-weight": [
-            "interpolate", ["linear"], ["get", "affected"],
-            1, 0.4, 100, 0.8, 1000, 1,
-          ],
-          "heatmap-intensity": ["interpolate", ["linear"], ["zoom"], 6, 0.5, 11, 0.9],
-          "heatmap-radius": ["interpolate", ["linear"], ["zoom"], 6, 25, 9, 45, 12, 70],
-          "heatmap-opacity": 0.5,
-          "heatmap-color": [
-            "interpolate", ["linear"], ["heatmap-density"],
-            0, "rgba(0,0,0,0)",
-            0.15, "rgba(130,95,25,0.30)",
-            0.45, "rgba(251,191,36,0.40)",
-            1, "rgba(255,240,180,0.50)",
-          ],
-        },
-      });
       map.addLayer({
         id: "outages-live-circles",
         type: "circle",
@@ -690,7 +679,7 @@ export default function Map({
       ["history-paths", "history-paths-hit", "history-points"].forEach(id =>
         map.setLayoutProperty(id, "visibility", vis(l.history)));
       map.setLayoutProperty("outages-live-circles", "visibility", vis(l.outages));
-      styleOutagesForBasemap(map, basemap, l.outages);
+      styleOutagesForBasemap(map, basemap);
 
       // Click handlers
       ["corridors-fill", "alerts-fill", "lsr-circles", "history-paths-hit", "history-points",
@@ -899,7 +888,8 @@ export default function Map({
     });
     const bg = basemap === "dark" ? "#0f172a" : basemap === "satellite" ? "#000000" : "#c8dce8";
     map.setPaintProperty("background", "background-color", bg);
-    styleOutagesForBasemap(map, basemap, layersRef.current.outages);
+    map.setLayoutProperty("night-lights", "visibility", basemap === "dark" ? "visible" : "none");
+    styleOutagesForBasemap(map, basemap);
   }, [basemap]);
 
   // Update layer visibility and alert tier filter
@@ -937,7 +927,7 @@ export default function Map({
     ["history-paths", "history-paths-hit", "history-points"].forEach(l =>
       map.setLayoutProperty(l, "visibility", vis(layers.history)));
     map.setLayoutProperty("outages-live-circles", "visibility", vis(layers.outages));
-    styleOutagesForBasemap(map, basemap, layers.outages);
+    styleOutagesForBasemap(map, basemap);
   }, [layers, basemap]);
 
   return (
