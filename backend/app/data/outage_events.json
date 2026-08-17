@@ -1,0 +1,4900 @@
+{
+ "events": [
+  {
+   "id": "nipsco-storm-lucy-2026-08-11",
+   "utility": "NIPSCO (NiSource)",
+   "name": "Storm Lucy \u2014 August 11, 2026 Derecho",
+   "event_type": "Derecho / severe wind outage event",
+   "date": "2026-08-11",
+   "event_window_utc": "2026-08-11 1200Z \u2192 2026-08-12 1730Z (SPC report span)",
+   "area": "Northern Indiana \u2014 nearly the entire NIPSCO electric service territory (plus derecho impacts in NE Illinois)",
+   "customers_affected": 301000,
+   "customers_affected_note": "Official NIPSCO outage summary (updated Aug 13, 2026); media tallies during the event ran as high as ~313,000. Roughly 60% of NIPSCO's electric customer base.",
+   "largest_in_utility_history": true,
+   "peak_gust_measured_mph": 99,
+   "peak_gust_measured_at": "Gary Airport (Lake County, IN)",
+   "peak_gust_reported_mph": 124,
+   "peak_gust_reported_note": "Localized gusts up to 124 mph reported in media coverage; 99 mph is the highest SPC-logged measured gust in the corridor.",
+   "wind_reports_in_corridor": 217,
+   "deaths_reported": 2,
+   "deaths_note": "At least 2 deaths reported in the broader Aug 10-12 severe weather outbreak (press reports).",
+   "communities_affected": 118,
+   "city_peak_outages": {
+    "GARY": 38000,
+    "HAMMOND": 13900,
+    "MERRILLVILLE": 12700
+   },
+   "city_peak_note": "Largest city outage counts as of Aug 13, 2026 (press).",
+   "still_out_aug13": 230000,
+   "restoration_90pct_target": "2026-08-18T23:59 local",
+   "restoration_full_target": "2026-08-21T23:59 local",
+   "followup": "A second round of storms on Aug 12 produced additional outages and flash flooding in Lake, Porter, Jasper, and Newton counties. Indiana National Guard deployed to assist.",
+   "infrastructure_damage": "Extensive tree damage, blocked roadways, entangled power lines, damaged poles, and significant damage to transmission lines, substations, and distribution facilities (NIPSCO).",
+   "sources": [
+    {
+     "label": "NIPSCO official outage summary (PDF)",
+     "url": "https://www.nipsco.com/outages/power-outages"
+    },
+    {
+     "label": "WNDU: largest outage event in company history",
+     "url": "https://www.wndu.com/2026/08/13/nipsco-gives-update-power-restoration-timeline-amid-largest-outage-event-companys-history/"
+    },
+    {
+     "label": "ABC7: National Guard deployed",
+     "url": "https://abc7chicago.com/post/indiana-power-outages-more-200k-nipsco-customers-storms-tornadoes-leave-destruction-kill-2-people/19672067/"
+    },
+    {
+     "label": "NBC Chicago: restoration progress",
+     "url": "https://www.nbcchicago.com/news/local/179k-nipsco-customers-remain-without-power-following-tuesdays-derecho/3975692/"
+    },
+    {
+     "label": "AccuWeather: derecho meteorology",
+     "url": "https://www.accuweather.com/en/severe-weather/hundreds-of-thousands-remain-without-power-in-indiana-after-derecho/1922534"
+    },
+    {
+     "label": "SPC storm reports 2026-08-11 (wind data)",
+     "url": "https://www.spc.noaa.gov/climo/reports/260811_rpts.html"
+    }
+   ],
+   "swath_geojson": {
+    "type": "Polygon",
+    "coordinates": [
+     [
+      [
+       -85.5,
+       40.190000000000005
+      ],
+      [
+       -88.1941451883785,
+       40.34858306449174
+      ],
+      [
+       -88.70714078815949,
+       41.27396088040322
+      ],
+      [
+       -88.63863426048074,
+       41.77805303963837
+      ],
+      [
+       -88.57394893160064,
+       42.01995514672724
+      ],
+      [
+       -88.37324072115283,
+       42.2564348444897
+      ],
+      [
+       -88.27876342628919,
+       42.28947275593725
+      ],
+      [
+       -85.8561636306814,
+       41.82513079566882
+      ],
+      [
+       -84.51870415205676,
+       40.95787854742048
+      ],
+      [
+       -84.49005876590753,
+       40.883755045189595
+      ],
+      [
+       -84.5202543872841,
+       40.41219050351853
+      ],
+      [
+       -84.56792701572955,
+       40.3240547815764
+      ],
+      [
+       -84.79818008785499,
+       40.19200046002639
+      ],
+      [
+       -85.5,
+       40.190000000000005
+      ]
+     ]
+    ]
+   },
+   "gust_reports": [
+    {
+     "type": "Feature",
+     "geometry": {
+      "type": "Point",
+      "coordinates": [
+       -84.82,
+       40.31
+      ]
+     },
+     "properties": {
+      "feature_type": "gust_report",
+      "speed_mph": null,
+      "measured": false,
+      "location": "7 NE Saratoga",
+      "county": "Randolph",
+      "state": "IN",
+      "date": "2026-08-11",
+      "time_utc": "1200",
+      "comments": "Delayed report. A small number of trees and utility lines were knocked down by thunderstorm winds in this approximate area. Time has been estimated from radar. (IND)",
+      "_layer": "outage_event"
+     }
+    },
+    {
+     "type": "Feature",
+     "geometry": {
+      "type": "Point",
+      "coordinates": [
+       -85.5,
+       40.31
+      ]
+     },
+     "properties": {
+      "feature_type": "gust_report",
+      "speed_mph": 65,
+      "measured": true,
+      "location": "Gaston",
+      "county": "Delaware",
+      "state": "IN",
+      "date": "2026-08-11",
+      "time_utc": "1209",
+      "comments": "(IND)",
+      "_layer": "outage_event"
+     }
+    },
+    {
+     "type": "Feature",
+     "geometry": {
+      "type": "Point",
+      "coordinates": [
+       -84.64,
+       40.42
+      ]
+     },
+     "properties": {
+      "feature_type": "gust_report",
+      "speed_mph": null,
+      "measured": false,
+      "location": "Saint Henry",
+      "county": "Mercer",
+      "state": "OH",
+      "date": "2026-08-11",
+      "time_utc": "1216",
+      "comments": "Power poles down in St. Henry along East Main Street. Time estimated from Radar. (ILN)",
+      "_layer": "outage_event"
+     }
+    },
+    {
+     "type": "Feature",
+     "geometry": {
+      "type": "Point",
+      "coordinates": [
+       -88.52,
+       41.76
+      ]
+     },
+     "properties": {
+      "feature_type": "gust_report",
+      "speed_mph": null,
+      "measured": false,
+      "location": "1 ESE Big Rock",
+      "county": "Kane",
+      "state": "IL",
+      "date": "2026-08-11",
+      "time_utc": "1507",
+      "comments": "Photo on social media showed a tree 12 to 18 inches in diameter snapped and fell onto a fence in a subdivision near Garnart Road. (LOT)",
+      "_layer": "outage_event"
+     }
+    },
+    {
+     "type": "Feature",
+     "geometry": {
+      "type": "Point",
+      "coordinates": [
+       -88.45,
+       41.76
+      ]
+     },
+     "properties": {
+      "feature_type": "gust_report",
+      "speed_mph": 70,
+      "measured": true,
+      "location": "Sugar Grove",
+      "county": "Kane",
+      "state": "IL",
+      "date": "2026-08-11",
+      "time_utc": "1511",
+      "comments": "Significant tree damage reported in town. (LOT)",
+      "_layer": "outage_event"
+     }
+    },
+    {
+     "type": "Feature",
+     "geometry": {
+      "type": "Point",
+      "coordinates": [
+       -88.48,
+       41.77
+      ]
+     },
+     "properties": {
+      "feature_type": "gust_report",
+      "speed_mph": 85,
+      "measured": true,
+      "location": "2 WNW Sugar Grove",
+      "county": "Kane",
+      "state": "IL",
+      "date": "2026-08-11",
+      "time_utc": "1511",
+      "comments": "KARR - Aurora / Sugar Grove Airport. (LOT)",
+      "_layer": "outage_event"
+     }
+    },
+    {
+     "type": "Feature",
+     "geometry": {
+      "type": "Point",
+      "coordinates": [
+       -88.45,
+       41.77
+      ]
+     },
+     "properties": {
+      "feature_type": "gust_report",
+      "speed_mph": null,
+      "measured": false,
+      "location": "1 NNW Sugar Grove",
+      "county": "Kane",
+      "state": "IL",
+      "date": "2026-08-11",
+      "time_utc": "1512",
+      "comments": "Photo on social media showed a large tree blown down partially blocking a residential road near Galena Boulevard and Route 47. (LOT)",
+      "_layer": "outage_event"
+     }
+    },
+    {
+     "type": "Feature",
+     "geometry": {
+      "type": "Point",
+      "coordinates": [
+       -88.44,
+       41.65
+      ]
+     },
+     "properties": {
+      "feature_type": "gust_report",
+      "speed_mph": null,
+      "measured": false,
+      "location": "1 NE Yorkville",
+      "county": "Kendall",
+      "state": "IL",
+      "date": "2026-08-11",
+      "time_utc": "1513",
+      "comments": "Photo shared of a large tree down. Time estimated by radar. (LOT)",
+      "_layer": "outage_event"
+     }
+    },
+    {
+     "type": "Feature",
+     "geometry": {
+      "type": "Point",
+      "coordinates": [
+       -88.44,
+       41.75
+      ]
+     },
+     "properties": {
+      "feature_type": "gust_report",
+      "speed_mph": 97,
+      "measured": true,
+      "location": "1 SE Sugar Grove",
+      "county": "Kane",
+      "state": "IL",
+      "date": "2026-08-11",
+      "time_utc": "1513",
+      "comments": "Home weather station measured a 97 mph wind gust. (LOT)",
+      "_layer": "outage_event"
+     }
+    },
+    {
+     "type": "Feature",
+     "geometry": {
+      "type": "Point",
+      "coordinates": [
+       -88.47,
+       41.96
+      ]
+     },
+     "properties": {
+      "feature_type": "gust_report",
+      "speed_mph": 66,
+      "measured": true,
+      "location": "1 NE Lily Lake",
+      "county": "Kane",
+      "state": "IL",
+      "date": "2026-08-11",
+      "time_utc": "1514",
+      "comments": "(LOT)",
+      "_layer": "outage_event"
+     }
+    },
+    {
+     "type": "Feature",
+     "geometry": {
+      "type": "Point",
+      "coordinates": [
+       -88.33,
+       41.72
+      ]
+     },
+     "properties": {
+      "feature_type": "gust_report",
+      "speed_mph": null,
+      "measured": false,
+      "location": "1 N Boulder Hill",
+      "county": "Kendall",
+      "state": "IL",
+      "date": "2026-08-11",
+      "time_utc": "1516",
+      "comments": "multiple large branches 6-8 inches in diameter down north side of town. (LOT)",
+      "_layer": "outage_event"
+     }
+    },
+    {
+     "type": "Feature",
+     "geometry": {
+      "type": "Point",
+      "coordinates": [
+       -88.43,
+       41.62
+      ]
+     },
+     "properties": {
+      "feature_type": "gust_report",
+      "speed_mph": 64,
+      "measured": true,
+      "location": "2 SE Yorkville",
+      "county": "Kendall",
+      "state": "IL",
+      "date": "2026-08-11",
+      "time_utc": "1518",
+      "comments": "(LOT)",
+      "_layer": "outage_event"
+     }
+    },
+    {
+     "type": "Feature",
+     "geometry": {
+      "type": "Point",
+      "coordinates": [
+       -88.36,
+       41.69
+      ]
+     },
+     "properties": {
+      "feature_type": "gust_report",
+      "speed_mph": null,
+      "measured": false,
+      "location": "1 NNW Oswego",
+      "county": "Kendall",
+      "state": "IL",
+      "date": "2026-08-11",
+      "time_utc": "1518",
+      "comments": "tree branches reported down. (LOT)",
+      "_layer": "outage_event"
+     }
+    },
+    {
+     "type": "Feature",
+     "geometry": {
+      "type": "Point",
+      "coordinates": [
+       -88.59,
+       41.3
+      ]
+     },
+     "properties": {
+      "feature_type": "gust_report",
+      "speed_mph": 60,
+      "measured": true,
+      "location": "1 SE Seneca",
+      "county": "La Salle",
+      "state": "IL",
+      "date": "2026-08-11",
+      "time_utc": "1519",
+      "comments": "Private weather station. (LOT)",
+      "_layer": "outage_event"
+     }
+    },
+    {
+     "type": "Feature",
+     "geometry": {
+      "type": "Point",
+      "coordinates": [
+       -88.33,
+       41.69
+      ]
+     },
+     "properties": {
+      "feature_type": "gust_report",
+      "speed_mph": 65,
+      "measured": true,
+      "location": "1 ENE Oswego",
+      "county": "Kendall",
+      "state": "IL",
+      "date": "2026-08-11",
+      "time_utc": "1521",
+      "comments": "Private weather station: 0.9 SSE Oswego. (LOT)",
+      "_layer": "outage_event"
+     }
+    },
+    {
+     "type": "Feature",
+     "geometry": {
+      "type": "Point",
+      "coordinates": [
+       -88.38,
+       41.87
+      ]
+     },
+     "properties": {
+      "feature_type": "gust_report",
+      "speed_mph": null,
+      "measured": false,
+      "location": "4 WNW Batavia",
+      "county": "Kane",
+      "state": "IL",
+      "date": "2026-08-11",
+      "time_utc": "1521",
+      "comments": "Photos of snapped tree branches. Time estimated by radar. (LOT)",
+      "_layer": "outage_event"
+     }
+    },
+    {
+     "type": "Feature",
+     "geometry": {
+      "type": "Point",
+      "coordinates": [
+       -88.32,
+       41.91
+      ]
+     },
+     "properties": {
+      "feature_type": "gust_report",
+      "speed_mph": null,
+      "measured": false,
+      "location": "St. Charles",
+      "county": "Kane",
+      "state": "IL",
+      "date": "2026-08-11",
+      "time_utc": "1522",
+      "comments": "large branches downed across town. relayed by social media. (LOT)",
+      "_layer": "outage_event"
+     }
+    },
+    {
+     "type": "Feature",
+     "geometry": {
+      "type": "Point",
+      "coordinates": [
+       -88.26,
+       41.76
+      ]
+     },
+     "properties": {
+      "feature_type": "gust_report",
+      "speed_mph": null,
+      "measured": false,
+      "location": "3 E Aurora",
+      "county": "DuPage",
+      "state": "IL",
+      "date": "2026-08-11",
+      "time_utc": "1523",
+      "comments": "Photo on social media showed a large tree completely uprooted near Kautz Road and New York Street. (LOT)",
+      "_layer": "outage_event"
+     }
+    },
+    {
+     "type": "Feature",
+     "geometry": {
+      "type": "Point",
+      "coordinates": [
+       -88.27,
+       41.82
+      ]
+     },
+     "properties": {
+      "feature_type": "gust_report",
+      "speed_mph": 89,
+      "measured": true,
+      "location": "3 SE Batavia",
+      "county": "Kane",
+      "state": "IL",
+      "date": "2026-08-11",
+      "time_utc": "1524",
+      "comments": "Private weather station: KILAUROR58. (LOT)",
+      "_layer": "outage_event"
+     }
+    },
+    {
+     "type": "Feature",
+     "geometry": {
+      "type": "Point",
+      "coordinates": [
+       -88.41,
+       41.39
+      ]
+     },
+     "properties": {
+      "feature_type": "gust_report",
+      "speed_mph": null,
+      "measured": false,
+      "location": "2 NNE Morris",
+      "county": "Grundy",
+      "state": "IL",
+      "date": "2026-08-11",
+      "time_utc": "1525",
+      "comments": "Photo on social media showed a semi truck blown over into power lines on Route 6 between Route 47 and Ashley Road. (LOT)",
+      "_layer": "outage_event"
+     }
+    },
+    {
+     "type": "Feature",
+     "geometry": {
+      "type": "Point",
+      "coordinates": [
+       -88.17,
+       41.57
+      ]
+     },
+     "properties": {
+      "feature_type": "gust_report",
+      "speed_mph": null,
+      "measured": false,
+      "location": "1 WNW Crystal Lawns",
+      "county": "Will",
+      "state": "IL",
+      "date": "2026-08-11",
+      "time_utc": "1527",
+      "comments": "Tree damage and minor fascia damage to a house west of Joliet Mall. (LOT)",
+      "_layer": "outage_event"
+     }
+    },
+    {
+     "type": "Feature",
+     "geometry": {
+      "type": "Point",
+      "coordinates": [
+       -88.17,
+       41.82
+      ]
+     },
+     "properties": {
+      "feature_type": "gust_report",
+      "speed_mph": null,
+      "measured": false,
+      "location": "Warrenville",
+      "county": "DuPage",
+      "state": "IL",
+      "date": "2026-08-11",
+      "time_utc": "1527",
+      "comments": "reports of trees and wires down throughout town... with a few structures damaged; mostly between rt 56 and I-88. (LOT)",
+      "_layer": "outage_event"
+     }
+    },
+    {
+     "type": "Feature",
+     "geometry": {
+      "type": "Point",
+      "coordinates": [
+       -88.19,
+       41.58
+      ]
+     },
+     "properties": {
+      "feature_type": "gust_report",
+      "speed_mph": 80,
+      "measured": true,
+      "location": "2 SSE Plainfield",
+      "county": "Will",
+      "state": "IL",
+      "date": "2026-08-11",
+      "time_utc": "1528",
+      "comments": "Received 1.59 inches of rain so far. Power out with tree and siding damage to homes. (LOT)",
+      "_layer": "outage_event"
+     }
+    },
+    {
+     "type": "Feature",
+     "geometry": {
+      "type": "Point",
+      "coordinates": [
+       -88.23,
+       41.63
+      ]
+     },
+     "properties": {
+      "feature_type": "gust_report",
+      "speed_mph": 88,
+      "measured": true,
+      "location": "2 NW Plainfield",
+      "county": "Will",
+      "state": "IL",
+      "date": "2026-08-11",
+      "time_utc": "1528",
+      "comments": "Corrects previous tstm wnd gst report from 2 NW Plainfield. (LOT)",
+      "_layer": "outage_event"
+     }
+    },
+    {
+     "type": "Feature",
+     "geometry": {
+      "type": "Point",
+      "coordinates": [
+       -88.11,
+       41.69
+      ]
+     },
+     "properties": {
+      "feature_type": "gust_report",
+      "speed_mph": null,
+      "measured": false,
+      "location": "2 WSW Bolingbrook",
+      "county": "Will",
+      "state": "IL",
+      "date": "2026-08-11",
+      "time_utc": "1528",
+      "comments": "One tree and several tree limbs blown down near Jane Addams Middle School. (LOT)",
+      "_layer": "outage_event"
+     }
+    },
+    {
+     "type": "Feature",
+     "geometry": {
+      "type": "Point",
+      "coordinates": [
+       -88.11,
+       41.7
+      ]
+     },
+     "properties": {
+      "feature_type": "gust_report",
+      "speed_mph": null,
+      "measured": false,
+      "location": "2 W Bolingbrook",
+      "county": "Will",
+      "state": "IL",
+      "date": "2026-08-11",
+      "time_utc": "1528",
+      "comments": "A 12 inch diameter tree was blown down partially blocking a road near Jamie McGee Elementary School. (LOT)",
+      "_layer": "outage_event"
+     }
+    },
+    {
+     "type": "Feature",
+     "geometry": {
+      "type": "Point",
+      "coordinates": [
+       -88.19,
+       41.84
+      ]
+     },
+     "properties": {
+      "feature_type": "gust_report",
+      "speed_mph": 80,
+      "measured": true,
+      "location": "2 NNW Warrenville",
+      "county": "DuPage",
+      "state": "IL",
+      "date": "2026-08-11",
+      "time_utc": "1528",
+      "comments": "A corridor of destructive winds impacted Warrenville and a portion of Lisle during the derecho on August 11. Extensive tree damage occurred in Blackwell Forest Preserve (LOT)",
+      "_layer": "outage_event"
+     }
+    },
+    {
+     "type": "Feature",
+     "geometry": {
+      "type": "Point",
+      "coordinates": [
+       -88.21,
+       41.61
+      ]
+     },
+     "properties": {
+      "feature_type": "gust_report",
+      "speed_mph": null,
+      "measured": false,
+      "location": "Plainfield",
+      "county": "Will",
+      "state": "IL",
+      "date": "2026-08-11",
+      "time_utc": "1529",
+      "comments": "Photo on social media showed a large tree and power lines blown down near James Street and Commercial Street. Many other trees damaged nearby. (LOT)",
+      "_layer": "outage_event"
+     }
+    },
+    {
+     "type": "Feature",
+     "geometry": {
+      "type": "Point",
+      "coordinates": [
+       -88.19,
+       41.73
+      ]
+     },
+     "properties": {
+      "feature_type": "gust_report",
+      "speed_mph": null,
+      "measured": false,
+      "location": "4 SSW Naperville",
+      "county": "Will",
+      "state": "IL",
+      "date": "2026-08-11",
+      "time_utc": "1529",
+      "comments": "tree branches 4-6 inch diameter down near 95th and Book Road. (LOT)",
+      "_layer": "outage_event"
+     }
+    },
+    {
+     "type": "Feature",
+     "geometry": {
+      "type": "Point",
+      "coordinates": [
+       -88.21,
+       41.79
+      ]
+     },
+     "properties": {
+      "feature_type": "gust_report",
+      "speed_mph": null,
+      "measured": false,
+      "location": "3 SW Warrenville",
+      "county": "DuPage",
+      "state": "IL",
+      "date": "2026-08-11",
+      "time_utc": "1529",
+      "comments": "large tree branches down. (LOT)",
+      "_layer": "outage_event"
+     }
+    },
+    {
+     "type": "Feature",
+     "geometry": {
+      "type": "Point",
+      "coordinates": [
+       -88.14,
+       41.56
+      ]
+     },
+     "properties": {
+      "feature_type": "gust_report",
+      "speed_mph": null,
+      "measured": false,
+      "location": "1 SE Crystal Lawns",
+      "county": "Will",
+      "state": "IL",
+      "date": "2026-08-11",
+      "time_utc": "1530",
+      "comments": "Scattered tree limbs 4 to 8 inches in diameter snapped and blown down. (LOT)",
+      "_layer": "outage_event"
+     }
+    },
+    {
+     "type": "Feature",
+     "geometry": {
+      "type": "Point",
+      "coordinates": [
+       -88.14,
+       41.57
+      ]
+     },
+     "properties": {
+      "feature_type": "gust_report",
+      "speed_mph": null,
+      "measured": false,
+      "location": "1 E Crystal Lawns",
+      "county": "Will",
+      "state": "IL",
+      "date": "2026-08-11",
+      "time_utc": "1530",
+      "comments": "Photo on social media showed a healthy tree roughly one foot in diameter completely snapped at its base on Loch Lane. (LOT)",
+      "_layer": "outage_event"
+     }
+    },
+    {
+     "type": "Feature",
+     "geometry": {
+      "type": "Point",
+      "coordinates": [
+       -88.15,
+       41.59
+      ]
+     },
+     "properties": {
+      "feature_type": "gust_report",
+      "speed_mph": null,
+      "measured": false,
+      "location": "2 NNE Crystal Lawns",
+      "county": "Will",
+      "state": "IL",
+      "date": "2026-08-11",
+      "time_utc": "1530",
+      "comments": "Multiple trees and large tree limbs blown down west of Gaylord Road between Division Street and Renwick Road. (LOT)",
+      "_layer": "outage_event"
+     }
+    },
+    {
+     "type": "Feature",
+     "geometry": {
+      "type": "Point",
+      "coordinates": [
+       -88.23,
+       41.63
+      ]
+     },
+     "properties": {
+      "feature_type": "gust_report",
+      "speed_mph": 62,
+      "measured": true,
+      "location": "2 NW Plainfield",
+      "county": "Will",
+      "state": "IL",
+      "date": "2026-08-11",
+      "time_utc": "1530",
+      "comments": "Private weather station: 2.3 NW Plainfield. (LOT)",
+      "_layer": "outage_event"
+     }
+    },
+    {
+     "type": "Feature",
+     "geometry": {
+      "type": "Point",
+      "coordinates": [
+       -88.21,
+       41.55
+      ]
+     },
+     "properties": {
+      "feature_type": "gust_report",
+      "speed_mph": 96,
+      "measured": true,
+      "location": "2 NNW Shorewood",
+      "county": "Will",
+      "state": "IL",
+      "date": "2026-08-11",
+      "time_utc": "1531",
+      "comments": "Private weather station. (LOT)",
+      "_layer": "outage_event"
+     }
+    },
+    {
+     "type": "Feature",
+     "geometry": {
+      "type": "Point",
+      "coordinates": [
+       -88.09,
+       41.8
+      ]
+     },
+     "properties": {
+      "feature_type": "gust_report",
+      "speed_mph": null,
+      "measured": false,
+      "location": "1 WNW Lisle",
+      "county": "DuPage",
+      "state": "IL",
+      "date": "2026-08-11",
+      "time_utc": "1531",
+      "comments": "Photo on social media shows a large tree down. Numerous trees down all over the neighborhood. (LOT)",
+      "_layer": "outage_event"
+     }
+    },
+    {
+     "type": "Feature",
+     "geometry": {
+      "type": "Point",
+      "coordinates": [
+       -88.16,
+       41.91
+      ]
+     },
+     "properties": {
+      "feature_type": "gust_report",
+      "speed_mph": null,
+      "measured": false,
+      "location": "1 WSW Carol Stream",
+      "county": "DuPage",
+      "state": "IL",
+      "date": "2026-08-11",
+      "time_utc": "1531",
+      "comments": "Photo sent of a 8 inch diameter tree snapped. Time estimated by radar. (LOT)",
+      "_layer": "outage_event"
+     }
+    },
+    {
+     "type": "Feature",
+     "geometry": {
+      "type": "Point",
+      "coordinates": [
+       -88.29,
+       41.29
+      ]
+     },
+     "properties": {
+      "feature_type": "gust_report",
+      "speed_mph": null,
+      "measured": false,
+      "location": "1 W Coal City",
+      "county": "Grundy",
+      "state": "IL",
+      "date": "2026-08-11",
+      "time_utc": "1532",
+      "comments": "A large tree was snapped several feet above the ground and fell onto a house along Route 113 causing damage. (LOT)",
+      "_layer": "outage_event"
+     }
+    },
+    {
+     "type": "Feature",
+     "geometry": {
+      "type": "Point",
+      "coordinates": [
+       -88.15,
+       41.51
+      ]
+     },
+     "properties": {
+      "feature_type": "gust_report",
+      "speed_mph": null,
+      "measured": false,
+      "location": "2 WNW Rockdale",
+      "county": "Will",
+      "state": "IL",
+      "date": "2026-08-11",
+      "time_utc": "1532",
+      "comments": "Photo on social media showed a large tree limb snapped off a tree near Caterpillar Drive and McDonough Street. (LOT)",
+      "_layer": "outage_event"
+     }
+    },
+    {
+     "type": "Feature",
+     "geometry": {
+      "type": "Point",
+      "coordinates": [
+       -88.11,
+       41.53
+      ]
+     },
+     "properties": {
+      "feature_type": "gust_report",
+      "speed_mph": null,
+      "measured": false,
+      "location": "1 WNW Joliet",
+      "county": "Will",
+      "state": "IL",
+      "date": "2026-08-11",
+      "time_utc": "1533",
+      "comments": "large branches downed... relayed by social media. time estimated by radar. (LOT)",
+      "_layer": "outage_event"
+     }
+    },
+    {
+     "type": "Feature",
+     "geometry": {
+      "type": "Point",
+      "coordinates": [
+       -88.08,
+       41.6
+      ]
+     },
+     "properties": {
+      "feature_type": "gust_report",
+      "speed_mph": 58,
+      "measured": true,
+      "location": "NWS Chicago-Romeoville",
+      "county": "Will",
+      "state": "IL",
+      "date": "2026-08-11",
+      "time_utc": "1534",
+      "comments": "Peak wind gust of 58 mph measured by Davis weather station at NWS Chicago office. Severe gusts lasted for 5 to 10 minutes as the storm moved overhead. There are numerou (LOT)",
+      "_layer": "outage_event"
+     }
+    },
+    {
+     "type": "Feature",
+     "geometry": {
+      "type": "Point",
+      "coordinates": [
+       -88.05,
+       41.79
+      ]
+     },
+     "properties": {
+      "feature_type": "gust_report",
+      "speed_mph": null,
+      "measured": false,
+      "location": "1 ESE Lisle",
+      "county": "DuPage",
+      "state": "IL",
+      "date": "2026-08-11",
+      "time_utc": "1534",
+      "comments": "Photo on social media showed a large tree completely uprooted near Thatcher Road and Walnut Avenue. (LOT)",
+      "_layer": "outage_event"
+     }
+    },
+    {
+     "type": "Feature",
+     "geometry": {
+      "type": "Point",
+      "coordinates": [
+       -88.23,
+       41.26
+      ]
+     },
+     "properties": {
+      "feature_type": "gust_report",
+      "speed_mph": 70,
+      "measured": true,
+      "location": "1 W Braidwood",
+      "county": "Will",
+      "state": "IL",
+      "date": "2026-08-11",
+      "time_utc": "1535",
+      "comments": "(LOT)",
+      "_layer": "outage_event"
+     }
+    },
+    {
+     "type": "Feature",
+     "geometry": {
+      "type": "Point",
+      "coordinates": [
+       -88.25,
+       41.7
+      ]
+     },
+     "properties": {
+      "feature_type": "gust_report",
+      "speed_mph": null,
+      "measured": false,
+      "location": "4 E Boulder Hill",
+      "county": "Will",
+      "state": "IL",
+      "date": "2026-08-11",
+      "time_utc": "1535",
+      "comments": "6 inch tree branches reported down at Aurora at Eola and Ridge. (LOT)",
+      "_layer": "outage_event"
+     }
+    },
+    {
+     "type": "Feature",
+     "geometry": {
+      "type": "Point",
+      "coordinates": [
+       -88.03,
+       41.62
+      ]
+     },
+     "properties": {
+      "feature_type": "gust_report",
+      "speed_mph": null,
+      "measured": false,
+      "location": "3 NE Lockport",
+      "county": "Will",
+      "state": "IL",
+      "date": "2026-08-11",
+      "time_utc": "1536",
+      "comments": "large branches broken near archer and smith roads intersection. (LOT)",
+      "_layer": "outage_event"
+     }
+    },
+    {
+     "type": "Feature",
+     "geometry": {
+      "type": "Point",
+      "coordinates": [
+       -88.44,
+       41.27
+      ]
+     },
+     "properties": {
+      "feature_type": "gust_report",
+      "speed_mph": 65,
+      "measured": true,
+      "location": "2 NNW Mazon",
+      "county": "Grundy",
+      "state": "IL",
+      "date": "2026-08-11",
+      "time_utc": "1537",
+      "comments": "Private weather station. (LOT)",
+      "_layer": "outage_event"
+     }
+    },
+    {
+     "type": "Feature",
+     "geometry": {
+      "type": "Point",
+      "coordinates": [
+       -87.96,
+       41.53
+      ]
+     },
+     "properties": {
+      "feature_type": "gust_report",
+      "speed_mph": null,
+      "measured": false,
+      "location": "1 NNE New Lenox",
+      "county": "Will",
+      "state": "IL",
+      "date": "2026-08-11",
+      "time_utc": "1537",
+      "comments": "Photos sent of snapped tree branches. Time estimated by radar. (LOT)",
+      "_layer": "outage_event"
+     }
+    },
+    {
+     "type": "Feature",
+     "geometry": {
+      "type": "Point",
+      "coordinates": [
+       -88.0,
+       41.66
+      ]
+     },
+     "properties": {
+      "feature_type": "gust_report",
+      "speed_mph": null,
+      "measured": false,
+      "location": "1 S Lemont",
+      "county": "Cook",
+      "state": "IL",
+      "date": "2026-08-11",
+      "time_utc": "1538",
+      "comments": "Lemont EMA reports multiple areas with significant tree damage in Lemont. Includes a few trees uprooted or snapped... and numerous large branches downed. Areas along Pe (LOT)",
+      "_layer": "outage_event"
+     }
+    },
+    {
+     "type": "Feature",
+     "geometry": {
+      "type": "Point",
+      "coordinates": [
+       -88.0,
+       41.7
+      ]
+     },
+     "properties": {
+      "feature_type": "gust_report",
+      "speed_mph": 70,
+      "measured": true,
+      "location": "2 N Lemont",
+      "county": "DuPage",
+      "state": "IL",
+      "date": "2026-08-11",
+      "time_utc": "1538",
+      "comments": "Peak wind gust of 70 mph measured by sonic anemometer at a height of 10m. (LOT)",
+      "_layer": "outage_event"
+     }
+    },
+    {
+     "type": "Feature",
+     "geometry": {
+      "type": "Point",
+      "coordinates": [
+       -88.01,
+       41.73
+      ]
+     },
+     "properties": {
+      "feature_type": "gust_report",
+      "speed_mph": null,
+      "measured": false,
+      "location": "2 SW Darien",
+      "county": "DuPage",
+      "state": "IL",
+      "date": "2026-08-11",
+      "time_utc": "1538",
+      "comments": "report of 18 inch diameter tree down. (LOT)",
+      "_layer": "outage_event"
+     }
+    },
+    {
+     "type": "Feature",
+     "geometry": {
+      "type": "Point",
+      "coordinates": [
+       -88.01,
+       41.76
+      ]
+     },
+     "properties": {
+      "feature_type": "gust_report",
+      "speed_mph": null,
+      "measured": false,
+      "location": "2 WNW Darien",
+      "county": "DuPage",
+      "state": "IL",
+      "date": "2026-08-11",
+      "time_utc": "1538",
+      "comments": "Photos shared via social media show multiple large branches broken near McCollum Park. (LOT)",
+      "_layer": "outage_event"
+     }
+    },
+    {
+     "type": "Feature",
+     "geometry": {
+      "type": "Point",
+      "coordinates": [
+       -88.01,
+       41.78
+      ]
+     },
+     "properties": {
+      "feature_type": "gust_report",
+      "speed_mph": null,
+      "measured": false,
+      "location": "1 SSE Downers Grove",
+      "county": "DuPage",
+      "state": "IL",
+      "date": "2026-08-11",
+      "time_utc": "1538",
+      "comments": "multiple large branches broken... one tree snapped. (LOT)",
+      "_layer": "outage_event"
+     }
+    },
+    {
+     "type": "Feature",
+     "geometry": {
+      "type": "Point",
+      "coordinates": [
+       -88.28,
+       41.29
+      ]
+     },
+     "properties": {
+      "feature_type": "gust_report",
+      "speed_mph": 70,
+      "measured": true,
+      "location": "Coal City",
+      "county": "Grundy",
+      "state": "IL",
+      "date": "2026-08-11",
+      "time_utc": "1539",
+      "comments": "Private weather station: KILCOALC4. (LOT)",
+      "_layer": "outage_event"
+     }
+    },
+    {
+     "type": "Feature",
+     "geometry": {
+      "type": "Point",
+      "coordinates": [
+       -88.15,
+       41.31
+      ]
+     },
+     "properties": {
+      "feature_type": "gust_report",
+      "speed_mph": null,
+      "measured": false,
+      "location": "Wilmington",
+      "county": "Will",
+      "state": "IL",
+      "date": "2026-08-11",
+      "time_utc": "1540",
+      "comments": "Roof of a business near First Street and Rt 53. Time estimated based on radar. (LOT)",
+      "_layer": "outage_event"
+     }
+    },
+    {
+     "type": "Feature",
+     "geometry": {
+      "type": "Point",
+      "coordinates": [
+       -88.23,
+       41.63
+      ]
+     },
+     "properties": {
+      "feature_type": "gust_report",
+      "speed_mph": 88,
+      "measured": true,
+      "location": "2 NW Plainfield",
+      "county": "Will",
+      "state": "IL",
+      "date": "2026-08-11",
+      "time_utc": "1540",
+      "comments": "Second personal weather station measured an 88 mph wind gust in Plainfield. (LOT)",
+      "_layer": "outage_event"
+     }
+    },
+    {
+     "type": "Feature",
+     "geometry": {
+      "type": "Point",
+      "coordinates": [
+       -88.16,
+       41.75
+      ]
+     },
+     "properties": {
+      "feature_type": "gust_report",
+      "speed_mph": null,
+      "measured": false,
+      "location": "2 SSW Naperville",
+      "county": "DuPage",
+      "state": "IL",
+      "date": "2026-08-11",
+      "time_utc": "1540",
+      "comments": "Numerous reports from EMA of downed trees and flooding throughout town. (LOT)",
+      "_layer": "outage_event"
+     }
+    },
+    {
+     "type": "Feature",
+     "geometry": {
+      "type": "Point",
+      "coordinates": [
+       -87.97,
+       41.81
+      ]
+     },
+     "properties": {
+      "feature_type": "gust_report",
+      "speed_mph": null,
+      "measured": false,
+      "location": "1 NW Clarendon Hills",
+      "county": "DuPage",
+      "state": "IL",
+      "date": "2026-08-11",
+      "time_utc": "1540",
+      "comments": "small branches (1-3 inches) down on home. (LOT)",
+      "_layer": "outage_event"
+     }
+    },
+    {
+     "type": "Feature",
+     "geometry": {
+      "type": "Point",
+      "coordinates": [
+       -87.85,
+       41.49
+      ]
+     },
+     "properties": {
+      "feature_type": "gust_report",
+      "speed_mph": 75,
+      "measured": true,
+      "location": "Frankfort",
+      "county": "Will",
+      "state": "IL",
+      "date": "2026-08-11",
+      "time_utc": "1542",
+      "comments": "Sustained winds estimated 55 mph with gusts in excess of 75 mph. (LOT)",
+      "_layer": "outage_event"
+     }
+    },
+    {
+     "type": "Feature",
+     "geometry": {
+      "type": "Point",
+      "coordinates": [
+       -87.93,
+       41.79
+      ]
+     },
+     "properties": {
+      "feature_type": "gust_report",
+      "speed_mph": null,
+      "measured": false,
+      "location": "1 S Hinsdale",
+      "county": "DuPage",
+      "state": "IL",
+      "date": "2026-08-11",
+      "time_utc": "1544",
+      "comments": "numerous branches down with trees blocking eastbound 55th street. (LOT)",
+      "_layer": "outage_event"
+     }
+    },
+    {
+     "type": "Feature",
+     "geometry": {
+      "type": "Point",
+      "coordinates": [
+       -87.83,
+       41.25
+      ]
+     },
+     "properties": {
+      "feature_type": "gust_report",
+      "speed_mph": null,
+      "measured": false,
+      "location": "Manteno",
+      "county": "Kankakee",
+      "state": "IL",
+      "date": "2026-08-11",
+      "time_utc": "1545",
+      "comments": "roof damage to a building. (LOT)",
+      "_layer": "outage_event"
+     }
+    },
+    {
+     "type": "Feature",
+     "geometry": {
+      "type": "Point",
+      "coordinates": [
+       -87.89,
+       41.56
+      ]
+     },
+     "properties": {
+      "feature_type": "gust_report",
+      "speed_mph": null,
+      "measured": false,
+      "location": "SW Orland Park",
+      "county": "Will",
+      "state": "IL",
+      "date": "2026-08-11",
+      "time_utc": "1545",
+      "comments": "Roof off of a building near 183rd Place and Wolf Road - time estimated from radar. (LOT)",
+      "_layer": "outage_event"
+     }
+    },
+    {
+     "type": "Feature",
+     "geometry": {
+      "type": "Point",
+      "coordinates": [
+       -87.82,
+       41.53
+      ]
+     },
+     "properties": {
+      "feature_type": "gust_report",
+      "speed_mph": null,
+      "measured": false,
+      "location": "1 NW Frankfort Square",
+      "county": "Will",
+      "state": "IL",
+      "date": "2026-08-11",
+      "time_utc": "1546",
+      "comments": "partial roof removed from residence. (LOT)",
+      "_layer": "outage_event"
+     }
+    },
+    {
+     "type": "Feature",
+     "geometry": {
+      "type": "Point",
+      "coordinates": [
+       -87.82,
+       41.65
+      ]
+     },
+     "properties": {
+      "feature_type": "gust_report",
+      "speed_mph": null,
+      "measured": false,
+      "location": "1 SSE Palos Park",
+      "county": "Cook",
+      "state": "IL",
+      "date": "2026-08-11",
+      "time_utc": "1546",
+      "comments": "Photo on social media showed a large pine tree on a house on 83rd Avenue between 131st Street and 135th Street. (LOT)",
+      "_layer": "outage_event"
+     }
+    },
+    {
+     "type": "Feature",
+     "geometry": {
+      "type": "Point",
+      "coordinates": [
+       -87.79,
+       41.53
+      ]
+     },
+     "properties": {
+      "feature_type": "gust_report",
+      "speed_mph": null,
+      "measured": false,
+      "location": "1 NE Frankfort Square",
+      "county": "Will",
+      "state": "IL",
+      "date": "2026-08-11",
+      "time_utc": "1547",
+      "comments": "Semi blown over near Vollmer Road and Harlem Avenue. Time estimated by radar. (LOT)",
+      "_layer": "outage_event"
+     }
+    },
+    {
+     "type": "Feature",
+     "geometry": {
+      "type": "Point",
+      "coordinates": [
+       -87.81,
+       41.75
+      ]
+     },
+     "properties": {
+      "feature_type": "gust_report",
+      "speed_mph": null,
+      "measured": false,
+      "location": "Bridgeview",
+      "county": "Cook",
+      "state": "IL",
+      "date": "2026-08-11",
+      "time_utc": "1547",
+      "comments": "Photos shared of large tree branches snapped. Time estimated by radar. (LOT)",
+      "_layer": "outage_event"
+     }
+    },
+    {
+     "type": "Feature",
+     "geometry": {
+      "type": "Point",
+      "coordinates": [
+       -87.82,
+       41.85
+      ]
+     },
+     "properties": {
+      "feature_type": "gust_report",
+      "speed_mph": null,
+      "measured": false,
+      "location": "North Riverside",
+      "county": "Cook",
+      "state": "IL",
+      "date": "2026-08-11",
+      "time_utc": "1547",
+      "comments": "Photo on social media showed large tree limbs blown down near 23rd Street and Des Plaines Avenue. (LOT)",
+      "_layer": "outage_event"
+     }
+    },
+    {
+     "type": "Feature",
+     "geometry": {
+      "type": "Point",
+      "coordinates": [
+       -87.74,
+       41.42
+      ]
+     },
+     "properties": {
+      "feature_type": "gust_report",
+      "speed_mph": null,
+      "measured": false,
+      "location": "1 ESE Monee",
+      "county": "Will",
+      "state": "IL",
+      "date": "2026-08-11",
+      "time_utc": "1548",
+      "comments": "report of numerous trees and power lines reported down throughout town. (LOT)",
+      "_layer": "outage_event"
+     }
+    },
+    {
+     "type": "Feature",
+     "geometry": {
+      "type": "Point",
+      "coordinates": [
+       -87.79,
+       41.56
+      ]
+     },
+     "properties": {
+      "feature_type": "gust_report",
+      "speed_mph": null,
+      "measured": false,
+      "location": "1 SSE Tinley Park",
+      "county": "Cook",
+      "state": "IL",
+      "date": "2026-08-11",
+      "time_utc": "1548",
+      "comments": "report of significant roof damage and windows blown out of a shopping center and nearby residential building. (LOT)",
+      "_layer": "outage_event"
+     }
+    },
+    {
+     "type": "Feature",
+     "geometry": {
+      "type": "Point",
+      "coordinates": [
+       -87.71,
+       41.49
+      ]
+     },
+     "properties": {
+      "feature_type": "gust_report",
+      "speed_mph": null,
+      "measured": false,
+      "location": "1 ENE Richton Park",
+      "county": "Cook",
+      "state": "IL",
+      "date": "2026-08-11",
+      "time_utc": "1549",
+      "comments": "Photo shared to social media shows damage to canopy over roadway at Richton Park Metra station. Time estimated by radar. (LOT)",
+      "_layer": "outage_event"
+     }
+    },
+    {
+     "type": "Feature",
+     "geometry": {
+      "type": "Point",
+      "coordinates": [
+       -87.69,
+       41.49
+      ]
+     },
+     "properties": {
+      "feature_type": "gust_report",
+      "speed_mph": null,
+      "measured": false,
+      "location": "1 NNW Park Forest",
+      "county": "Cook",
+      "state": "IL",
+      "date": "2026-08-11",
+      "time_utc": "1550",
+      "comments": "Photo shared via social media shows a few large branches broken at Central Park in Park Forest. Also several inches of standing water in parking lots. (LOT)",
+      "_layer": "outage_event"
+     }
+    },
+    {
+     "type": "Feature",
+     "geometry": {
+      "type": "Point",
+      "coordinates": [
+       -87.61,
+       41.45
+      ]
+     },
+     "properties": {
+      "feature_type": "gust_report",
+      "speed_mph": null,
+      "measured": false,
+      "location": "1 ENE Crete",
+      "county": "Will",
+      "state": "IL",
+      "date": "2026-08-11",
+      "time_utc": "1551",
+      "comments": "large pine tree uprooted... partially blocking roadway. (LOT)",
+      "_layer": "outage_event"
+     }
+    },
+    {
+     "type": "Feature",
+     "geometry": {
+      "type": "Point",
+      "coordinates": [
+       -87.68,
+       41.49
+      ]
+     },
+     "properties": {
+      "feature_type": "gust_report",
+      "speed_mph": null,
+      "measured": false,
+      "location": "1 ENE Park Forest",
+      "county": "Cook",
+      "state": "IL",
+      "date": "2026-08-11",
+      "time_utc": "1551",
+      "comments": "Photos shared to social media show multiple large branches broken and at least 2 trees uprooted just northeast of Park Forest Business District. (LOT)",
+      "_layer": "outage_event"
+     }
+    },
+    {
+     "type": "Feature",
+     "geometry": {
+      "type": "Point",
+      "coordinates": [
+       -87.72,
+       41.62
+      ]
+     },
+     "properties": {
+      "feature_type": "gust_report",
+      "speed_mph": null,
+      "measured": false,
+      "location": "Midlothian",
+      "county": "Cook",
+      "state": "IL",
+      "date": "2026-08-11",
+      "time_utc": "1551",
+      "comments": "Photos shared via social media show multiple large branches broken in Midlothian. At least one evergreen uprooted. (LOT)",
+      "_layer": "outage_event"
+     }
+    },
+    {
+     "type": "Feature",
+     "geometry": {
+      "type": "Point",
+      "coordinates": [
+       -87.79,
+       41.33
+      ]
+     },
+     "properties": {
+      "feature_type": "gust_report",
+      "speed_mph": 87,
+      "measured": true,
+      "location": "Peotone",
+      "county": "Will",
+      "state": "IL",
+      "date": "2026-08-11",
+      "time_utc": "1552",
+      "comments": "Peak wind gust of 87 mph. Secondary sensor reported a wind gust of 78 mph prior to power loss. Widespread tree damage reported as well. (LOT)",
+      "_layer": "outage_event"
+     }
+    },
+    {
+     "type": "Feature",
+     "geometry": {
+      "type": "Point",
+      "coordinates": [
+       -87.63,
+       41.44
+      ]
+     },
+     "properties": {
+      "feature_type": "gust_report",
+      "speed_mph": null,
+      "measured": false,
+      "location": "Crete",
+      "county": "Will",
+      "state": "IL",
+      "date": "2026-08-11",
+      "time_utc": "1552",
+      "comments": "large tree down blocking main street. (LOT)",
+      "_layer": "outage_event"
+     }
+    },
+    {
+     "type": "Feature",
+     "geometry": {
+      "type": "Point",
+      "coordinates": [
+       -87.68,
+       41.54
+      ]
+     },
+     "properties": {
+      "feature_type": "gust_report",
+      "speed_mph": null,
+      "measured": false,
+      "location": "1 SE Flossmoor",
+      "county": "Cook",
+      "state": "IL",
+      "date": "2026-08-11",
+      "time_utc": "1552",
+      "comments": "Photos shared of numerous large tree branches down damage to the roof of the house and garage. Time estimated by radar. (LOT)",
+      "_layer": "outage_event"
+     }
+    },
+    {
+     "type": "Feature",
+     "geometry": {
+      "type": "Point",
+      "coordinates": [
+       -87.86,
+       41.14
+      ]
+     },
+     "properties": {
+      "feature_type": "gust_report",
+      "speed_mph": null,
+      "measured": false,
+      "location": "Bradley",
+      "county": "Kankakee",
+      "state": "IL",
+      "date": "2026-08-11",
+      "time_utc": "1553",
+      "comments": "Photos shared via social media show uprooted tree in Bradley. Time estimated by radar. (LOT)",
+      "_layer": "outage_event"
+     }
+    },
+    {
+     "type": "Feature",
+     "geometry": {
+      "type": "Point",
+      "coordinates": [
+       -87.59,
+       41.44
+      ]
+     },
+     "properties": {
+      "feature_type": "gust_report",
+      "speed_mph": null,
+      "measured": false,
+      "location": "2 ESE Crete",
+      "county": "Will",
+      "state": "IL",
+      "date": "2026-08-11",
+      "time_utc": "1553",
+      "comments": "Outbuildings and mobile homes damaged on Burville road east of crete. (LOT)",
+      "_layer": "outage_event"
+     }
+    },
+    {
+     "type": "Feature",
+     "geometry": {
+      "type": "Point",
+      "coordinates": [
+       -87.63,
+       41.44
+      ]
+     },
+     "properties": {
+      "feature_type": "gust_report",
+      "speed_mph": null,
+      "measured": false,
+      "location": "1 S Crete",
+      "county": "Will",
+      "state": "IL",
+      "date": "2026-08-11",
+      "time_utc": "1553",
+      "comments": "large tree uprooted... blocking roadway. (LOT)",
+      "_layer": "outage_event"
+     }
+    },
+    {
+     "type": "Feature",
+     "geometry": {
+      "type": "Point",
+      "coordinates": [
+       -87.64,
+       41.45
+      ]
+     },
+     "properties": {
+      "feature_type": "gust_report",
+      "speed_mph": null,
+      "measured": false,
+      "location": "1 WNW Crete",
+      "county": "Will",
+      "state": "IL",
+      "date": "2026-08-11",
+      "time_utc": "1553",
+      "comments": "large tree uprooted... resting on house. (LOT)",
+      "_layer": "outage_event"
+     }
+    },
+    {
+     "type": "Feature",
+     "geometry": {
+      "type": "Point",
+      "coordinates": [
+       -87.63,
+       41.51
+      ]
+     },
+     "properties": {
+      "feature_type": "gust_report",
+      "speed_mph": null,
+      "measured": false,
+      "location": "1 E Chicago Heights",
+      "county": "Cook",
+      "state": "IL",
+      "date": "2026-08-11",
+      "time_utc": "1553",
+      "comments": "Photo shared via social media shows sections of north facing wall blown out or collapsed from second floor room of building at Green Street and US-30. Large sections of (LOT)",
+      "_layer": "outage_event"
+     }
+    },
+    {
+     "type": "Feature",
+     "geometry": {
+      "type": "Point",
+      "coordinates": [
+       -87.67,
+       41.56
+      ]
+     },
+     "properties": {
+      "feature_type": "gust_report",
+      "speed_mph": null,
+      "measured": false,
+      "location": "Homewood",
+      "county": "Cook",
+      "state": "IL",
+      "date": "2026-08-11",
+      "time_utc": "1553",
+      "comments": "widespread tree damage south side of town. (LOT)",
+      "_layer": "outage_event"
+     }
+    },
+    {
+     "type": "Feature",
+     "geometry": {
+      "type": "Point",
+      "coordinates": [
+       -87.67,
+       41.62
+      ]
+     },
+     "properties": {
+      "feature_type": "gust_report",
+      "speed_mph": null,
+      "measured": false,
+      "location": "1 SSE Posen",
+      "county": "Cook",
+      "state": "IL",
+      "date": "2026-08-11",
+      "time_utc": "1553",
+      "comments": "Multiple photos shared to social media show large branches broken in neighborhoods near Dixie Highway and 150th Street. Time estimated by radar. (LOT)",
+      "_layer": "outage_event"
+     }
+    },
+    {
+     "type": "Feature",
+     "geometry": {
+      "type": "Point",
+      "coordinates": [
+       -87.69,
+       41.82
+      ]
+     },
+     "properties": {
+      "feature_type": "gust_report",
+      "speed_mph": null,
+      "measured": false,
+      "location": "Brighton Park - Chicago",
+      "county": "Cook",
+      "state": "IL",
+      "date": "2026-08-11",
+      "time_utc": "1553",
+      "comments": "trees uprooted. relayed by social media. (LOT)",
+      "_layer": "outage_event"
+     }
+    },
+    {
+     "type": "Feature",
+     "geometry": {
+      "type": "Point",
+      "coordinates": [
+       -87.93,
+       41.18
+      ]
+     },
+     "properties": {
+      "feature_type": "gust_report",
+      "speed_mph": null,
+      "measured": false,
+      "location": "3 WNW Bourbonnais",
+      "county": "Kankakee",
+      "state": "IL",
+      "date": "2026-08-11",
+      "time_utc": "1554",
+      "comments": "Photo on social media showed a large tree limb blown down. Widespread trees and limbs down reported near N 3000 W Road and Route 102. (LOT)",
+      "_layer": "outage_event"
+     }
+    },
+    {
+     "type": "Feature",
+     "geometry": {
+      "type": "Point",
+      "coordinates": [
+       -87.68,
+       41.66
+      ]
+     },
+     "properties": {
+      "feature_type": "gust_report",
+      "speed_mph": null,
+      "measured": false,
+      "location": "Blue Island",
+      "county": "Cook",
+      "state": "IL",
+      "date": "2026-08-11",
+      "time_utc": "1554",
+      "comments": "Multiple photos shared to social media show small branches downed in Blue Island. A few larger branches broken. Time estimated by radar. (LOT)",
+      "_layer": "outage_event"
+     }
+    },
+    {
+     "type": "Feature",
+     "geometry": {
+      "type": "Point",
+      "coordinates": [
+       -87.74,
+       41.79
+      ]
+     },
+     "properties": {
+      "feature_type": "gust_report",
+      "speed_mph": null,
+      "measured": false,
+      "location": "1 NNE Midway Airport",
+      "county": "Cook",
+      "state": "IL",
+      "date": "2026-08-11",
+      "time_utc": "1554",
+      "comments": "Multiple public reports of tree damage in the Garfield Ridge... Clearing... Archer Heights... West Elsdon... West Lawn... Brighton Park... Gage Park... and Chicago Lawn (LOT)",
+      "_layer": "outage_event"
+     }
+    },
+    {
+     "type": "Feature",
+     "geometry": {
+      "type": "Point",
+      "coordinates": [
+       -87.59,
+       41.49
+      ]
+     },
+     "properties": {
+      "feature_type": "gust_report",
+      "speed_mph": null,
+      "measured": false,
+      "location": "1 W Sauk Village",
+      "county": "Cook",
+      "state": "IL",
+      "date": "2026-08-11",
+      "time_utc": "1555",
+      "comments": "7 trailers blown over in industrial area. time estimated by radar. (LOT)",
+      "_layer": "outage_event"
+     }
+    },
+    {
+     "type": "Feature",
+     "geometry": {
+      "type": "Point",
+      "coordinates": [
+       -87.52,
+       41.49
+      ]
+     },
+     "properties": {
+      "feature_type": "gust_report",
+      "speed_mph": null,
+      "measured": false,
+      "location": "1 WSW Dyer",
+      "county": "Lake",
+      "state": "IN",
+      "date": "2026-08-11",
+      "time_utc": "1556",
+      "comments": "Photos shared of siding stripped off a house. Time estimated by radar. (LOT)",
+      "_layer": "outage_event"
+     }
+    },
+    {
+     "type": "Feature",
+     "geometry": {
+      "type": "Point",
+      "coordinates": [
+       -87.56,
+       41.5
+      ]
+     },
+     "properties": {
+      "feature_type": "gust_report",
+      "speed_mph": null,
+      "measured": false,
+      "location": "1 NNE Sauk Village",
+      "county": "Cook",
+      "state": "IL",
+      "date": "2026-08-11",
+      "time_utc": "1556",
+      "comments": "Photos shared to social media shows multiple large branches downed in mobile home park near Sauk Village. At least one tree with trunk split and limbs collapsed onto st (LOT)",
+      "_layer": "outage_event"
+     }
+    },
+    {
+     "type": "Feature",
+     "geometry": {
+      "type": "Point",
+      "coordinates": [
+       -87.61,
+       41.64
+      ]
+     },
+     "properties": {
+      "feature_type": "gust_report",
+      "speed_mph": null,
+      "measured": false,
+      "location": "1 NW Dolton",
+      "county": "Cook",
+      "state": "IL",
+      "date": "2026-08-11",
+      "time_utc": "1556",
+      "comments": "Multiple photos shared to social media show large branches downed across Dolton. Multiple large trees uprooted. Time estimated by radar. (LOT)",
+      "_layer": "outage_event"
+     }
+    },
+    {
+     "type": "Feature",
+     "geometry": {
+      "type": "Point",
+      "coordinates": [
+       -87.68,
+       41.74
+      ]
+     },
+     "properties": {
+      "feature_type": "gust_report",
+      "speed_mph": null,
+      "measured": false,
+      "location": "1 WSW Auburn-Gresham",
+      "county": "Cook",
+      "state": "IL",
+      "date": "2026-08-11",
+      "time_utc": "1556",
+      "comments": "Multiple public reports of tree damage in the Ashburn... Auburn Gresham... Beverly... and Washington Heights community areas of Chicago. Most concentrated damage appear (LOT)",
+      "_layer": "outage_event"
+     }
+    },
+    {
+     "type": "Feature",
+     "geometry": {
+      "type": "Point",
+      "coordinates": [
+       -87.7,
+       41.88
+      ]
+     },
+     "properties": {
+      "feature_type": "gust_report",
+      "speed_mph": null,
+      "measured": false,
+      "location": "1 ESE Garfield Park - C",
+      "county": "Cook",
+      "state": "IL",
+      "date": "2026-08-11",
+      "time_utc": "1556",
+      "comments": "Multiple public reports of tree damage in the Humboldt Park... West Town... West Garfield Park... East Garfield Park... and Near West Side community areas of Chicago. R (LOT)",
+      "_layer": "outage_event"
+     }
+    },
+    {
+     "type": "Feature",
+     "geometry": {
+      "type": "Point",
+      "coordinates": [
+       -87.66,
+       41.16
+      ]
+     },
+     "properties": {
+      "feature_type": "gust_report",
+      "speed_mph": null,
+      "measured": false,
+      "location": "Momence",
+      "county": "Kankakee",
+      "state": "IL",
+      "date": "2026-08-11",
+      "time_utc": "1557",
+      "comments": "Photo shared via social media shows large tree branch downed onto car in Momence. Exact location unknown. Time estimated by radar. (LOT)",
+      "_layer": "outage_event"
+     }
+    },
+    {
+     "type": "Feature",
+     "geometry": {
+      "type": "Point",
+      "coordinates": [
+       -87.63,
+       41.73
+      ]
+     },
+     "properties": {
+      "feature_type": "gust_report",
+      "speed_mph": null,
+      "measured": false,
+      "location": "1 NE Washington Hts - C",
+      "county": "Cook",
+      "state": "IL",
+      "date": "2026-08-11",
+      "time_utc": "1557",
+      "comments": "Multiple public reports of tree damage in the Washington Heights... Roseland... Chatham and Burnside community areas of Chicago. Most concentrated damage appears to be (LOT)",
+      "_layer": "outage_event"
+     }
+    },
+    {
+     "type": "Feature",
+     "geometry": {
+      "type": "Point",
+      "coordinates": [
+       -87.48,
+       41.45
+      ]
+     },
+     "properties": {
+      "feature_type": "gust_report",
+      "speed_mph": 80,
+      "measured": true,
+      "location": "St. John",
+      "county": "Lake",
+      "state": "IN",
+      "date": "2026-08-11",
+      "time_utc": "1558",
+      "comments": "(LOT)",
+      "_layer": "outage_event"
+     }
+    },
+    {
+     "type": "Feature",
+     "geometry": {
+      "type": "Point",
+      "coordinates": [
+       -87.83,
+       41.17
+      ]
+     },
+     "properties": {
+      "feature_type": "gust_report",
+      "speed_mph": 91,
+      "measured": true,
+      "location": "3 NE Bradley",
+      "county": "Kankakee",
+      "state": "IL",
+      "date": "2026-08-11",
+      "time_utc": "1559",
+      "comments": "Corrects previous tstm wnd gst report from 3 NE Bradley. Private weather station: KILBOURB2. (LOT)",
+      "_layer": "outage_event"
+     }
+    },
+    {
+     "type": "Feature",
+     "geometry": {
+      "type": "Point",
+      "coordinates": [
+       -87.76,
+       41.66
+      ]
+     },
+     "properties": {
+      "feature_type": "gust_report",
+      "speed_mph": null,
+      "measured": false,
+      "location": "1 WNW Crestwood",
+      "county": "Cook",
+      "state": "IL",
+      "date": "2026-08-11",
+      "time_utc": "1559",
+      "comments": "large branches downed... relayed by social media. (LOT)",
+      "_layer": "outage_event"
+     }
+    },
+    {
+     "type": "Feature",
+     "geometry": {
+      "type": "Point",
+      "coordinates": [
+       -87.58,
+       41.73
+      ]
+     },
+     "properties": {
+      "feature_type": "gust_report",
+      "speed_mph": null,
+      "measured": false,
+      "location": "Calumet Hts. - Chicago",
+      "county": "Cook",
+      "state": "IL",
+      "date": "2026-08-11",
+      "time_utc": "1559",
+      "comments": "Widespread public reports of tree damage in the Avalon Park... Calumet Heights... and South Chicago community areas of Chicago. Most concentrated area of damage appears (LOT)",
+      "_layer": "outage_event"
+     }
+    },
+    {
+     "type": "Feature",
+     "geometry": {
+      "type": "Point",
+      "coordinates": [
+       -87.43,
+       41.37
+      ]
+     },
+     "properties": {
+      "feature_type": "gust_report",
+      "speed_mph": null,
+      "measured": false,
+      "location": "1 ENE Cedar Lake",
+      "county": "Lake",
+      "state": "IN",
+      "date": "2026-08-11",
+      "time_utc": "1600",
+      "comments": "Photo shared to social media shows tree uprooted along the shore of Cedar Lake. Time estimated by radar. (LOT)",
+      "_layer": "outage_event"
+     }
+    },
+    {
+     "type": "Feature",
+     "geometry": {
+      "type": "Point",
+      "coordinates": [
+       -87.36,
+       41.42
+      ]
+     },
+     "properties": {
+      "feature_type": "gust_report",
+      "speed_mph": null,
+      "measured": false,
+      "location": "Crown Point",
+      "county": "Lake",
+      "state": "IN",
+      "date": "2026-08-11",
+      "time_utc": "1600",
+      "comments": "numerous trees and power lines down throughout town... blocking many roadways. (LOT)",
+      "_layer": "outage_event"
+     }
+    },
+    {
+     "type": "Feature",
+     "geometry": {
+      "type": "Point",
+      "coordinates": [
+       -87.51,
+       41.56
+      ]
+     },
+     "properties": {
+      "feature_type": "gust_report",
+      "speed_mph": null,
+      "measured": false,
+      "location": "1 NNW Munster",
+      "county": "Lake",
+      "state": "IN",
+      "date": "2026-08-11",
+      "time_utc": "1600",
+      "comments": "numerous trees reported uprooted and down in town. some roadways blocked. relayed by broadcast media. (LOT)",
+      "_layer": "outage_event"
+     }
+    },
+    {
+     "type": "Feature",
+     "geometry": {
+      "type": "Point",
+      "coordinates": [
+       -87.53,
+       41.61
+      ]
+     },
+     "properties": {
+      "feature_type": "gust_report",
+      "speed_mph": null,
+      "measured": false,
+      "location": "Calumet City",
+      "county": "Cook",
+      "state": "IL",
+      "date": "2026-08-11",
+      "time_utc": "1600",
+      "comments": "Photos and videos shared via social media show large branches downed in Calumet City. Time estimated by radar. (LOT)",
+      "_layer": "outage_event"
+     }
+    },
+    {
+     "type": "Feature",
+     "geometry": {
+      "type": "Point",
+      "coordinates": [
+       -87.63,
+       41.83
+      ]
+     },
+     "properties": {
+      "feature_type": "gust_report",
+      "speed_mph": null,
+      "measured": false,
+      "location": "1 SW Douglas - Chicago",
+      "county": "Cook",
+      "state": "IL",
+      "date": "2026-08-11",
+      "time_utc": "1600",
+      "comments": "Isolated to widely scattered public reports of tree damage in the Bridgeport... Armour Square... Douglas... New City... Fuller Park... Grand Boulevard... Oakland... and (LOT)",
+      "_layer": "outage_event"
+     }
+    },
+    {
+     "type": "Feature",
+     "geometry": {
+      "type": "Point",
+      "coordinates": [
+       -87.57,
+       41.92
+      ]
+     },
+     "properties": {
+      "feature_type": "gust_report",
+      "speed_mph": 60,
+      "measured": true,
+      "location": "3 NE Navy Pier",
+      "county": "LMZ741",
+      "state": "IL",
+      "date": "2026-08-11",
+      "time_utc": "1600",
+      "comments": "Mesonet station CHII2 Harrison-Dever Crib. Peak gust of 52.1 kt before data loss. (LOT)",
+      "_layer": "outage_event"
+     }
+    },
+    {
+     "type": "Feature",
+     "geometry": {
+      "type": "Point",
+      "coordinates": [
+       -87.84,
+       41.53
+      ]
+     },
+     "properties": {
+      "feature_type": "gust_report",
+      "speed_mph": 91,
+      "measured": true,
+      "location": "2 E Mokena",
+      "county": "Will",
+      "state": "IL",
+      "date": "2026-08-11",
+      "time_utc": "1601",
+      "comments": "Near 195th and La Grange Road. (LOT)",
+      "_layer": "outage_event"
+     }
+    },
+    {
+     "type": "Feature",
+     "geometry": {
+      "type": "Point",
+      "coordinates": [
+       -87.43,
+       41.52
+      ]
+     },
+     "properties": {
+      "feature_type": "gust_report",
+      "speed_mph": null,
+      "measured": false,
+      "location": "1 S Griffith",
+      "county": "Lake",
+      "state": "IN",
+      "date": "2026-08-11",
+      "time_utc": "1602",
+      "comments": "large branches down on Rensselaer Street. Time estimated by radar. (LOT)",
+      "_layer": "outage_event"
+     }
+    },
+    {
+     "type": "Feature",
+     "geometry": {
+      "type": "Point",
+      "coordinates": [
+       -87.45,
+       41.55
+      ]
+     },
+     "properties": {
+      "feature_type": "gust_report",
+      "speed_mph": null,
+      "measured": false,
+      "location": "Highland",
+      "county": "Lake",
+      "state": "IN",
+      "date": "2026-08-11",
+      "time_utc": "1602",
+      "comments": "Photos shared of a tree branch that impaled the interior ceiling. Time estimated by radar. (LOT)",
+      "_layer": "outage_event"
+     }
+    },
+    {
+     "type": "Feature",
+     "geometry": {
+      "type": "Point",
+      "coordinates": [
+       -87.75,
+       41.96
+      ]
+     },
+     "properties": {
+      "feature_type": "gust_report",
+      "speed_mph": null,
+      "measured": false,
+      "location": "1 NE Portage Park - Chi",
+      "county": "Cook",
+      "state": "IL",
+      "date": "2026-08-11",
+      "time_utc": "1602",
+      "comments": "Isolated to widely scattered public reports of tree damage in the Norwood Park... Jefferson Park... Forest Glen... Portage Park... Dunning... Irving Park... Albany Park (LOT)",
+      "_layer": "outage_event"
+     }
+    },
+    {
+     "type": "Feature",
+     "geometry": {
+      "type": "Point",
+      "coordinates": [
+       -88.21,
+       41.29
+      ]
+     },
+     "properties": {
+      "feature_type": "gust_report",
+      "speed_mph": null,
+      "measured": false,
+      "location": "2 N Braidwood",
+      "county": "Will",
+      "state": "IL",
+      "date": "2026-08-11",
+      "time_utc": "1603",
+      "comments": "There are numerous trees down in the area. (LOT)",
+      "_layer": "outage_event"
+     }
+    },
+    {
+     "type": "Feature",
+     "geometry": {
+      "type": "Point",
+      "coordinates": [
+       -87.42,
+       41.38
+      ]
+     },
+     "properties": {
+      "feature_type": "gust_report",
+      "speed_mph": 73,
+      "measured": true,
+      "location": "2 NE Cedar Lake",
+      "county": "Lake",
+      "state": "IN",
+      "date": "2026-08-11",
+      "time_utc": "1603",
+      "comments": "Private weather station: KINCEDAR5. (LOT)",
+      "_layer": "outage_event"
+     }
+    },
+    {
+     "type": "Feature",
+     "geometry": {
+      "type": "Point",
+      "coordinates": [
+       -87.5,
+       41.54
+      ]
+     },
+     "properties": {
+      "feature_type": "gust_report",
+      "speed_mph": 76,
+      "measured": true,
+      "location": "Munster",
+      "county": "Lake",
+      "state": "IN",
+      "date": "2026-08-11",
+      "time_utc": "1603",
+      "comments": "Private weather station. (LOT)",
+      "_layer": "outage_event"
+     }
+    },
+    {
+     "type": "Feature",
+     "geometry": {
+      "type": "Point",
+      "coordinates": [
+       -87.45,
+       41.44
+      ]
+     },
+     "properties": {
+      "feature_type": "gust_report",
+      "speed_mph": 72,
+      "measured": true,
+      "location": "1 ESE St. John",
+      "county": "Lake",
+      "state": "IN",
+      "date": "2026-08-11",
+      "time_utc": "1604",
+      "comments": "Private weather station: KINSAINT. (LOT)",
+      "_layer": "outage_event"
+     }
+    },
+    {
+     "type": "Feature",
+     "geometry": {
+      "type": "Point",
+      "coordinates": [
+       -87.5,
+       41.68
+      ]
+     },
+     "properties": {
+      "feature_type": "gust_report",
+      "speed_mph": null,
+      "measured": false,
+      "location": "Whiting",
+      "county": "Lake",
+      "state": "IN",
+      "date": "2026-08-11",
+      "time_utc": "1604",
+      "comments": "Photos shared of large tree branches snapped. Time estimated by radar. (LOT)",
+      "_layer": "outage_event"
+     }
+    },
+    {
+     "type": "Feature",
+     "geometry": {
+      "type": "Point",
+      "coordinates": [
+       -88.14,
+       42.07
+      ]
+     },
+     "properties": {
+      "feature_type": "gust_report",
+      "speed_mph": 81,
+      "measured": true,
+      "location": "1 SSE South Barrington",
+      "county": "Cook",
+      "state": "IL",
+      "date": "2026-08-11",
+      "time_utc": "1604",
+      "comments": "Private weather station. (LOT)",
+      "_layer": "outage_event"
+     }
+    },
+    {
+     "type": "Feature",
+     "geometry": {
+      "type": "Point",
+      "coordinates": [
+       -87.34,
+       41.54
+      ]
+     },
+     "properties": {
+      "feature_type": "gust_report",
+      "speed_mph": null,
+      "measured": false,
+      "location": "4 WSW New Chicago",
+      "county": "Lake",
+      "state": "IN",
+      "date": "2026-08-11",
+      "time_utc": "1605",
+      "comments": "Photo shared via social media shows broken power pole near 45th Avenue and Jackson Street. Time estimated by radar. (LOT)",
+      "_layer": "outage_event"
+     }
+    },
+    {
+     "type": "Feature",
+     "geometry": {
+      "type": "Point",
+      "coordinates": [
+       -87.32,
+       41.59
+      ]
+     },
+     "properties": {
+      "feature_type": "gust_report",
+      "speed_mph": null,
+      "measured": false,
+      "location": "1 ESE Gary",
+      "county": "Lake",
+      "state": "IN",
+      "date": "2026-08-11",
+      "time_utc": "1606",
+      "comments": "large branches downed... at least 1 tree uprooted in the Pulaski neighborhood. (LOT)",
+      "_layer": "outage_event"
+     }
+    },
+    {
+     "type": "Feature",
+     "geometry": {
+      "type": "Point",
+      "coordinates": [
+       -87.37,
+       41.43
+      ]
+     },
+     "properties": {
+      "feature_type": "gust_report",
+      "speed_mph": 70,
+      "measured": true,
+      "location": "1 NNW Crown Point",
+      "county": "Lake",
+      "state": "IN",
+      "date": "2026-08-11",
+      "time_utc": "1607",
+      "comments": "Private weather station. (LOT)",
+      "_layer": "outage_event"
+     }
+    },
+    {
+     "type": "Feature",
+     "geometry": {
+      "type": "Point",
+      "coordinates": [
+       -87.27,
+       41.6
+      ]
+     },
+     "properties": {
+      "feature_type": "gust_report",
+      "speed_mph": null,
+      "measured": false,
+      "location": "2 NW Lake Station",
+      "county": "Lake",
+      "state": "IN",
+      "date": "2026-08-11",
+      "time_utc": "1607",
+      "comments": "several trees uprooted. (LOT)",
+      "_layer": "outage_event"
+     }
+    },
+    {
+     "type": "Feature",
+     "geometry": {
+      "type": "Point",
+      "coordinates": [
+       -87.26,
+       41.53
+      ]
+     },
+     "properties": {
+      "feature_type": "gust_report",
+      "speed_mph": null,
+      "measured": false,
+      "location": "Hobart",
+      "county": "Lake",
+      "state": "IN",
+      "date": "2026-08-11",
+      "time_utc": "1608",
+      "comments": "Video shared to social media shows evergreen uprooted onto power line in Hobart. A few other large branches downed in vicinity. Time estimated by radar. (LOT)",
+      "_layer": "outage_event"
+     }
+    },
+    {
+     "type": "Feature",
+     "geometry": {
+      "type": "Point",
+      "coordinates": [
+       -87.24,
+       41.42
+      ]
+     },
+     "properties": {
+      "feature_type": "gust_report",
+      "speed_mph": null,
+      "measured": false,
+      "location": "1 NW Lakes of the Four",
+      "county": "Lake",
+      "state": "IN",
+      "date": "2026-08-11",
+      "time_utc": "1609",
+      "comments": "Photo shared of a large tree uprooted. Time estimated by radar. (LOT)",
+      "_layer": "outage_event"
+     }
+    },
+    {
+     "type": "Feature",
+     "geometry": {
+      "type": "Point",
+      "coordinates": [
+       -87.41,
+       41.62
+      ]
+     },
+     "properties": {
+      "feature_type": "gust_report",
+      "speed_mph": 99,
+      "measured": true,
+      "location": "Gary Airport",
+      "county": "Lake",
+      "state": "IN",
+      "date": "2026-08-11",
+      "time_utc": "1609",
+      "comments": "Peak gust of 86 kt or 99 mph measured at Gary Airport Tower. (LOT)",
+      "_layer": "outage_event"
+     }
+    },
+    {
+     "type": "Feature",
+     "geometry": {
+      "type": "Point",
+      "coordinates": [
+       -87.77,
+       41.72
+      ]
+     },
+     "properties": {
+      "feature_type": "gust_report",
+      "speed_mph": 70,
+      "measured": true,
+      "location": "1 W Oak Lawn",
+      "county": "Cook",
+      "state": "IL",
+      "date": "2026-08-11",
+      "time_utc": "1609",
+      "comments": "(LOT)",
+      "_layer": "outage_event"
+     }
+    },
+    {
+     "type": "Feature",
+     "geometry": {
+      "type": "Point",
+      "coordinates": [
+       -87.28,
+       41.6
+      ]
+     },
+     "properties": {
+      "feature_type": "gust_report",
+      "speed_mph": null,
+      "measured": false,
+      "location": "2 NW Lake Station",
+      "county": "Lake",
+      "state": "IN",
+      "date": "2026-08-11",
+      "time_utc": "1610",
+      "comments": "*** 1 FATAL *** Local broadcast media reported than an unhoused woman was struck by roofing debris and killed during the derecho. The incident was first reported at 12: (LOT)",
+      "_layer": "outage_event"
+     }
+    },
+    {
+     "type": "Feature",
+     "geometry": {
+      "type": "Point",
+      "coordinates": [
+       -87.21,
+       41.6
+      ]
+     },
+     "properties": {
+      "feature_type": "gust_report",
+      "speed_mph": null,
+      "measured": false,
+      "location": "2 SSW Ogden Dunes",
+      "county": "Porter",
+      "state": "IN",
+      "date": "2026-08-11",
+      "time_utc": "1613",
+      "comments": "Drone imagery shared via social media shows widespread tree damage at Lakeshore Resort campground. Numerous trees with large branches broken... several trees uprooted o (LOT)",
+      "_layer": "outage_event"
+     }
+    },
+    {
+     "type": "Feature",
+     "geometry": {
+      "type": "Point",
+      "coordinates": [
+       -87.29,
+       41.16
+      ]
+     },
+     "properties": {
+      "feature_type": "gust_report",
+      "speed_mph": null,
+      "measured": false,
+      "location": "Roselawn",
+      "county": "Newton",
+      "state": "IN",
+      "date": "2026-08-11",
+      "time_utc": "1615",
+      "comments": "Large limbs down. (LOT)",
+      "_layer": "outage_event"
+     }
+    },
+    {
+     "type": "Feature",
+     "geometry": {
+      "type": "Point",
+      "coordinates": [
+       -87.08,
+       41.47
+      ]
+     },
+     "properties": {
+      "feature_type": "gust_report",
+      "speed_mph": null,
+      "measured": false,
+      "location": "1 W Valparaiso",
+      "county": "Porter",
+      "state": "IN",
+      "date": "2026-08-11",
+      "time_utc": "1616",
+      "comments": "numerous limbs and branches down in area. (LOT)",
+      "_layer": "outage_event"
+     }
+    },
+    {
+     "type": "Feature",
+     "geometry": {
+      "type": "Point",
+      "coordinates": [
+       -87.18,
+       41.58
+      ]
+     },
+     "properties": {
+      "feature_type": "gust_report",
+      "speed_mph": null,
+      "measured": false,
+      "location": "Portage",
+      "county": "Porter",
+      "state": "IN",
+      "date": "2026-08-11",
+      "time_utc": "1616",
+      "comments": "Numerous Power Poles and Trees Down. (LOT)",
+      "_layer": "outage_event"
+     }
+    },
+    {
+     "type": "Feature",
+     "geometry": {
+      "type": "Point",
+      "coordinates": [
+       -88.44,
+       41.27
+      ]
+     },
+     "properties": {
+      "feature_type": "gust_report",
+      "speed_mph": 65,
+      "measured": true,
+      "location": "2 NNW Mazon",
+      "county": "Grundy",
+      "state": "IL",
+      "date": "2026-08-11",
+      "time_utc": "1617",
+      "comments": "Private weather station: 2.4 NNW Mazon. (LOT)",
+      "_layer": "outage_event"
+     }
+    },
+    {
+     "type": "Feature",
+     "geometry": {
+      "type": "Point",
+      "coordinates": [
+       -87.05,
+       41.46
+      ]
+     },
+     "properties": {
+      "feature_type": "gust_report",
+      "speed_mph": null,
+      "measured": false,
+      "location": "1 SSE Valparaiso",
+      "county": "Porter",
+      "state": "IN",
+      "date": "2026-08-11",
+      "time_utc": "1617",
+      "comments": "Photo on social media showed a large tree limb and power lines down near College Avenue and Union Street. (LOT)",
+      "_layer": "outage_event"
+     }
+    },
+    {
+     "type": "Feature",
+     "geometry": {
+      "type": "Point",
+      "coordinates": [
+       -87.05,
+       41.61
+      ]
+     },
+     "properties": {
+      "feature_type": "gust_report",
+      "speed_mph": null,
+      "measured": false,
+      "location": "1 ESE Chesterton",
+      "county": "Porter",
+      "state": "IN",
+      "date": "2026-08-11",
+      "time_utc": "1618",
+      "comments": "tree down across Porter Ave... blocking roadway. (LOT)",
+      "_layer": "outage_event"
+     }
+    },
+    {
+     "type": "Feature",
+     "geometry": {
+      "type": "Point",
+      "coordinates": [
+       -85.15,
+       40.49
+      ]
+     },
+     "properties": {
+      "feature_type": "gust_report",
+      "speed_mph": null,
+      "measured": false,
+      "location": "Pennville",
+      "county": "Jay",
+      "state": "IN",
+      "date": "2026-08-11",
+      "time_utc": "1620",
+      "comments": "A couple of 1-1.5 diameter trees uprooted. Tree has some rotting but difficult to ascertain from photo. The tree appears healthy from appearance otherwise. Parts of tre (IWX)",
+      "_layer": "outage_event"
+     }
+    },
+    {
+     "type": "Feature",
+     "geometry": {
+      "type": "Point",
+      "coordinates": [
+       -87.02,
+       41.57
+      ]
+     },
+     "properties": {
+      "feature_type": "gust_report",
+      "speed_mph": null,
+      "measured": false,
+      "location": "4 SE Chesterton",
+      "county": "Porter",
+      "state": "IN",
+      "date": "2026-08-11",
+      "time_utc": "1620",
+      "comments": "Video shared to social media shows widespread tree damage along 250 East Road north of Tratebas Road. Roadway blocked in multiple areas due to large branches downed and (LOT)",
+      "_layer": "outage_event"
+     }
+    },
+    {
+     "type": "Feature",
+     "geometry": {
+      "type": "Point",
+      "coordinates": [
+       -87.6,
+       41.77
+      ]
+     },
+     "properties": {
+      "feature_type": "gust_report",
+      "speed_mph": null,
+      "measured": false,
+      "location": "Woodlawn - Chicago",
+      "county": "Cook",
+      "state": "IL",
+      "date": "2026-08-11",
+      "time_utc": "1620",
+      "comments": "Large 9 inch diameter tree branches down on road. (LOT)",
+      "_layer": "outage_event"
+     }
+    },
+    {
+     "type": "Feature",
+     "geometry": {
+      "type": "Point",
+      "coordinates": [
+       -88.13,
+       41.34
+      ]
+     },
+     "properties": {
+      "feature_type": "gust_report",
+      "speed_mph": 61,
+      "measured": true,
+      "location": "2 NNE Wilmington",
+      "county": "Will",
+      "state": "IL",
+      "date": "2026-08-11",
+      "time_utc": "1623",
+      "comments": "weather station at midewin tallgrass prairie. (LOT)",
+      "_layer": "outage_event"
+     }
+    },
+    {
+     "type": "Feature",
+     "geometry": {
+      "type": "Point",
+      "coordinates": [
+       -87.1,
+       41.65
+      ]
+     },
+     "properties": {
+      "feature_type": "gust_report",
+      "speed_mph": 60,
+      "measured": true,
+      "location": "1 W Dune Acres",
+      "county": "Porter",
+      "state": "IN",
+      "date": "2026-08-11",
+      "time_utc": "1623",
+      "comments": "Private weather station. (LOT)",
+      "_layer": "outage_event"
+     }
+    },
+    {
+     "type": "Feature",
+     "geometry": {
+      "type": "Point",
+      "coordinates": [
+       -86.89,
+       41.43
+      ]
+     },
+     "properties": {
+      "feature_type": "gust_report",
+      "speed_mph": null,
+      "measured": false,
+      "location": "Wanatah",
+      "county": "La Porte",
+      "state": "IN",
+      "date": "2026-08-11",
+      "time_utc": "1625",
+      "comments": "Numerous trees (0.5 to 1.5 ft diameter) downed. Varying degrees of health. Some snapped off. Numerous 3-6 inch limbs downed... a couple slightly larger. One fell onto a (IWX)",
+      "_layer": "outage_event"
+     }
+    },
+    {
+     "type": "Feature",
+     "geometry": {
+      "type": "Point",
+      "coordinates": [
+       -85.5,
+       40.31
+      ]
+     },
+     "properties": {
+      "feature_type": "gust_report",
+      "speed_mph": null,
+      "measured": false,
+      "location": "Gaston",
+      "county": "Delaware",
+      "state": "IN",
+      "date": "2026-08-11",
+      "time_utc": "1630",
+      "comments": "Picture of tree down in Gaston. (IND)",
+      "_layer": "outage_event"
+     }
+    },
+    {
+     "type": "Feature",
+     "geometry": {
+      "type": "Point",
+      "coordinates": [
+       -86.9,
+       41.53
+      ]
+     },
+     "properties": {
+      "feature_type": "gust_report",
+      "speed_mph": null,
+      "measured": false,
+      "location": "1 SSE Westville",
+      "county": "La Porte",
+      "state": "IN",
+      "date": "2026-08-11",
+      "time_utc": "1630",
+      "comments": "Trees down for several miles on US 6. (IWX)",
+      "_layer": "outage_event"
+     }
+    },
+    {
+     "type": "Feature",
+     "geometry": {
+      "type": "Point",
+      "coordinates": [
+       -86.91,
+       41.54
+      ]
+     },
+     "properties": {
+      "feature_type": "gust_report",
+      "speed_mph": null,
+      "measured": false,
+      "location": "Westville",
+      "county": "La Porte",
+      "state": "IN",
+      "date": "2026-08-11",
+      "time_utc": "1630",
+      "comments": "Large tree down onto a home in Westville. Time estimated via radar. (IWX)",
+      "_layer": "outage_event"
+     }
+    },
+    {
+     "type": "Feature",
+     "geometry": {
+      "type": "Point",
+      "coordinates": [
+       -86.73,
+       41.61
+      ]
+     },
+     "properties": {
+      "feature_type": "gust_report",
+      "speed_mph": null,
+      "measured": false,
+      "location": "1 W La Porte",
+      "county": "La Porte",
+      "state": "IN",
+      "date": "2026-08-11",
+      "time_utc": "1630",
+      "comments": "Several 1-1.5 ft diameter trees downed on a truck. No injuries reported. A couple of the trees were snapped off. Trees appear healthy-no visible rotting. (IWX)",
+      "_layer": "outage_event"
+     }
+    },
+    {
+     "type": "Feature",
+     "geometry": {
+      "type": "Point",
+      "coordinates": [
+       -85.13,
+       40.49
+      ]
+     },
+     "properties": {
+      "feature_type": "gust_report",
+      "speed_mph": null,
+      "measured": false,
+      "location": "1 E Pennville",
+      "county": "Jay",
+      "state": "IN",
+      "date": "2026-08-11",
+      "time_utc": "1632",
+      "comments": "Video of a 3-6 inch tree limb snapping off and falling onto a roof. Appears to be some shingle damage. (IWX)",
+      "_layer": "outage_event"
+     }
+    },
+    {
+     "type": "Feature",
+     "geometry": {
+      "type": "Point",
+      "coordinates": [
+       -86.91,
+       41.73
+      ]
+     },
+     "properties": {
+      "feature_type": "gust_report",
+      "speed_mph": 74,
+      "measured": true,
+      "location": "2 NW Michigan City",
+      "county": "LMZ046",
+      "state": "IN",
+      "date": "2026-08-11",
+      "time_utc": "1632",
+      "comments": "MCYI3. (IWX)",
+      "_layer": "outage_event"
+     }
+    },
+    {
+     "type": "Feature",
+     "geometry": {
+      "type": "Point",
+      "coordinates": [
+       -86.66,
+       40.98
+      ]
+     },
+     "properties": {
+      "feature_type": "gust_report",
+      "speed_mph": null,
+      "measured": false,
+      "location": "Pulaski",
+      "county": "Pulaski",
+      "state": "IN",
+      "date": "2026-08-11",
+      "time_utc": "1634",
+      "comments": "Time is approx. when storm entered the county. Facebook post from Pulaski County Sheriff reported clearing trees from various roads around the county (not listed). (IWX)",
+      "_layer": "outage_event"
+     }
+    },
+    {
+     "type": "Feature",
+     "geometry": {
+      "type": "Point",
+      "coordinates": [
+       -86.71,
+       41.61
+      ]
+     },
+     "properties": {
+      "feature_type": "gust_report",
+      "speed_mph": 58,
+      "measured": true,
+      "location": "La Porte",
+      "county": "La Porte",
+      "state": "IN",
+      "date": "2026-08-11",
+      "time_utc": "1634",
+      "comments": "(IWX)",
+      "_layer": "outage_event"
+     }
+    },
+    {
+     "type": "Feature",
+     "geometry": {
+      "type": "Point",
+      "coordinates": [
+       -86.71,
+       41.61
+      ]
+     },
+     "properties": {
+      "feature_type": "gust_report",
+      "speed_mph": null,
+      "measured": false,
+      "location": "La Porte",
+      "county": "La Porte",
+      "state": "IN",
+      "date": "2026-08-11",
+      "time_utc": "1634",
+      "comments": "Tree fell onto a garage... causing garage and side door to bow out. (IWX)",
+      "_layer": "outage_event"
+     }
+    },
+    {
+     "type": "Feature",
+     "geometry": {
+      "type": "Point",
+      "coordinates": [
+       -86.85,
+       41.65
+      ]
+     },
+     "properties": {
+      "feature_type": "gust_report",
+      "speed_mph": null,
+      "measured": false,
+      "location": "2 S Waterford",
+      "county": "La Porte",
+      "state": "IN",
+      "date": "2026-08-11",
+      "time_utc": "1634",
+      "comments": "Tree down on Wozniak Road. Time estimated via radar. (IWX)",
+      "_layer": "outage_event"
+     }
+    },
+    {
+     "type": "Feature",
+     "geometry": {
+      "type": "Point",
+      "coordinates": [
+       -86.93,
+       41.73
+      ]
+     },
+     "properties": {
+      "feature_type": "gust_report",
+      "speed_mph": 75,
+      "measured": true,
+      "location": "4 NE Beverly Shores",
+      "county": "LMZ745",
+      "state": "IN",
+      "date": "2026-08-11",
+      "time_utc": "1634",
+      "comments": "Gust to 65 knots at the Michigan City GLERL site. (LOT)",
+      "_layer": "outage_event"
+     }
+    },
+    {
+     "type": "Feature",
+     "geometry": {
+      "type": "Point",
+      "coordinates": [
+       -86.73,
+       41.57
+      ]
+     },
+     "properties": {
+      "feature_type": "gust_report",
+      "speed_mph": 58,
+      "measured": true,
+      "location": "3 SSW La Porte",
+      "county": "La Porte",
+      "state": "IN",
+      "date": "2026-08-11",
+      "time_utc": "1635",
+      "comments": "AWOS station KPPO La Porte. (IWX)",
+      "_layer": "outage_event"
+     }
+    },
+    {
+     "type": "Feature",
+     "geometry": {
+      "type": "Point",
+      "coordinates": [
+       -86.87,
+       41.58
+      ]
+     },
+     "properties": {
+      "feature_type": "gust_report",
+      "speed_mph": null,
+      "measured": false,
+      "location": "1 NW Pinhook",
+      "county": "La Porte",
+      "state": "IN",
+      "date": "2026-08-11",
+      "time_utc": "1635",
+      "comments": "Tree down onto powerlines on Holmesville Road. Relayed by broadcast media. Time estimated via radar. (IWX)",
+      "_layer": "outage_event"
+     }
+    },
+    {
+     "type": "Feature",
+     "geometry": {
+      "type": "Point",
+      "coordinates": [
+       -86.69,
+       41.61
+      ]
+     },
+     "properties": {
+      "feature_type": "gust_report",
+      "speed_mph": null,
+      "measured": false,
+      "location": "1 ENE La Porte",
+      "county": "La Porte",
+      "state": "IN",
+      "date": "2026-08-11",
+      "time_utc": "1635",
+      "comments": "Tree down across railroad tracks east of La Porte. (IWX)",
+      "_layer": "outage_event"
+     }
+    },
+    {
+     "type": "Feature",
+     "geometry": {
+      "type": "Point",
+      "coordinates": [
+       -86.89,
+       41.68
+      ]
+     },
+     "properties": {
+      "feature_type": "gust_report",
+      "speed_mph": null,
+      "measured": false,
+      "location": "2 WSW Trail Creek",
+      "county": "La Porte",
+      "state": "IN",
+      "date": "2026-08-11",
+      "time_utc": "1635",
+      "comments": "Numerous trees down and powerlines down south of Michigan City. Time estimated via radar. (IWX)",
+      "_layer": "outage_event"
+     }
+    },
+    {
+     "type": "Feature",
+     "geometry": {
+      "type": "Point",
+      "coordinates": [
+       -86.88,
+       41.7
+      ]
+     },
+     "properties": {
+      "feature_type": "gust_report",
+      "speed_mph": null,
+      "measured": false,
+      "location": "1 S Michigan City",
+      "county": "La Porte",
+      "state": "IN",
+      "date": "2026-08-11",
+      "time_utc": "1635",
+      "comments": "Trees and powerlines downed south of Michigan City... with some of the trees blocking roads. (IWX)",
+      "_layer": "outage_event"
+     }
+    },
+    {
+     "type": "Feature",
+     "geometry": {
+      "type": "Point",
+      "coordinates": [
+       -86.62,
+       41.29
+      ]
+     },
+     "properties": {
+      "feature_type": "gust_report",
+      "speed_mph": null,
+      "measured": false,
+      "location": "Knox",
+      "county": "Starke",
+      "state": "IN",
+      "date": "2026-08-11",
+      "time_utc": "1639",
+      "comments": "Several tree limbs 3-6 inch in diameter downed. One snapped off. (IWX)",
+      "_layer": "outage_event"
+     }
+    },
+    {
+     "type": "Feature",
+     "geometry": {
+      "type": "Point",
+      "coordinates": [
+       -86.62,
+       41.29
+      ]
+     },
+     "properties": {
+      "feature_type": "gust_report",
+      "speed_mph": null,
+      "measured": false,
+      "location": "Knox",
+      "county": "Starke",
+      "state": "IN",
+      "date": "2026-08-11",
+      "time_utc": "1640",
+      "comments": "Tree down in Knox. Time estimated via radar. (IWX)",
+      "_layer": "outage_event"
+     }
+    },
+    {
+     "type": "Feature",
+     "geometry": {
+      "type": "Point",
+      "coordinates": [
+       -86.6,
+       41.32
+      ]
+     },
+     "properties": {
+      "feature_type": "gust_report",
+      "speed_mph": null,
+      "measured": false,
+      "location": "2 NNE Knox",
+      "county": "Starke",
+      "state": "IN",
+      "date": "2026-08-11",
+      "time_utc": "1640",
+      "comments": "Downed trees on 150 North in Knox. Time estimated via radar. (IWX)",
+      "_layer": "outage_event"
+     }
+    },
+    {
+     "type": "Feature",
+     "geometry": {
+      "type": "Point",
+      "coordinates": [
+       -86.67,
+       41.33
+      ]
+     },
+     "properties": {
+      "feature_type": "gust_report",
+      "speed_mph": 71,
+      "measured": true,
+      "location": "2 ESE Brems",
+      "county": "Starke",
+      "state": "IN",
+      "date": "2026-08-11",
+      "time_utc": "1640",
+      "comments": "AWOS station KOXI Knox - Starke Co. Airport. (IWX)",
+      "_layer": "outage_event"
+     }
+    },
+    {
+     "type": "Feature",
+     "geometry": {
+      "type": "Point",
+      "coordinates": [
+       -86.52,
+       41.49
+      ]
+     },
+     "properties": {
+      "feature_type": "gust_report",
+      "speed_mph": null,
+      "measured": false,
+      "location": "3 NW Walkerton",
+      "county": "St. Joseph",
+      "state": "IN",
+      "date": "2026-08-11",
+      "time_utc": "1640",
+      "comments": "2 Healthy Trees uprooted and completely blocking SR 104. Road impassible. (IWX)",
+      "_layer": "outage_event"
+     }
+    },
+    {
+     "type": "Feature",
+     "geometry": {
+      "type": "Point",
+      "coordinates": [
+       -87.17,
+       41.58
+      ]
+     },
+     "properties": {
+      "feature_type": "gust_report",
+      "speed_mph": null,
+      "measured": false,
+      "location": "1 ENE Portage",
+      "county": "Porter",
+      "state": "IN",
+      "date": "2026-08-11",
+      "time_utc": "1640",
+      "comments": "Report of a snapped transformer. (LOT)",
+      "_layer": "outage_event"
+     }
+    },
+    {
+     "type": "Feature",
+     "geometry": {
+      "type": "Point",
+      "coordinates": [
+       -86.71,
+       41.61
+      ]
+     },
+     "properties": {
+      "feature_type": "gust_report",
+      "speed_mph": null,
+      "measured": false,
+      "location": "La Porte",
+      "county": "La Porte",
+      "state": "IN",
+      "date": "2026-08-11",
+      "time_utc": "1640",
+      "comments": "Widespread tree damage in La Porte. Numerous trees down. (IWX)",
+      "_layer": "outage_event"
+     }
+    },
+    {
+     "type": "Feature",
+     "geometry": {
+      "type": "Point",
+      "coordinates": [
+       -86.73,
+       41.61
+      ]
+     },
+     "properties": {
+      "feature_type": "gust_report",
+      "speed_mph": null,
+      "measured": false,
+      "location": "1 W La Porte",
+      "county": "La Porte",
+      "state": "IN",
+      "date": "2026-08-11",
+      "time_utc": "1640",
+      "comments": "Wendys sign blown out. (IWX)",
+      "_layer": "outage_event"
+     }
+    },
+    {
+     "type": "Feature",
+     "geometry": {
+      "type": "Point",
+      "coordinates": [
+       -86.71,
+       41.62
+      ]
+     },
+     "properties": {
+      "feature_type": "gust_report",
+      "speed_mph": 60,
+      "measured": true,
+      "location": "1 N La Porte",
+      "county": "La Porte",
+      "state": "IN",
+      "date": "2026-08-11",
+      "time_utc": "1640",
+      "comments": "Small tree limbs down and estimated 60 mph wind gusts. Time estimated via radar. (IWX)",
+      "_layer": "outage_event"
+     }
+    },
+    {
+     "type": "Feature",
+     "geometry": {
+      "type": "Point",
+      "coordinates": [
+       -86.7,
+       41.62
+      ]
+     },
+     "properties": {
+      "feature_type": "gust_report",
+      "speed_mph": null,
+      "measured": false,
+      "location": "1 NE La Porte",
+      "county": "La Porte",
+      "state": "IN",
+      "date": "2026-08-11",
+      "time_utc": "1640",
+      "comments": "Numerous trees down at a home along Route 2 west of La Porte. Time estimated via radar. (IWX)",
+      "_layer": "outage_event"
+     }
+    },
+    {
+     "type": "Feature",
+     "geometry": {
+      "type": "Point",
+      "coordinates": [
+       -86.38,
+       41.46
+      ]
+     },
+     "properties": {
+      "feature_type": "gust_report",
+      "speed_mph": null,
+      "measured": false,
+      "location": "Teegarden",
+      "county": "Marshall",
+      "state": "IN",
+      "date": "2026-08-11",
+      "time_utc": "1644",
+      "comments": "Tree on a house. No injuries reported. No information on size or health of the tree. (IWX)",
+      "_layer": "outage_event"
+     }
+    },
+    {
+     "type": "Feature",
+     "geometry": {
+      "type": "Point",
+      "coordinates": [
+       -86.48,
+       41.52
+      ]
+     },
+     "properties": {
+      "feature_type": "gust_report",
+      "speed_mph": null,
+      "measured": false,
+      "location": "3 WSW North Liberty",
+      "county": "St. Joseph",
+      "state": "IN",
+      "date": "2026-08-11",
+      "time_utc": "1644",
+      "comments": "Numerous large trees downed just east of the La Porte and St. Joseph line. (IWX)",
+      "_layer": "outage_event"
+     }
+    },
+    {
+     "type": "Feature",
+     "geometry": {
+      "type": "Point",
+      "coordinates": [
+       -86.4,
+       41.41
+      ]
+     },
+     "properties": {
+      "feature_type": "gust_report",
+      "speed_mph": null,
+      "measured": false,
+      "location": "Tyner",
+      "county": "Marshall",
+      "state": "IN",
+      "date": "2026-08-11",
+      "time_utc": "1645",
+      "comments": "Tree downed. Caused a gas leak. No information on the size or health of the tree. (IWX)",
+      "_layer": "outage_event"
+     }
+    },
+    {
+     "type": "Feature",
+     "geometry": {
+      "type": "Point",
+      "coordinates": [
+       -86.71,
+       41.46
+      ]
+     },
+     "properties": {
+      "feature_type": "gust_report",
+      "speed_mph": null,
+      "measured": false,
+      "location": "2 SW Kingsford Heights",
+      "county": "La Porte",
+      "state": "IN",
+      "date": "2026-08-11",
+      "time_utc": "1645",
+      "comments": "Several tress down and blocking the road between the 500 block and 700 block of W 1000 S in Union Mills... IN. Time estimated via radar. (IWX)",
+      "_layer": "outage_event"
+     }
+    },
+    {
+     "type": "Feature",
+     "geometry": {
+      "type": "Point",
+      "coordinates": [
+       -86.69,
+       41.48
+      ]
+     },
+     "properties": {
+      "feature_type": "gust_report",
+      "speed_mph": null,
+      "measured": false,
+      "location": "Kingsford Heights",
+      "county": "La Porte",
+      "state": "IN",
+      "date": "2026-08-11",
+      "time_utc": "1645",
+      "comments": "Large tree snapped in Kingsford Heights. Time estimated via radar. (IWX)",
+      "_layer": "outage_event"
+     }
+    },
+    {
+     "type": "Feature",
+     "geometry": {
+      "type": "Point",
+      "coordinates": [
+       -86.54,
+       41.51
+      ]
+     },
+     "properties": {
+      "feature_type": "gust_report",
+      "speed_mph": null,
+      "measured": false,
+      "location": "4 S Fish Lake",
+      "county": "La Porte",
+      "state": "IN",
+      "date": "2026-08-11",
+      "time_utc": "1645",
+      "comments": "2 trees uprooted and completely blocking SR 104 3 Miles NW of Walkerton. Time estimated via radar. (IWX)",
+      "_layer": "outage_event"
+     }
+    },
+    {
+     "type": "Feature",
+     "geometry": {
+      "type": "Point",
+      "coordinates": [
+       -86.3,
+       41.69
+      ]
+     },
+     "properties": {
+      "feature_type": "gust_report",
+      "speed_mph": 60,
+      "measured": true,
+      "location": "2 NW South Bend",
+      "county": "St. Joseph",
+      "state": "IN",
+      "date": "2026-08-11",
+      "time_utc": "1652",
+      "comments": "Estimated. Occurred with tree damage. (IWX)",
+      "_layer": "outage_event"
+     }
+    },
+    {
+     "type": "Feature",
+     "geometry": {
+      "type": "Point",
+      "coordinates": [
+       -86.3,
+       41.69
+      ]
+     },
+     "properties": {
+      "feature_type": "gust_report",
+      "speed_mph": null,
+      "measured": false,
+      "location": "2 NW South Bend",
+      "county": "St. Joseph",
+      "state": "IN",
+      "date": "2026-08-11",
+      "time_utc": "1652",
+      "comments": "0.5 to 1 ft diameter tree limb downed. Appears healthy. Fell onto North Wellington rd. (IWX)",
+      "_layer": "outage_event"
+     }
+    },
+    {
+     "type": "Feature",
+     "geometry": {
+      "type": "Point",
+      "coordinates": [
+       -86.65,
+       40.76
+      ]
+     },
+     "properties": {
+      "feature_type": "gust_report",
+      "speed_mph": null,
+      "measured": false,
+      "location": "Idaville",
+      "county": "White",
+      "state": "IN",
+      "date": "2026-08-11",
+      "time_utc": "1654",
+      "comments": "Large oak tree limb (2 ft diameter) downed. Several smaller limbs and branches downed. Largest limb appears rotted at the center. (IWX)",
+      "_layer": "outage_event"
+     }
+    },
+    {
+     "type": "Feature",
+     "geometry": {
+      "type": "Point",
+      "coordinates": [
+       -86.31,
+       41.35
+      ]
+     },
+     "properties": {
+      "feature_type": "gust_report",
+      "speed_mph": null,
+      "measured": false,
+      "location": "1 NE Plymouth",
+      "county": "Marshall",
+      "state": "IN",
+      "date": "2026-08-11",
+      "time_utc": "1654",
+      "comments": "Large tree (1-2 ft diameter) downed onto a fence at Centennial Park (Skate Park). Tree has rotting in the middle. (IWX)",
+      "_layer": "outage_event"
+     }
+    },
+    {
+     "type": "Feature",
+     "geometry": {
+      "type": "Point",
+      "coordinates": [
+       -86.23,
+       41.25
+      ]
+     },
+     "properties": {
+      "feature_type": "gust_report",
+      "speed_mph": null,
+      "measured": false,
+      "location": "1 NE Argos",
+      "county": "Marshall",
+      "state": "IN",
+      "date": "2026-08-11",
+      "time_utc": "1655",
+      "comments": "Numerous 1-3 inch diameter limbs downed on the northeast side of Argos. Several photos of 3-6 inch diameter limbs downed... appear healthy. (IWX)",
+      "_layer": "outage_event"
+     }
+    },
+    {
+     "type": "Feature",
+     "geometry": {
+      "type": "Point",
+      "coordinates": [
+       -86.29,
+       41.32
+      ]
+     },
+     "properties": {
+      "feature_type": "gust_report",
+      "speed_mph": null,
+      "measured": false,
+      "location": "2 SSE Plymouth",
+      "county": "Marshall",
+      "state": "IN",
+      "date": "2026-08-11",
+      "time_utc": "1655",
+      "comments": "Corrects previous tstm wnd dmg report from 2 SSE Plymouth. Michigan Road is closed between 11th & Diamond Drive due to a tree down. Time estimated via radar. (IWX)",
+      "_layer": "outage_event"
+     }
+    },
+    {
+     "type": "Feature",
+     "geometry": {
+      "type": "Point",
+      "coordinates": [
+       -86.32,
+       41.35
+      ]
+     },
+     "properties": {
+      "feature_type": "gust_report",
+      "speed_mph": 75,
+      "measured": true,
+      "location": "Plymouth",
+      "county": "Marshall",
+      "state": "IN",
+      "date": "2026-08-11",
+      "time_utc": "1655",
+      "comments": "EMA estimates 70 to 75 mph wind gusts. Time estimated via radar. (IWX)",
+      "_layer": "outage_event"
+     }
+    },
+    {
+     "type": "Feature",
+     "geometry": {
+      "type": "Point",
+      "coordinates": [
+       -86.51,
+       41.7
+      ]
+     },
+     "properties": {
+      "feature_type": "gust_report",
+      "speed_mph": null,
+      "measured": false,
+      "location": "New Carlisle",
+      "county": "St. Joseph",
+      "state": "IN",
+      "date": "2026-08-11",
+      "time_utc": "1655",
+      "comments": "Trees and tree limbs down in New Carlisle. Time estimated via radar. (IWX)",
+      "_layer": "outage_event"
+     }
+    },
+    {
+     "type": "Feature",
+     "geometry": {
+      "type": "Point",
+      "coordinates": [
+       -86.75,
+       41.79
+      ]
+     },
+     "properties": {
+      "feature_type": "gust_report",
+      "speed_mph": null,
+      "measured": false,
+      "location": "New Buffalo",
+      "county": "Berrien",
+      "state": "MI",
+      "date": "2026-08-11",
+      "time_utc": "1658",
+      "comments": "1-2 ft diameter limb of a tree downed in New Buffalo. Tree limb appears partially rotted but in otherwise good shape. (IWX)",
+      "_layer": "outage_event"
+     }
+    },
+    {
+     "type": "Feature",
+     "geometry": {
+      "type": "Point",
+      "coordinates": [
+       -86.31,
+       41.46
+      ]
+     },
+     "properties": {
+      "feature_type": "gust_report",
+      "speed_mph": null,
+      "measured": false,
+      "location": "La Paz",
+      "county": "Marshall",
+      "state": "IN",
+      "date": "2026-08-11",
+      "time_utc": "1700",
+      "comments": "Tree snapped and down onto Cortland St in Lapaz. Time estimated via radar. (IWX)",
+      "_layer": "outage_event"
+     }
+    },
+    {
+     "type": "Feature",
+     "geometry": {
+      "type": "Point",
+      "coordinates": [
+       -86.17,
+       41.67
+      ]
+     },
+     "properties": {
+      "feature_type": "gust_report",
+      "speed_mph": null,
+      "measured": false,
+      "location": "Mishawaka",
+      "county": "St. Joseph",
+      "state": "IN",
+      "date": "2026-08-11",
+      "time_utc": "1704",
+      "comments": "3-6 inch diameter limb downed on a shed (minor gutter damage) and also brought power lines down (not the pole). (IWX)",
+      "_layer": "outage_event"
+     }
+    },
+    {
+     "type": "Feature",
+     "geometry": {
+      "type": "Point",
+      "coordinates": [
+       -86.59,
+       40.76
+      ]
+     },
+     "properties": {
+      "feature_type": "gust_report",
+      "speed_mph": null,
+      "measured": false,
+      "location": "Burnettsville",
+      "county": "White",
+      "state": "IN",
+      "date": "2026-08-11",
+      "time_utc": "1705",
+      "comments": "3-6 inch diameter limbs downed. Appear healthy. Numerous smaller branches downed. (IWX)",
+      "_layer": "outage_event"
+     }
+    },
+    {
+     "type": "Feature",
+     "geometry": {
+      "type": "Point",
+      "coordinates": [
+       -86.65,
+       40.76
+      ]
+     },
+     "properties": {
+      "feature_type": "gust_report",
+      "speed_mph": null,
+      "measured": false,
+      "location": "Idaville",
+      "county": "White",
+      "state": "IN",
+      "date": "2026-08-11",
+      "time_utc": "1705",
+      "comments": "Tree down in Idaville. Time estimated via radar. (IWX)",
+      "_layer": "outage_event"
+     }
+    },
+    {
+     "type": "Feature",
+     "geometry": {
+      "type": "Point",
+      "coordinates": [
+       -86.25,
+       41.61
+      ]
+     },
+     "properties": {
+      "feature_type": "gust_report",
+      "speed_mph": null,
+      "measured": false,
+      "location": "1 SW Gulivoire Park",
+      "county": "St. Joseph",
+      "state": "IN",
+      "date": "2026-08-11",
+      "time_utc": "1705",
+      "comments": "Trees down on Old US 31 near Kern Road. Time estimated via radar. (IWX)",
+      "_layer": "outage_event"
+     }
+    },
+    {
+     "type": "Feature",
+     "geometry": {
+      "type": "Point",
+      "coordinates": [
+       -86.3,
+       41.7
+      ]
+     },
+     "properties": {
+      "feature_type": "gust_report",
+      "speed_mph": 60,
+      "measured": true,
+      "location": "3 NW South Bend",
+      "county": "St. Joseph",
+      "state": "IN",
+      "date": "2026-08-11",
+      "time_utc": "1705",
+      "comments": "Estimated 60 mph winds and some minor tree damage. (IWX)",
+      "_layer": "outage_event"
+     }
+    },
+    {
+     "type": "Feature",
+     "geometry": {
+      "type": "Point",
+      "coordinates": [
+       -86.07,
+       40.75
+      ]
+     },
+     "properties": {
+      "feature_type": "gust_report",
+      "speed_mph": null,
+      "measured": false,
+      "location": "Peru",
+      "county": "Miami",
+      "state": "IN",
+      "date": "2026-08-11",
+      "time_utc": "1710",
+      "comments": "Tree down on West Main Street. Time estimated via radar. (IWX)",
+      "_layer": "outage_event"
+     }
+    },
+    {
+     "type": "Feature",
+     "geometry": {
+      "type": "Point",
+      "coordinates": [
+       -86.01,
+       41.54
+      ]
+     },
+     "properties": {
+      "feature_type": "gust_report",
+      "speed_mph": null,
+      "measured": false,
+      "location": "Wakarusa",
+      "county": "Elkhart",
+      "state": "IN",
+      "date": "2026-08-11",
+      "time_utc": "1715",
+      "comments": "Large tree down in Wakarusa. Time estimated via radar. (IWX)",
+      "_layer": "outage_event"
+     }
+    },
+    {
+     "type": "Feature",
+     "geometry": {
+      "type": "Point",
+      "coordinates": [
+       -85.78,
+       41.53
+      ]
+     },
+     "properties": {
+      "feature_type": "gust_report",
+      "speed_mph": 63,
+      "measured": true,
+      "location": "2 NW Benton",
+      "county": "Elkhart",
+      "state": "IN",
+      "date": "2026-08-11",
+      "time_utc": "1719",
+      "comments": "ASOS station KGSH Goshen. (IWX)",
+      "_layer": "outage_event"
+     }
+    },
+    {
+     "type": "Feature",
+     "geometry": {
+      "type": "Point",
+      "coordinates": [
+       -85.86,
+       41.23
+      ]
+     },
+     "properties": {
+      "feature_type": "gust_report",
+      "speed_mph": null,
+      "measured": false,
+      "location": "1 WSW Warsaw",
+      "county": "Kosciusko",
+      "state": "IN",
+      "date": "2026-08-11",
+      "time_utc": "1720",
+      "comments": "Power lines down with electrical fire 300 block of W Prairie Street. Time estimated via radar. (IWX)",
+      "_layer": "outage_event"
+     }
+    },
+    {
+     "type": "Feature",
+     "geometry": {
+      "type": "Point",
+      "coordinates": [
+       -85.79,
+       41.4
+      ]
+     },
+     "properties": {
+      "feature_type": "gust_report",
+      "speed_mph": null,
+      "measured": false,
+      "location": "2 NNW Dewart Lake",
+      "county": "Kosciusko",
+      "state": "IN",
+      "date": "2026-08-11",
+      "time_utc": "1720",
+      "comments": "Tree down across 300 East between 1200 and 1300 North. Time estimated via radar. (IWX)",
+      "_layer": "outage_event"
+     }
+    },
+    {
+     "type": "Feature",
+     "geometry": {
+      "type": "Point",
+      "coordinates": [
+       -85.89,
+       41.71
+      ]
+     },
+     "properties": {
+      "feature_type": "gust_report",
+      "speed_mph": null,
+      "measured": false,
+      "location": "4 W Bristol",
+      "county": "Elkhart",
+      "state": "IN",
+      "date": "2026-08-11",
+      "time_utc": "1720",
+      "comments": "Tree down on CR 17 1 mile south of the Toll Road. Time estimated via radar. (IWX)",
+      "_layer": "outage_event"
+     }
+    },
+    {
+     "type": "Feature",
+     "geometry": {
+      "type": "Point",
+      "coordinates": [
+       -86.27,
+       40.42
+      ]
+     },
+     "properties": {
+      "feature_type": "gust_report",
+      "speed_mph": null,
+      "measured": false,
+      "location": "Russiaville",
+      "county": "Howard",
+      "state": "IN",
+      "date": "2026-08-11",
+      "time_utc": "1725",
+      "comments": "Tree fell onto a home... possibly causing a gas leak. Time esimated from radar. (IND)",
+      "_layer": "outage_event"
+     }
+    },
+    {
+     "type": "Feature",
+     "geometry": {
+      "type": "Point",
+      "coordinates": [
+       -85.7,
+       41.32
+      ]
+     },
+     "properties": {
+      "feature_type": "gust_report",
+      "speed_mph": null,
+      "measured": false,
+      "location": "North Webster",
+      "county": "Kosciusko",
+      "state": "IN",
+      "date": "2026-08-11",
+      "time_utc": "1725",
+      "comments": "Two healthy... large trees snapped at the top. (IWX)",
+      "_layer": "outage_event"
+     }
+    },
+    {
+     "type": "Feature",
+     "geometry": {
+      "type": "Point",
+      "coordinates": [
+       -85.79,
+       41.42
+      ]
+     },
+     "properties": {
+      "feature_type": "gust_report",
+      "speed_mph": null,
+      "measured": false,
+      "location": "2 WSW Syracuse",
+      "county": "Kosciusko",
+      "state": "IN",
+      "date": "2026-08-11",
+      "time_utc": "1725",
+      "comments": "Tree down along N 300 E. Relayed by off duty NWS employee. Time estimated via radar. (IWX)",
+      "_layer": "outage_event"
+     }
+    },
+    {
+     "type": "Feature",
+     "geometry": {
+      "type": "Point",
+      "coordinates": [
+       -85.8,
+       41.42
+      ]
+     },
+     "properties": {
+      "feature_type": "gust_report",
+      "speed_mph": null,
+      "measured": false,
+      "location": "3 W Syracuse",
+      "county": "Kosciusko",
+      "state": "IN",
+      "date": "2026-08-11",
+      "time_utc": "1725",
+      "comments": "12 inch diameter tree snapped. Relayed by off duty NWS employee. Time estimated via radar. (IWX)",
+      "_layer": "outage_event"
+     }
+    },
+    {
+     "type": "Feature",
+     "geometry": {
+      "type": "Point",
+      "coordinates": [
+       -86.94,
+       40.41
+      ]
+     },
+     "properties": {
+      "feature_type": "gust_report",
+      "speed_mph": 63,
+      "measured": true,
+      "location": "2 SW Purdue University",
+      "county": "Tippecanoe",
+      "state": "IN",
+      "date": "2026-08-11",
+      "time_utc": "1733",
+      "comments": "(IND)",
+      "_layer": "outage_event"
+     }
+    },
+    {
+     "type": "Feature",
+     "geometry": {
+      "type": "Point",
+      "coordinates": [
+       -85.18,
+       40.93
+      ]
+     },
+     "properties": {
+      "feature_type": "gust_report",
+      "speed_mph": null,
+      "measured": false,
+      "location": "Yoder",
+      "county": "Allen",
+      "state": "IN",
+      "date": "2026-08-11",
+      "time_utc": "1803",
+      "comments": "Tree down into powerlines on Swank Street in Yoder. Time estimated via radar. (IWX)",
+      "_layer": "outage_event"
+     }
+    },
+    {
+     "type": "Feature",
+     "geometry": {
+      "type": "Point",
+      "coordinates": [
+       -84.61,
+       40.88
+      ]
+     },
+     "properties": {
+      "feature_type": "gust_report",
+      "speed_mph": null,
+      "measured": false,
+      "location": "2 WNW Van Wert",
+      "county": "Van Wert",
+      "state": "OH",
+      "date": "2026-08-11",
+      "time_utc": "1835",
+      "comments": "Power pole fell into a building and was sparking. (IWX)",
+      "_layer": "outage_event"
+     }
+    },
+    {
+     "type": "Feature",
+     "geometry": {
+      "type": "Point",
+      "coordinates": [
+       -88.13,
+       40.45
+      ]
+     },
+     "properties": {
+      "feature_type": "gust_report",
+      "speed_mph": null,
+      "measured": false,
+      "location": "2 WSW Paxton",
+      "county": "Ford",
+      "state": "IL",
+      "date": "2026-08-11",
+      "time_utc": "1903",
+      "comments": "Downed tree limbs along Route 9 west of Paxton near the airport. Time estimated by radar. (LOT)",
+      "_layer": "outage_event"
+     }
+    },
+    {
+     "type": "Feature",
+     "geometry": {
+      "type": "Point",
+      "coordinates": [
+       -85.17,
+       40.79
+      ]
+     },
+     "properties": {
+      "feature_type": "gust_report",
+      "speed_mph": null,
+      "measured": false,
+      "location": "2 ESE Murray",
+      "county": "Wells",
+      "state": "IN",
+      "date": "2026-08-11",
+      "time_utc": "1922",
+      "comments": "Road closure due to flooding at SR-1 and E Jackson St/350 N). (IWX)",
+      "_layer": "outage_event"
+     }
+    },
+    {
+     "type": "Feature",
+     "geometry": {
+      "type": "Point",
+      "coordinates": [
+       -88.55,
+       41.27
+      ]
+     },
+     "properties": {
+      "feature_type": "gust_report",
+      "speed_mph": 65,
+      "measured": true,
+      "location": "4 SE Seneca",
+      "county": "Grundy",
+      "state": "IL",
+      "date": "2026-08-12",
+      "time_utc": "1422",
+      "comments": "Ambient weather station measured a peak wind gust of 65 mph. (LOT)",
+      "_layer": "outage_event"
+     }
+    },
+    {
+     "type": "Feature",
+     "geometry": {
+      "type": "Point",
+      "coordinates": [
+       -88.28,
+       41.29
+      ]
+     },
+     "properties": {
+      "feature_type": "gust_report",
+      "speed_mph": null,
+      "measured": false,
+      "location": "Coal City",
+      "county": "Grundy",
+      "state": "IL",
+      "date": "2026-08-12",
+      "time_utc": "1436",
+      "comments": "Report shared via social media of small and medium tree limbs downed around Coal City. Time estimated by radar. (LOT)",
+      "_layer": "outage_event"
+     }
+    },
+    {
+     "type": "Feature",
+     "geometry": {
+      "type": "Point",
+      "coordinates": [
+       -88.4,
+       41.4
+      ]
+     },
+     "properties": {
+      "feature_type": "gust_report",
+      "speed_mph": null,
+      "measured": false,
+      "location": "3 NNE Morris",
+      "county": "Grundy",
+      "state": "IL",
+      "date": "2026-08-12",
+      "time_utc": "1437",
+      "comments": "power lines down near RT 6 and Ashley road. (LOT)",
+      "_layer": "outage_event"
+     }
+    },
+    {
+     "type": "Feature",
+     "geometry": {
+      "type": "Point",
+      "coordinates": [
+       -88.21,
+       41.55
+      ]
+     },
+     "properties": {
+      "feature_type": "gust_report",
+      "speed_mph": 64,
+      "measured": true,
+      "location": "2 NNW Shorewood",
+      "county": "Will",
+      "state": "IL",
+      "date": "2026-08-12",
+      "time_utc": "1438",
+      "comments": "Measured wind gust of 64.2 mph on an Ambient weather station. The gusts appear well calibrated surrounding the period of time during the storm... and radar data support (LOT)",
+      "_layer": "outage_event"
+     }
+    },
+    {
+     "type": "Feature",
+     "geometry": {
+      "type": "Point",
+      "coordinates": [
+       -87.83,
+       41.49
+      ]
+     },
+     "properties": {
+      "feature_type": "gust_report",
+      "speed_mph": null,
+      "measured": false,
+      "location": "1 E Frankfort",
+      "county": "Will",
+      "state": "IL",
+      "date": "2026-08-12",
+      "time_utc": "1501",
+      "comments": "Photo shared on social media shows a 40 foot diameter tree uprooted. The yard surrounding the tree was flooded. Time estimated by radar. (LOT)",
+      "_layer": "outage_event"
+     }
+    },
+    {
+     "type": "Feature",
+     "geometry": {
+      "type": "Point",
+      "coordinates": [
+       -87.86,
+       41.12
+      ]
+     },
+     "properties": {
+      "feature_type": "gust_report",
+      "speed_mph": null,
+      "measured": false,
+      "location": "Kankakee",
+      "county": "Kankakee",
+      "state": "IL",
+      "date": "2026-08-12",
+      "time_utc": "1507",
+      "comments": "Social media report of large tree branches downed throughout Kankakee. The nearby IKK AWOS measured a peak wind gust of 44 kt or 51 mph. Time estimated by radar. (LOT)",
+      "_layer": "outage_event"
+     }
+    },
+    {
+     "type": "Feature",
+     "geometry": {
+      "type": "Point",
+      "coordinates": [
+       -87.79,
+       41.33
+      ]
+     },
+     "properties": {
+      "feature_type": "gust_report",
+      "speed_mph": null,
+      "measured": false,
+      "location": "Peotone",
+      "county": "Will",
+      "state": "IL",
+      "date": "2026-08-12",
+      "time_utc": "1508",
+      "comments": "Report shared on social media of downed tree branches in Peotone. Time estimated by radar. (LOT)",
+      "_layer": "outage_event"
+     }
+    },
+    {
+     "type": "Feature",
+     "geometry": {
+      "type": "Point",
+      "coordinates": [
+       -87.68,
+       41.54
+      ]
+     },
+     "properties": {
+      "feature_type": "gust_report",
+      "speed_mph": null,
+      "measured": false,
+      "location": "Flossmoor",
+      "county": "Cook",
+      "state": "IL",
+      "date": "2026-08-12",
+      "time_utc": "1511",
+      "comments": "Report on social media of additional tree limbs fell during the storms this morning. Time estimated by radar. (LOT)",
+      "_layer": "outage_event"
+     }
+    },
+    {
+     "type": "Feature",
+     "geometry": {
+      "type": "Point",
+      "coordinates": [
+       -87.63,
+       41.44
+      ]
+     },
+     "properties": {
+      "feature_type": "gust_report",
+      "speed_mph": null,
+      "measured": false,
+      "location": "Crete",
+      "county": "Will",
+      "state": "IL",
+      "date": "2026-08-12",
+      "time_utc": "1518",
+      "comments": "Photo shared on social media showing a large 20 foot long tree branch downed on a power line. Time estimated by radar. (LOT)",
+      "_layer": "outage_event"
+     }
+    },
+    {
+     "type": "Feature",
+     "geometry": {
+      "type": "Point",
+      "coordinates": [
+       -87.83,
+       41.17
+      ]
+     },
+     "properties": {
+      "feature_type": "gust_report",
+      "speed_mph": 60,
+      "measured": true,
+      "location": "3 NE Bradley",
+      "county": "Kankakee",
+      "state": "IL",
+      "date": "2026-08-12",
+      "time_utc": "1519",
+      "comments": "Personal weather station measured a wind gust of 60 mph. (LOT)",
+      "_layer": "outage_event"
+     }
+    },
+    {
+     "type": "Feature",
+     "geometry": {
+      "type": "Point",
+      "coordinates": [
+       -87.52,
+       41.59
+      ]
+     },
+     "properties": {
+      "feature_type": "gust_report",
+      "speed_mph": null,
+      "measured": false,
+      "location": "1 WNW Hammond",
+      "county": "Lake",
+      "state": "IN",
+      "date": "2026-08-12",
+      "time_utc": "1525",
+      "comments": "Multiple reports on social media of downed tree limbs in South Hammond. Time estimated by radar. (LOT)",
+      "_layer": "outage_event"
+     }
+    },
+    {
+     "type": "Feature",
+     "geometry": {
+      "type": "Point",
+      "coordinates": [
+       -88.29,
+       42.17
+      ]
+     },
+     "properties": {
+      "feature_type": "gust_report",
+      "speed_mph": null,
+      "measured": false,
+      "location": "Algonquin",
+      "county": "McHenry",
+      "state": "IL",
+      "date": "2026-08-12",
+      "time_utc": "1525",
+      "comments": "Power poles downed blocking the road. (LOT)",
+      "_layer": "outage_event"
+     }
+    },
+    {
+     "type": "Feature",
+     "geometry": {
+      "type": "Point",
+      "coordinates": [
+       -88.09,
+       40.46
+      ]
+     },
+     "properties": {
+      "feature_type": "gust_report",
+      "speed_mph": 62,
+      "measured": true,
+      "location": "Paxton",
+      "county": "Ford",
+      "state": "IL",
+      "date": "2026-08-12",
+      "time_utc": "1531",
+      "comments": "recorded by handheld anemometer. (LOT)",
+      "_layer": "outage_event"
+     }
+    },
+    {
+     "type": "Feature",
+     "geometry": {
+      "type": "Point",
+      "coordinates": [
+       -87.45,
+       40.95
+      ]
+     },
+     "properties": {
+      "feature_type": "gust_report",
+      "speed_mph": null,
+      "measured": false,
+      "location": "Morocco",
+      "county": "Newton",
+      "state": "IN",
+      "date": "2026-08-12",
+      "time_utc": "1535",
+      "comments": "Photo shared on social media showing large trees downed on a garage in Morocco... Indiana. Time estimated by radar. (LOT)",
+      "_layer": "outage_event"
+     }
+    },
+    {
+     "type": "Feature",
+     "geometry": {
+      "type": "Point",
+      "coordinates": [
+       -87.36,
+       40.87
+      ]
+     },
+     "properties": {
+      "feature_type": "gust_report",
+      "speed_mph": null,
+      "measured": false,
+      "location": "Brook",
+      "county": "Newton",
+      "state": "IN",
+      "date": "2026-08-12",
+      "time_utc": "1540",
+      "comments": "Report shared on social media of power poles downed in Brook. Time estimated by radar. (LOT)",
+      "_layer": "outage_event"
+     }
+    },
+    {
+     "type": "Feature",
+     "geometry": {
+      "type": "Point",
+      "coordinates": [
+       -87.03,
+       40.92
+      ]
+     },
+     "properties": {
+      "feature_type": "gust_report",
+      "speed_mph": null,
+      "measured": false,
+      "location": "6 ESE Rensselaer",
+      "county": "Jasper",
+      "state": "IN",
+      "date": "2026-08-12",
+      "time_utc": "1552",
+      "comments": "Report relayed via social media of downed power poles in McCoysburg. The nearby AWOS in Rensselaer measured a peak wind gust of 51 mph. Time estimated by radar. (LOT)",
+      "_layer": "outage_event"
+     }
+    },
+    {
+     "type": "Feature",
+     "geometry": {
+      "type": "Point",
+      "coordinates": [
+       -86.42,
+       41.29
+      ]
+     },
+     "properties": {
+      "feature_type": "gust_report",
+      "speed_mph": null,
+      "measured": false,
+      "location": "3 N Burr Oak",
+      "county": "Marshall",
+      "state": "IN",
+      "date": "2026-08-12",
+      "time_utc": "1640",
+      "comments": "Tree down near SR 17 and SR 8 intersection. Relayed by EMA. Time estimated via radar. (IWX)",
+      "_layer": "outage_event"
+     }
+    },
+    {
+     "type": "Feature",
+     "geometry": {
+      "type": "Point",
+      "coordinates": [
+       -86.6,
+       41.04
+      ]
+     },
+     "properties": {
+      "feature_type": "gust_report",
+      "speed_mph": null,
+      "measured": false,
+      "location": "1 SSE Winamac",
+      "county": "Pulaski",
+      "state": "IN",
+      "date": "2026-08-12",
+      "time_utc": "1730",
+      "comments": "Video showing US 35 flooded at the Caseys gas station south of Winamac. (IWX)",
+      "_layer": "outage_event"
+     }
+    }
+   ]
+  }
+ ]
+}

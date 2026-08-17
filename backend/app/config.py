@@ -21,6 +21,9 @@ class Settings(BaseSettings):
     stale_threshold_seconds: int = 900
     # Disable to run the API without background ingestion (tests, docs builds).
     enable_scheduler: bool = True
+    # Live utility outage feed (NIPSCO public outage-map backend) + poll cadence.
+    outage_feed_url: str = "https://www.nipsco.com/nisource-api/ldc/GetPowerOutages"
+    outage_poll_seconds: int = 300
 
     class Config:
         env_file = ".env"

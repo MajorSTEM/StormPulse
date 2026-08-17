@@ -168,4 +168,26 @@ async def run_history_load():
         logger.error(f"DAT recent-tornado refresh failed: {exc}")
 
 
+async def run_outage_poll():
+    """Refresh the live utility outage snapshot (NIPSCO public feed)."""
+    from app.ingestion.outages_live import poll_live_outages
+    try:
+        result = await poll_live_outages()
+        ingestion_status.setdefault(
+            "nipsco_outages",
+            {"last_success": None, "last_error": None, "status": "pending"},
+        )
+        ingestion_status["nipsco_outages"]["last_success"] = datetime.now(timezone.utc).isoformat()
+        ingestion_status["nipsco_outages"]["status"] = "ok"
+        ingestion_status["nipsco_outages"]["last_result"] = result
+    except Exception as exc:
+        ingestion_status.setdefault(
+            "nipsco_outages",
+            {"last_success": None, "last_error": None, "status": "pending"},
+        )
+        ingestion_status["nipsco_outages"]["last_error"] = str(exc)
+        ingestion_status["nipsco_outages"]["status"] = "error"
+        logger.error(f"Live outage poll failed: {exc}")
+
+
 scheduler = AsyncIOScheduler()

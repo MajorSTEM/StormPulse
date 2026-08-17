@@ -10,11 +10,12 @@ from sqlalchemy import text
 
 from app.config import settings
 from app.database import init_db, AsyncSessionLocal
-from app.api import alerts, lsr, corridors, health, history
+from app.api import alerts, lsr, corridors, health, history, outages
 from app.ingestion.scheduler import (
     scheduler,
     run_ingestion_cycle,
     run_history_load,
+    run_outage_poll,
     load_persisted_status,
 )
 from app.security import limiter, require_api_key, security_headers_middleware
@@ -82,6 +83,16 @@ async def lifespan(app: FastAPI):
             max_instances=1,
             coalesce=True,
             next_run_time=datetime.now(timezone.utc),
+        )
+        # Live utility outage feed (auto-updates as restorations land)
+        scheduler.add_job(
+            run_outage_poll,
+            "interval",
+            seconds=settings.outage_poll_seconds,
+            id="outage_poll",
+            max_instances=1,
+            coalesce=True,
+            next_run_time=datetime.now(timezone.utc) + timedelta(seconds=20),
         )
         # Archive maintenance: SPC one-shot bulk load + DAT survey refresh.
         # Runs shortly after boot (delayed so live ingestion goes first),
@@ -157,6 +168,7 @@ app.include_router(alerts.router, prefix="/api/v1", tags=["alerts"], dependencie
 app.include_router(lsr.router, prefix="/api/v1", tags=["lsr"], dependencies=protected)
 app.include_router(corridors.router, prefix="/api/v1", tags=["corridors"], dependencies=protected)
 app.include_router(history.router, prefix="/api/v1", tags=["history"], dependencies=protected)
+app.include_router(outages.router, prefix="/api/v1", tags=["outages"], dependencies=protected)
 app.include_router(health.router, prefix="/api/v1", tags=["health"])
 
 
