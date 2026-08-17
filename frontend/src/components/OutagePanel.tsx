@@ -50,7 +50,7 @@ export default function OutagePanel({
 
   return (
     <div
-      className="absolute top-16 right-3 z-20 bg-gray-900/95 backdrop-blur rounded-lg border border-yellow-600/60 shadow-xl flex flex-col max-h-[calc(100vh-130px)]"
+      className="absolute top-16 right-3 z-20 bg-gray-950 rounded-lg border border-yellow-600/60 shadow-2xl flex flex-col max-h-[calc(100vh-130px)]"
       style={{ width: "min(300px, calc(100vw - 24px))" }}
     >
       {/* Header */}
@@ -106,7 +106,7 @@ export default function OutagePanel({
               </div>
             </div>
           </div>
-          <div className="flex items-center justify-between text-[10px] text-gray-500">
+          <div className="flex items-center justify-between text-[10px] text-gray-400">
             <span>{meta?.utility ?? "NIPSCO"} · scan {asOf}</span>
             <button
               onClick={onRefreshLive}
@@ -148,7 +148,7 @@ export default function OutagePanel({
               Utility outage feed unreachable right now — retrying automatically.
             </p>
           )}
-          <p className="text-[9px] text-gray-600 leading-relaxed">
+          <p className="text-[9px] text-gray-400 leading-relaxed">
             Mirrors the utility&apos;s public outage map (~10 min updates). Dots mark
             reported outages — areas without dots are presumed energized.
             Restored areas drop off automatically on each scan.
@@ -159,7 +159,7 @@ export default function OutagePanel({
       {/* Events tab */}
       {tab === "events" && (
         <div className="overflow-y-auto flex-1 px-2 py-2 space-y-1.5">
-          <p className="text-[10px] text-gray-500 px-1 leading-relaxed">
+          <p className="text-[10px] text-gray-300 px-1 leading-relaxed">
             Major outage events are rare — this archive documents them with the
             full record: wind data, customers affected, restoration timeline, sources.
           </p>
@@ -173,12 +173,12 @@ export default function OutagePanel({
                 className={`w-full text-left px-2.5 py-2 rounded border transition ${
                   active
                     ? "border-yellow-500 bg-yellow-950/40 ring-1 ring-yellow-500/40"
-                    : "border-gray-700 bg-gray-800/20 hover:border-yellow-600"
+                    : "border-gray-600 bg-gray-800/80 hover:border-yellow-500"
                 }`}
               >
                 <div className="text-xs font-medium text-yellow-200">{p.name}</div>
-                <div className="text-[10px] text-gray-400 mt-0.5">{p.utility}</div>
-                <div className="text-[10px] text-gray-300 mt-1 flex flex-wrap gap-x-2">
+                <div className="text-[10px] text-gray-300 mt-0.5">{p.utility}</div>
+                <div className="text-[10px] text-gray-200 mt-1 flex flex-wrap gap-x-2">
                   <span className="text-red-400 font-medium">
                     {p.customers_affected.toLocaleString()} customers out
                   </span>

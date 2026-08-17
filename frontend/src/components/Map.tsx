@@ -141,6 +141,26 @@ function buildPredictionConesFC(corridors: GeoJSONFeatureCollection | null): Geo
   return { type: "FeatureCollection", features };
 }
 
+const OUTAGE_GRADUATED_COLOR: maplibregl.ExpressionSpecification = [
+  "step", ["get", "affected"],
+  "#facc15", 50, "#fb923c", 500, "#ef4444", 5000, "#b91c1c",
+];
+
+/** Dark basemap: blackout-hole styling. Satellite/street: graduated circles. */
+function styleOutagesForBasemap(map: maplibregl.Map, basemap: Basemap, outagesVisible: boolean) {
+  if (!map.getLayer("outages-live-circles")) return;
+  const dark = basemap === "dark";
+  map.setPaintProperty("outages-live-circles", "circle-color",
+    dark ? "#05060c" : OUTAGE_GRADUATED_COLOR);
+  map.setPaintProperty("outages-live-circles", "circle-opacity", dark ? 0.8 : 0.65);
+  map.setPaintProperty("outages-live-circles", "circle-blur", dark ? 0.4 : 0);
+  map.setPaintProperty("outages-live-circles", "circle-stroke-color",
+    dark ? "#f59e0b" : "#0f172a");
+  map.setPaintProperty("outages-live-circles", "circle-stroke-width", dark ? 0.8 : 1);
+  map.setLayoutProperty("outages-live-glow", "visibility",
+    dark && outagesVisible ? "visible" : "none");
+}
+
 export default function Map({
   alerts,
   lsrs,
@@ -349,23 +369,38 @@ export default function Map({
         },
       });
 
-      // ── Live utility outages (graduated by customers affected) ──────────────
+      // ── Live utility outages ────────────────────────────────────────────────
+      // Dark basemap: outages render as blackout zones — soft dark holes with a
+      // warm "still-lit" rim against the illuminated map. Satellite/street:
+      // graduated yellow→red circles (styleOutagesForBasemap switches modes).
       map.addSource("outages-live", { type: "geojson", data: EMPTY_FC });
+      map.addLayer({
+        id: "outages-live-glow",
+        type: "circle",
+        source: "outages-live",
+        layout: { visibility: "none" },
+        paint: {
+          "circle-color": "#fbbf24",
+          "circle-blur": 1,
+          "circle-opacity": 0.12,
+          "circle-radius": [
+            "interpolate", ["linear"], ["get", "affected"],
+            1, 4, 50, 7, 500, 11, 5000, 17,
+          ],
+        },
+      });
       map.addLayer({
         id: "outages-live-circles",
         type: "circle",
         source: "outages-live",
         layout: { visibility: "none" },
         paint: {
-          "circle-color": [
-            "step", ["get", "affected"],
-            "#facc15", 50, "#fb923c", 500, "#ef4444", 5000, "#b91c1c",
-          ],
+          "circle-color": OUTAGE_GRADUATED_COLOR,
           "circle-radius": [
             "interpolate", ["linear"], ["get", "affected"],
-            1, 3, 50, 5, 500, 9, 5000, 15,
+            1, 2, 50, 3.5, 500, 6, 5000, 11,
           ],
-          "circle-opacity": 0.8,
+          "circle-opacity": 0.65,
           "circle-stroke-color": "#0f172a",
           "circle-stroke-width": 1,
         },
@@ -645,6 +680,7 @@ export default function Map({
       ["history-paths", "history-paths-hit", "history-points"].forEach(id =>
         map.setLayoutProperty(id, "visibility", vis(l.history)));
       map.setLayoutProperty("outages-live-circles", "visibility", vis(l.outages));
+      styleOutagesForBasemap(map, basemap, l.outages);
 
       // Click handlers
       ["corridors-fill", "alerts-fill", "lsr-circles", "history-paths-hit", "history-points",
@@ -853,6 +889,7 @@ export default function Map({
     });
     const bg = basemap === "dark" ? "#0f172a" : basemap === "satellite" ? "#000000" : "#c8dce8";
     map.setPaintProperty("background", "background-color", bg);
+    styleOutagesForBasemap(map, basemap, layersRef.current.outages);
   }, [basemap]);
 
   // Update layer visibility and alert tier filter
@@ -890,7 +927,8 @@ export default function Map({
     ["history-paths", "history-paths-hit", "history-points"].forEach(l =>
       map.setLayoutProperty(l, "visibility", vis(layers.history)));
     map.setLayoutProperty("outages-live-circles", "visibility", vis(layers.outages));
-  }, [layers]);
+    styleOutagesForBasemap(map, basemap, layers.outages);
+  }, [layers, basemap]);
 
   return (
     <div

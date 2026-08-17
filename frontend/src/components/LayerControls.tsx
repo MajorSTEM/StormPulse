@@ -38,6 +38,7 @@ const OTHER_LAYERS: LayerDef[] = [
   { key: "lsr",      label: "Storm Reports (LSR)", color: "bg-blue-400",   subLabel: "T1/T2 Official", subCls: "text-blue-400" },
   { key: "corridors", label: "Prob. Corridors",   color: "bg-orange-500", subLabel: "T3 INFERRED + Predicted Path",   subCls: "text-orange-400" },
   { key: "history",  label: "Tornado History",    color: "bg-amber-500",  subLabel: "SPC Archive 1950–2024", subCls: "text-amber-400" },
+  { key: "outages",  label: "Power Outages",      color: "bg-yellow-400", subLabel: "Live NIPSCO Feed", subCls: "text-yellow-400" },
   { key: "counties", label: "County Outlines",    color: "bg-gray-500" },
 ];
 
