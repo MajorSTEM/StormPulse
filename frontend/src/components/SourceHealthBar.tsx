@@ -24,6 +24,7 @@ const SOURCE_LABELS: Record<string, string> = {
   nws_alerts: "NWS Alerts",
   nws_lsr: "LSR Feed",
   corridor_engine: "Corridor Engine",
+  nipsco_outages: "NIPSCO Feed",
 };
 
 // OPC-style data-quality chip per source health (SCADA convention)
@@ -39,9 +40,11 @@ function qualityLabel(health: string): { text: string; cls: string } {
 interface Props {
   historianOpen?: boolean;
   onToggleHistorian?: () => void;
+  outagesOpen?: boolean;
+  onToggleOutages?: () => void;
 }
 
-export default function SourceHealthBar({ historianOpen, onToggleHistorian }: Props) {
+export default function SourceHealthBar({ historianOpen, onToggleHistorian, outagesOpen, onToggleOutages }: Props) {
   const [health, setHealth] = useState<HealthStatus | null>(null);
   const [isDegraded, setIsDegraded] = useState(false);
 
@@ -112,6 +115,20 @@ export default function SourceHealthBar({ historianOpen, onToggleHistorian }: Pr
         </div>
 
         <div className="ml-auto flex items-center gap-3">
+          {onToggleOutages && (
+            <button
+              onClick={onToggleOutages}
+              className={`flex items-center gap-1 border rounded px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider transition ${
+                outagesOpen
+                  ? "border-yellow-400 text-yellow-200 bg-yellow-950/50"
+                  : "border-yellow-700 text-yellow-400 hover:bg-yellow-950/40"
+              }`}
+              title="Live power outages + major outage events"
+            >
+              <span>⚡</span>
+              <span>Outages</span>
+            </button>
+          )}
           {onToggleHistorian && (
             <button
               onClick={onToggleHistorian}

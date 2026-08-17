@@ -11,6 +11,7 @@ import type {
 } from "@/lib/types";
 import {
   fetchAlerts, fetchLSRs, fetchCorridors, fetchTornadoHistory,
+  fetchLiveOutages, fetchOutageEvents,
   buildShareableUrl, type HistoryQuery,
 } from "@/lib/api";
 import type { MapHandle } from "@/components/Map";
@@ -21,6 +22,7 @@ import SourceHealthBar from "@/components/SourceHealthBar";
 import LastUpdatedTicker from "@/components/LastUpdatedTicker";
 import TimelineScrubber from "@/components/TimelineScrubber";
 import HistoryPanel from "@/components/HistoryPanel";
+import OutagePanel from "@/components/OutagePanel";
 
 const Map = dynamic(() => import("@/components/Map"), {
   ssr: false,
@@ -57,6 +59,18 @@ function PageContent() {
   const [replayTarget, setReplayTarget] = useState<GeoJSONFeature | null>(null);
   // Alarm-annunciator semantics: acknowledged alerts drop off feed + map
   const [ackedAlertIds, setAckedAlertIds] = useState<Set<string>>(new Set());
+  // Clearable corridors + live feed (repopulate as new ids arrive)
+  const [clearedCorridorIds, setClearedCorridorIds] = useState<Set<string>>(new Set());
+  const [clearedLsrIds, setClearedLsrIds] = useState<Set<string>>(new Set());
+  // Power outages: live feed + curated major-event archive
+  const [outagesOpen, setOutagesOpen] = useState(false);
+  const [outagesLive, setOutagesLive] = useState<GeoJSONFeatureCollection | null>(null);
+  const [outagesLoading, setOutagesLoading] = useState(false);
+  const [outageEvents, setOutageEvents] = useState<GeoJSONFeatureCollection | null>(null);
+  const [selectedOutageEvent, setSelectedOutageEvent] = useState<GeoJSONFeatureCollection | null>(null);
+  const [selectedOutageEventId, setSelectedOutageEventId] = useState<string | null>(null);
+  // Map legend starts collapsed so it never covers the layer controls
+  const [legendOpen, setLegendOpen] = useState(false);
   useEffect(() => {
     if (window.innerWidth < 768) setSidebarOpen(false);
   }, []);
@@ -85,6 +99,7 @@ function PageContent() {
       corridors:    active.includes("corridors"),
       counties:     active.includes("counties"),
       history:      active.includes("history"),
+      outages:      active.includes("outages"),
     };
   });
 
@@ -184,6 +199,74 @@ function PageContent() {
     }
   }, []);
 
+  const visibleCorridors = (() => {
+    if (!corridors) return null;
+    return {
+      ...corridors,
+      features: corridors.features.filter(
+        f => !clearedCorridorIds.has((f.properties as { id: string }).id)
+      ),
+    };
+  })();
+
+  const visibleLsrs = (() => {
+    if (!lsrs) return null;
+    return {
+      ...lsrs,
+      features: lsrs.features.filter(
+        f => !clearedLsrIds.has((f.properties as { id: string }).id)
+      ),
+    };
+  })();
+
+  const handleClearCorridors = useCallback(() => {
+    if (!corridors) return;
+    setClearedCorridorIds(prev => {
+      const next = new Set(prev);
+      corridors.features.forEach(f => next.add((f.properties as { id: string }).id));
+      return next;
+    });
+  }, [corridors]);
+
+  const handleClearLsrs = useCallback(() => {
+    if (!lsrs) return;
+    setClearedLsrIds(prev => {
+      const next = new Set(prev);
+      lsrs.features.forEach(f => next.add((f.properties as { id: string }).id));
+      return next;
+    });
+  }, [lsrs]);
+
+  const loadLiveOutages = useCallback(async () => {
+    setOutagesLoading(true);
+    try {
+      const res = await fetchLiveOutages();
+      if (res.ok) setOutagesLive(await res.json());
+    } catch (err) {
+      console.error("Live outage fetch failed:", err);
+    } finally {
+      setOutagesLoading(false);
+    }
+  }, []);
+
+  // Poll the live outage feed while the panel is open or the layer is on,
+  // so restorations auto-populate.
+  useEffect(() => {
+    if (!outagesOpen && !layers.outages) return;
+    loadLiveOutages();
+    const interval = setInterval(loadLiveOutages, 120000);
+    return () => clearInterval(interval);
+  }, [outagesOpen, layers.outages, loadLiveOutages]);
+
+  // Load the curated outage-event archive once, on first open
+  useEffect(() => {
+    if (!outagesOpen || outageEvents) return;
+    fetchOutageEvents()
+      .then(res => (res.ok ? res.json() : null))
+      .then(data => { if (data) setOutageEvents(data); })
+      .catch(err => console.error("Outage events fetch failed:", err));
+  }, [outagesOpen, outageEvents]);
+
   const handleToggleLayer = useCallback((layer: keyof LayerVisibility) => {
     setLayers(prev => ({ ...prev, [layer]: !prev[layer] }));
   }, []);
@@ -235,6 +318,23 @@ function PageContent() {
     flyToGeometry(feature?.geometry as { coordinates: unknown } | null);
   }, [corridors, flyToGeometry]);
 
+  const handleSelectOutageEvent = useCallback((feature: GeoJSONFeature) => {
+    const id = (feature.properties as { id?: string }).id ?? null;
+    setSelectedOutageEventId(id);
+    if (outageEvents) {
+      // Show the event swath plus its gust reports on the map
+      setSelectedOutageEvent({
+        ...outageEvents,
+        features: outageEvents.features.filter(f => {
+          const p = f.properties as { feature_type?: string; id?: string };
+          return p.feature_type === "gust_report" || p.id === id;
+        }),
+      });
+    }
+    setSelectedFeature(feature as SelectedFeature);
+    flyToGeometry(feature.geometry as { coordinates: unknown } | null);
+  }, [outageEvents, flyToGeometry]);
+
   const handleHistorySelect = useCallback((feature: GeoJSONFeature) => {
     const geomType = feature.geometry?.type;
     setReplayTarget(geomType === "LineString" || geomType === "MultiLineString" ? feature : null);
@@ -259,6 +359,20 @@ function PageContent() {
         onToggleHistorian={() => {
           setHistoryOpen(prev => {
             if (prev) setReplayTarget(null);
+            else setOutagesOpen(false);
+            return !prev;
+          });
+        }}
+        outagesOpen={outagesOpen}
+        onToggleOutages={() => {
+          setOutagesOpen(prev => {
+            if (!prev) {
+              setHistoryOpen(false);
+              setReplayTarget(null);
+            } else {
+              setSelectedOutageEvent(null);
+              setSelectedOutageEventId(null);
+            }
             return !prev;
           });
         }}
@@ -266,9 +380,11 @@ function PageContent() {
 
       <Map
         alerts={visibleAlerts}
-        lsrs={lsrs}
-        corridors={corridors}
+        lsrs={visibleLsrs}
+        corridors={visibleCorridors}
         history={history}
+        outagesLive={layers.outages ? outagesLive : null}
+        outageEvent={selectedOutageEvent}
         replayTarget={replayTarget}
         layers={layers}
         onFeatureClick={(feature) => {
@@ -319,18 +435,37 @@ function PageContent() {
           selectedId={replayTarget ? ((replayTarget.properties as { id?: number }).id ?? null) : null}
         />
       )}
+      {outagesOpen && (
+        <OutagePanel
+          live={outagesLive}
+          liveLoading={outagesLoading}
+          events={outageEvents}
+          showLiveOnMap={layers.outages}
+          onToggleLiveOnMap={show => setLayers(prev => ({ ...prev, outages: show }))}
+          onSelectEvent={handleSelectOutageEvent}
+          onRefreshLive={loadLiveOutages}
+          onClose={() => {
+            setOutagesOpen(false);
+            setSelectedOutageEvent(null);
+            setSelectedOutageEventId(null);
+          }}
+          selectedEventId={selectedOutageEventId}
+        />
+      )}
 
       {sidebarOpen && (
         <IncidentSidebar
           alerts={visibleAlerts}
-          corridors={corridors}
-          lsrs={lsrs}
+          corridors={visibleCorridors}
+          lsrs={visibleLsrs}
           onSelectIncident={handleSelectIncident}
           onSelectAlert={handleSelectAlert}
           onClose={() => setSidebarOpen(false)}
           activeAlertId={activeAlertId}
           onAckAlert={handleAckAlert}
           onAckAll={handleAckAllAlerts}
+          onClearCorridors={handleClearCorridors}
+          onClearLsrs={handleClearLsrs}
         />
       )}
 
@@ -355,8 +490,22 @@ function PageContent() {
       {/* Last updated ticker */}
       <LastUpdatedTicker lastUpdated={lastUpdated} />
 
-      {/* Legend */}
-      <div className="absolute bottom-44 right-3 z-10 bg-gray-900/90 backdrop-blur rounded-lg border border-gray-700 p-3 text-xs max-h-[45vh] overflow-y-auto hidden md:block">
+      {/* Legend — collapsed chip by default so it never covers the layer panel */}
+      {!legendOpen && (
+        <button
+          onClick={() => setLegendOpen(true)}
+          className="absolute bottom-44 right-3 z-10 bg-gray-900/90 border border-gray-700 rounded-lg px-2.5 py-1 text-[10px] text-gray-300 hidden md:flex items-center gap-1 hover:border-orange-500"
+        >
+          <span>🗺</span><span className="uppercase tracking-wider font-bold">Legend</span>
+        </button>
+      )}
+      {legendOpen && (
+      <div className="absolute bottom-44 right-3 z-10 bg-gray-900/90 backdrop-blur rounded-lg border border-gray-700 p-3 text-xs max-h-[40vh] overflow-y-auto hidden md:block">
+        <button
+          onClick={() => setLegendOpen(false)}
+          className="float-right text-gray-500 hover:text-white text-xs leading-none -mt-1 -mr-1"
+          aria-label="Collapse legend"
+        >✕</button>
         <div className="font-bold text-gray-300 mb-2 uppercase tracking-wider text-[10px]">NWS Alert Colors</div>
         <div className="space-y-1">
           {[
@@ -412,8 +561,10 @@ function PageContent() {
         </div>
       </div>
 
+      )}
+
       {/* Timeline scrubber */}
-      <TimelineScrubber lsrs={lsrs} onScrubTime={setScrubTime} />
+      <TimelineScrubber lsrs={visibleLsrs} onScrubTime={setScrubTime} />
 
       {/* Disclaimer — hidden on mobile when scrubber is present to avoid overlap */}
       <div className="absolute bottom-3 left-1/2 -translate-x-1/2 z-10 text-center hidden md:block">

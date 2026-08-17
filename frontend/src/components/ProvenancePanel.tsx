@@ -1,6 +1,9 @@
 "use client";
 
-import type { SelectedFeature, AlertProperties, LSRProperties, CorridorProperties, TornadoHistoryProperties } from "@/lib/types";
+import type {
+  SelectedFeature, AlertProperties, LSRProperties, CorridorProperties,
+  TornadoHistoryProperties, OutageLiveProperties, OutageEventProperties, GustReportProperties,
+} from "@/lib/types";
 import { format } from "date-fns";
 
 interface Props {
@@ -399,12 +402,165 @@ function durationMin(start: string, end: string | null): number | null {
   return mins > 0 ? mins : null;
 }
 
+function LiveOutageDetail({ props }: { props: OutageLiveProperties }) {
+  const fmt = (iso: string | null) => {
+    if (!iso) return null;
+    try { return new Date(iso).toLocaleString(); } catch { return iso; }
+  };
+  return (
+    <div className="space-y-3">
+      <div className="bg-yellow-950/40 border border-yellow-700 rounded p-2">
+        <div className="text-xs text-yellow-300 font-medium">⚡ Active outage · {props.city}</div>
+        <div className="text-[10px] text-yellow-200/80 mt-0.5">{props.utility} public outage feed</div>
+      </div>
+      <div className="grid grid-cols-2 gap-2">
+        <div>
+          <div className="text-xs text-gray-400 uppercase tracking-wider mb-1">Customers Affected</div>
+          <div className="text-sm font-bold text-white tabular-nums">{props.affected.toLocaleString()}</div>
+        </div>
+        <div>
+          <div className="text-xs text-gray-400 uppercase tracking-wider mb-1">Cause</div>
+          <div className="text-xs text-white">{props.cause}</div>
+        </div>
+      </div>
+      {fmt(props.reported) && (
+        <div>
+          <div className="text-xs text-gray-400 uppercase tracking-wider mb-1">Reported</div>
+          <div className="text-xs text-white">{fmt(props.reported)}</div>
+        </div>
+      )}
+      <div>
+        <div className="text-xs text-gray-400 uppercase tracking-wider mb-1">Estimated Restoration</div>
+        <div className="text-xs text-white">{fmt(props.restore_est) || "Not yet estimated"}</div>
+      </div>
+      {props.storm_mode && (
+        <div className="text-[10px] text-orange-300">
+          Utility is in storm mode — restoration estimates may shift as damage assessment continues.
+        </div>
+      )}
+    </div>
+  );
+}
+
+function GustReportDetail({ props }: { props: GustReportProperties }) {
+  return (
+    <div className="space-y-3">
+      <div className="bg-yellow-950/40 border border-yellow-700 rounded p-2">
+        <div className="text-xs text-yellow-300 font-medium">
+          💨 {props.speed_mph ? `${props.speed_mph} mph ${props.measured ? "measured" : "estimated"} gust` : "Wind damage report"}
+        </div>
+        <div className="text-[10px] text-yellow-200/80 mt-0.5">
+          {props.location} · {props.county} County, {props.state} · {props.date} {props.time_utc}Z
+        </div>
+      </div>
+      {props.comments && (
+        <div>
+          <div className="text-xs text-gray-400 uppercase tracking-wider mb-1">Report</div>
+          <div className="text-[11px] text-gray-200 leading-relaxed">{props.comments}</div>
+        </div>
+      )}
+      <div className="text-[10px] text-gray-500">Official SPC storm report (T2).</div>
+    </div>
+  );
+}
+
+function OutageEventDetail({ props }: { props: OutageEventProperties }) {
+  return (
+    <div className="space-y-3">
+      <div className="bg-yellow-950/40 border border-yellow-700 rounded p-2">
+        <div className="text-xs text-yellow-300 font-medium">⚡ {props.name}</div>
+        <div className="text-[10px] text-yellow-200/80 mt-0.5">{props.utility} · {props.event_type}</div>
+        {props.largest_in_utility_history && (
+          <div className="text-[9px] text-yellow-400 mt-0.5 font-bold uppercase tracking-wider">
+            Largest outage event in utility history
+          </div>
+        )}
+      </div>
+
+      <div>
+        <div className="text-xs text-gray-400 uppercase tracking-wider mb-1">Where It Hit</div>
+        <div className="text-xs text-white leading-relaxed">{props.area}</div>
+        <div className="text-[10px] text-gray-400 mt-0.5">
+          {props.communities_affected} communities affected · storm window {props.event_window_utc}
+        </div>
+      </div>
+
+      <div>
+        <div className="text-xs text-gray-400 uppercase tracking-wider mb-1">Wind Speeds</div>
+        <div className="text-xs text-white">
+          Peak measured gust {props.peak_gust_measured_mph} mph at {props.peak_gust_measured_at}
+        </div>
+        <div className="text-[10px] text-gray-400 mt-0.5">{props.peak_gust_reported_note}</div>
+        <div className="text-[10px] text-gray-400 mt-0.5">
+          {props.wind_reports_in_corridor} official wind reports in the corridor (dots on the map — click any for its report).
+        </div>
+      </div>
+
+      <div>
+        <div className="text-xs text-gray-400 uppercase tracking-wider mb-1">Outage Impact</div>
+        <div className="text-sm font-bold text-red-400 tabular-nums">
+          {props.customers_affected.toLocaleString()} customers lost power
+        </div>
+        <div className="text-[10px] text-gray-400 mt-0.5">{props.customers_affected_note}</div>
+        {Object.keys(props.city_peak_outages || {}).length > 0 && (
+          <div className="mt-1 space-y-0.5">
+            {Object.entries(props.city_peak_outages).map(([city, n]) => (
+              <div key={city} className="flex justify-between text-[11px]">
+                <span className="text-gray-300">{city}</span>
+                <span className="text-yellow-300 tabular-nums">{n.toLocaleString()}</span>
+              </div>
+            ))}
+            <div className="text-[9px] text-gray-500">{props.city_peak_note}</div>
+          </div>
+        )}
+        {props.deaths_reported > 0 && (
+          <div className="text-[10px] text-red-400 mt-1">{props.deaths_note}</div>
+        )}
+      </div>
+
+      <div>
+        <div className="text-xs text-gray-400 uppercase tracking-wider mb-1">Restoration Timeline</div>
+        <div className="text-[11px] text-gray-200 space-y-0.5">
+          <div>Aug 13: ~{props.still_out_aug13.toLocaleString()} still without power</div>
+          <div>90% restored target: {props.restoration_90pct_target}</div>
+          <div>Full restoration target: {props.restoration_full_target}</div>
+        </div>
+      </div>
+
+      <div>
+        <div className="text-xs text-gray-400 uppercase tracking-wider mb-1">Damage &amp; Aftermath</div>
+        <div className="text-[11px] text-gray-200 leading-relaxed">{props.infrastructure_damage}</div>
+        <div className="text-[11px] text-gray-300 leading-relaxed mt-1">{props.followup}</div>
+      </div>
+
+      <div>
+        <div className="text-xs text-gray-400 uppercase tracking-wider mb-1">Sources</div>
+        <div className="flex flex-wrap gap-x-2 gap-y-1">
+          {props.sources.map(s => (
+            <a key={s.url} href={s.url} target="_blank" rel="noopener noreferrer"
+              className="text-[10px] text-blue-400 hover:text-blue-300 underline">
+              {s.label}
+            </a>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function ProvenancePanel({ feature, onClose }: Props) {
   if (!feature) return null;
 
-  const props = feature.properties as AlertProperties | LSRProperties | CorridorProperties | TornadoHistoryProperties;
-  const isHistory = (props as { _layer: string })._layer === "history";
-  const tier = isHistory ? "T1" : ((props as { confidence_tier?: string }).confidence_tier || "T2");
+  const props = feature.properties as NonNullable<SelectedFeature>["properties"];
+  const layer = (props as { _layer: string })._layer;
+  const featureType = (props as { feature_type?: string }).feature_type;
+  const isHistory = layer === "history";
+  const isOutageEvent = layer === "outage_event" && featureType === "outage_event";
+  const isGust = layer === "outage_event" && featureType === "gust_report";
+  const isLiveOutage = layer === "outages_live";
+  const tier = isHistory || isOutageEvent ? "T1"
+    : isGust || isLiveOutage ? "T2"
+    : ((props as { confidence_tier?: string }).confidence_tier || "T2");
   const tierInfo = TIER_LABELS[tier] || TIER_LABELS["T2"];
 
   const layerTitle: Record<string, string> = {
@@ -412,6 +568,8 @@ export default function ProvenancePanel({ feature, onClose }: Props) {
     lsr: "Local Storm Report",
     corridors: "Probable Damage Corridor",
     history: "Historical Tornado (SPC Archive)",
+    outages_live: "Live Power Outage",
+    outage_event: featureType === "gust_report" ? "Storm Wind Report" : "Major Outage Event",
   };
 
   return (
@@ -448,6 +606,9 @@ export default function ProvenancePanel({ feature, onClose }: Props) {
         {(props as { _layer: string })._layer === "lsr" && <LSRDetail props={props as LSRProperties} />}
         {(props as { _layer: string })._layer === "corridors" && <CorridorDetail props={props as CorridorProperties} />}
         {isHistory && <HistoryDetail props={props as TornadoHistoryProperties} />}
+        {isLiveOutage && <LiveOutageDetail props={props as OutageLiveProperties} />}
+        {isOutageEvent && <OutageEventDetail props={props as OutageEventProperties} />}
+        {isGust && <GustReportDetail props={props as GustReportProperties} />}
       </div>
 
       {/* Provenance footer */}

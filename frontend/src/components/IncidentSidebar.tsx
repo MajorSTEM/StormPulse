@@ -14,6 +14,8 @@ interface Props {
   onClose?: () => void;
   onAckAlert?: (alertId: string) => void;
   onAckAll?: () => void;
+  onClearCorridors?: () => void;
+  onClearLsrs?: () => void;
 }
 
 function timeAgo(iso: string | null | undefined): string {
@@ -95,7 +97,7 @@ function efColor(magnitude: number | null | undefined): string {
 
 type Tab = "live" | "corridors" | "alerts";
 
-export default function IncidentSidebar({ alerts, corridors, lsrs, onSelectIncident, onSelectAlert, activeAlertId, onClose, onAckAlert, onAckAll }: Props) {
+export default function IncidentSidebar({ alerts, corridors, lsrs, onSelectIncident, onSelectAlert, activeAlertId, onClose, onAckAlert, onAckAll, onClearCorridors, onClearLsrs }: Props) {
   const [tab, setTab] = useState<Tab>("live");
   const [search, setSearch] = useState("");
 
@@ -218,6 +220,15 @@ export default function IncidentSidebar({ alerts, corridors, lsrs, onSelectIncid
         {/* Live Feed */}
         {tab === "live" && (
           <div className="px-2 pt-2 space-y-1">
+            {onClearLsrs && liveFeed.length > 0 && (
+              <button
+                onClick={onClearLsrs}
+                className="w-full text-[10px] font-bold uppercase tracking-wider border border-gray-600 text-gray-300 hover:border-orange-500 hover:text-orange-300 rounded py-1 transition"
+                title="Clear the current feed — new reports will repopulate it"
+              >
+                ✓ CLEAR FEED ({liveFeed.length})
+              </button>
+            )}
             {liveFeed.length === 0 && (
               <p className="text-center text-xs text-gray-500 py-6">
                 {search ? "No reports match your search." : "No storm reports loaded."}
@@ -267,6 +278,15 @@ export default function IncidentSidebar({ alerts, corridors, lsrs, onSelectIncid
         {/* Corridors */}
         {tab === "corridors" && (
           <div className="px-2 pt-2 space-y-1.5">
+            {onClearCorridors && filteredCorridors.length > 0 && (
+              <button
+                onClick={onClearCorridors}
+                className="w-full text-[10px] font-bold uppercase tracking-wider border border-gray-600 text-gray-300 hover:border-orange-500 hover:text-orange-300 rounded py-1 transition"
+                title="Clear current corridors — new corridors will repopulate"
+              >
+                ✓ CLEAR CORRIDORS ({filteredCorridors.length})
+              </button>
+            )}
             {filteredCorridors.length === 0 && (
               <p className="text-center text-xs text-gray-500 py-6">
                 {search ? "No corridors match search." : "No probable corridors yet."}

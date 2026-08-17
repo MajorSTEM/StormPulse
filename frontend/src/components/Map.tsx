@@ -19,6 +19,8 @@ interface Props {
   lsrs: GeoJSONFeatureCollection | null;
   corridors: GeoJSONFeatureCollection | null;
   history?: GeoJSONFeatureCollection | null;
+  outagesLive?: GeoJSONFeatureCollection | null;
+  outageEvent?: GeoJSONFeatureCollection | null; // selected event: swath + gusts
   replayTarget?: GeoJSONFeature | null; // historical tornado to animate
   layers: LayerVisibility;
   onFeatureClick: (feature: SelectedFeature) => void;
@@ -144,6 +146,8 @@ export default function Map({
   lsrs,
   corridors,
   history = null,
+  outagesLive = null,
+  outageEvent = null,
   replayTarget = null,
   layers,
   onFeatureClick,
@@ -163,12 +167,16 @@ export default function Map({
   const lsrsRef = useRef(lsrs);
   const corridorsRef = useRef(corridors);
   const historyRef = useRef(history);
+  const outagesLiveRef = useRef(outagesLive);
+  const outageEventRef = useRef(outageEvent);
   const layersRef = useRef(layers);
   const onMapReadyRef = useRef(onMapReady);
   alertsRef.current = alerts;
   lsrsRef.current = lsrs;
   corridorsRef.current = corridors;
   historyRef.current = history;
+  outagesLiveRef.current = outagesLive;
+  outageEventRef.current = outageEvent;
   layersRef.current = layers;
   onMapReadyRef.current = onMapReady;
 
@@ -338,6 +346,69 @@ export default function Map({
           "circle-radius": 7,
           "circle-stroke-color": "#f43f5e",
           "circle-stroke-width": 3,
+        },
+      });
+
+      // ── Live utility outages (graduated by customers affected) ──────────────
+      map.addSource("outages-live", { type: "geojson", data: EMPTY_FC });
+      map.addLayer({
+        id: "outages-live-circles",
+        type: "circle",
+        source: "outages-live",
+        layout: { visibility: "none" },
+        paint: {
+          "circle-color": [
+            "step", ["get", "affected"],
+            "#facc15", 50, "#fb923c", 500, "#ef4444", 5000, "#b91c1c",
+          ],
+          "circle-radius": [
+            "interpolate", ["linear"], ["get", "affected"],
+            1, 3, 50, 5, 500, 9, 5000, 15,
+          ],
+          "circle-opacity": 0.8,
+          "circle-stroke-color": "#0f172a",
+          "circle-stroke-width": 1,
+        },
+      });
+
+      // ── Historical outage event: wind swath + gust reports ──────────────────
+      map.addSource("outage-event", { type: "geojson", data: EMPTY_FC });
+      map.addLayer({
+        id: "outage-event-fill",
+        type: "fill",
+        source: "outage-event",
+        filter: ["==", ["geometry-type"], "Polygon"],
+        paint: { "fill-color": "#facc15", "fill-opacity": 0.08 },
+      });
+      map.addLayer({
+        id: "outage-event-outline",
+        type: "line",
+        source: "outage-event",
+        filter: ["==", ["geometry-type"], "Polygon"],
+        paint: {
+          "line-color": "#facc15",
+          "line-width": 2,
+          "line-dasharray": [3, 2],
+          "line-opacity": 0.8,
+        },
+      });
+      map.addLayer({
+        id: "outage-gust-circles",
+        type: "circle",
+        source: "outage-event",
+        filter: ["==", ["geometry-type"], "Point"],
+        paint: {
+          "circle-color": [
+            "step", ["coalesce", ["get", "speed_mph"], 0],
+            "#64748b", 40, "#facc15", 58, "#fb923c", 75, "#ef4444",
+          ],
+          "circle-radius": [
+            "interpolate", ["linear"], ["coalesce", ["get", "speed_mph"], 0],
+            0, 3, 40, 3.5, 75, 6, 100, 9,
+          ],
+          "circle-opacity": 0.85,
+          "circle-stroke-color": "#0f172a",
+          "circle-stroke-width": 1,
         },
       });
 
@@ -547,6 +618,8 @@ export default function Map({
       (map.getSource("prediction-cones") as maplibregl.GeoJSONSource)
         ?.setData(buildPredictionConesFC(corridorsRef.current));
       setSourceData(map, "history", historyRef.current ?? null);
+      setSourceData(map, "outages-live", outagesLiveRef.current ?? null);
+      setSourceData(map, "outage-event", outageEventRef.current ?? null);
 
       // Apply initial layer visibility and alert tier filter
       const vis = (v: boolean) => (v ? "visible" : "none") as "visible" | "none";
@@ -571,9 +644,11 @@ export default function Map({
       ].forEach(id => map.setLayoutProperty(id, "visibility", vis(l.corridors)));
       ["history-paths", "history-paths-hit", "history-points"].forEach(id =>
         map.setLayoutProperty(id, "visibility", vis(l.history)));
+      map.setLayoutProperty("outages-live-circles", "visibility", vis(l.outages));
 
       // Click handlers
-      ["corridors-fill", "alerts-fill", "lsr-circles", "history-paths-hit", "history-points"].forEach((layerId) => {
+      ["corridors-fill", "alerts-fill", "lsr-circles", "history-paths-hit", "history-points",
+       "outages-live-circles", "outage-gust-circles", "outage-event-fill"].forEach((layerId) => {
         map.on("click", layerId, (e) => {
           const feature = e.features?.[0];
           if (feature) onFeatureClick(feature as unknown as SelectedFeature);
@@ -672,6 +747,18 @@ export default function Map({
     if (!mapRef.current || !loadedRef.current) return;
     setSourceData(mapRef.current, "history", history);
   }, [history]);
+
+  // Live utility outages
+  useEffect(() => {
+    if (!mapRef.current || !loadedRef.current) return;
+    setSourceData(mapRef.current, "outages-live", outagesLive);
+  }, [outagesLive]);
+
+  // Selected historical outage event (swath + gusts)
+  useEffect(() => {
+    if (!mapRef.current || !loadedRef.current) return;
+    setSourceData(mapRef.current, "outage-event", outageEvent);
+  }, [outageEvent]);
 
   // Storm replay: animate a marker along the selected historical path,
   // drawing the traveled trail behind it. Loops until deselected.
@@ -802,6 +889,7 @@ export default function Map({
     ].forEach(l => map.setLayoutProperty(l, "visibility", vis(layers.corridors)));
     ["history-paths", "history-paths-hit", "history-points"].forEach(l =>
       map.setLayoutProperty(l, "visibility", vis(layers.history)));
+    map.setLayoutProperty("outages-live-circles", "visibility", vis(layers.outages));
   }, [layers]);
 
   return (

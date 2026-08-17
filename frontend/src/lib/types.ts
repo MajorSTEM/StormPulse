@@ -156,6 +156,61 @@ export interface HealthStatus {
   version: string;
 }
 
+export interface OutageLiveProperties {
+  affected: number;
+  city: string;
+  cause: string;
+  reported: string | null;
+  restore_est: string | null;
+  storm_mode: boolean;
+  utility: string;
+  _layer: "outages_live";
+}
+
+export interface OutageEventProperties {
+  id: string;
+  utility: string;
+  name: string;
+  event_type: string;
+  date: string;
+  event_window_utc: string;
+  area: string;
+  customers_affected: number;
+  customers_affected_note: string;
+  largest_in_utility_history: boolean;
+  peak_gust_measured_mph: number;
+  peak_gust_measured_at: string;
+  peak_gust_reported_mph: number;
+  peak_gust_reported_note: string;
+  wind_reports_in_corridor: number;
+  deaths_reported: number;
+  deaths_note: string;
+  communities_affected: number;
+  city_peak_outages: Record<string, number>;
+  city_peak_note: string;
+  still_out_aug13: number;
+  restoration_90pct_target: string;
+  restoration_full_target: string;
+  followup: string;
+  infrastructure_damage: string;
+  sources: { label: string; url: string }[];
+  feature_type: "outage_event";
+  _layer: "outage_event";
+}
+
+export interface GustReportProperties {
+  feature_type: "gust_report";
+  speed_mph: number | null;
+  measured: boolean;
+  location: string;
+  county: string;
+  state: string;
+  date: string;
+  time_utc: string;
+  comments: string;
+  _layer: "outage_event";
+}
+
 export interface LayerVisibility {
   alertsRed: boolean;
   alertsOrange: boolean;
@@ -166,8 +221,10 @@ export interface LayerVisibility {
   corridors: boolean;
   counties: boolean;
   history: boolean;
+  outages: boolean;
 }
 
 export type SelectedFeature = (GeoJSONFeature & {
-  properties: AlertProperties | LSRProperties | CorridorProperties | TornadoHistoryProperties;
+  properties: AlertProperties | LSRProperties | CorridorProperties | TornadoHistoryProperties
+    | OutageLiveProperties | OutageEventProperties | GustReportProperties;
 }) | null;

@@ -51,6 +51,20 @@ export async function fetchTornadoHistory(q: HistoryQuery = {}): Promise<Respons
   });
 }
 
+export async function fetchLiveOutages(): Promise<Response> {
+  return fetch(`${API_V1}/outages/live`, {
+    headers: AUTH_HEADERS,
+    cache: "no-store",
+  });
+}
+
+export async function fetchOutageEvents(): Promise<Response> {
+  return fetch(`${API_V1}/history/outages`, {
+    headers: AUTH_HEADERS,
+    next: { revalidate: 3600 },
+  });
+}
+
 export async function fetchHealth(): Promise<Response> {
   // Health is an intentionally public read-only route (no key required).
   return fetch(`${API_V1}/health`, {
