@@ -151,12 +151,13 @@ function styleOutagesForBasemap(map: maplibregl.Map, basemap: Basemap, outagesVi
   if (!map.getLayer("outages-live-circles")) return;
   const dark = basemap === "dark";
   map.setPaintProperty("outages-live-circles", "circle-color",
-    dark ? "#05060c" : OUTAGE_GRADUATED_COLOR);
-  map.setPaintProperty("outages-live-circles", "circle-opacity", dark ? 0.8 : 0.65);
-  map.setPaintProperty("outages-live-circles", "circle-blur", dark ? 0.4 : 0);
-  map.setPaintProperty("outages-live-circles", "circle-stroke-color",
-    dark ? "#f59e0b" : "#0f172a");
-  map.setPaintProperty("outages-live-circles", "circle-stroke-width", dark ? 0.8 : 1);
+    dark ? "#000000" : OUTAGE_GRADUATED_COLOR);
+  map.setPaintProperty("outages-live-circles", "circle-opacity", dark ? 0.92 : 0.65);
+  map.setPaintProperty("outages-live-circles", "circle-blur", dark ? 0.35 : 0);
+  map.setPaintProperty("outages-live-circles", "circle-stroke-width", dark ? 0 : 1);
+  map.setPaintProperty("outages-live-circles", "circle-radius", dark
+    ? ["interpolate", ["linear"], ["get", "affected"], 1, 4, 50, 6.5, 500, 11, 5000, 18]
+    : ["interpolate", ["linear"], ["get", "affected"], 1, 2, 50, 3.5, 500, 6, 5000, 11]);
   map.setLayoutProperty("outages-live-glow", "visibility",
     dark && outagesVisible ? "visible" : "none");
 }
@@ -374,18 +375,27 @@ export default function Map({
       // warm "still-lit" rim against the illuminated map. Satellite/street:
       // graduated yellow→red circles (styleOutagesForBasemap switches modes).
       map.addSource("outages-live", { type: "geojson", data: EMPTY_FC });
+      // Warm ambient "energized area" glow (heatmap) — the light that the
+      // blackout cores punch holes into. Dark basemap only.
       map.addLayer({
         id: "outages-live-glow",
-        type: "circle",
+        type: "heatmap",
         source: "outages-live",
         layout: { visibility: "none" },
         paint: {
-          "circle-color": "#fbbf24",
-          "circle-blur": 1,
-          "circle-opacity": 0.12,
-          "circle-radius": [
+          "heatmap-weight": [
             "interpolate", ["linear"], ["get", "affected"],
-            1, 4, 50, 7, 500, 11, 5000, 17,
+            1, 0.4, 100, 0.8, 1000, 1,
+          ],
+          "heatmap-intensity": ["interpolate", ["linear"], ["zoom"], 6, 0.5, 11, 0.9],
+          "heatmap-radius": ["interpolate", ["linear"], ["zoom"], 6, 25, 9, 45, 12, 70],
+          "heatmap-opacity": 0.5,
+          "heatmap-color": [
+            "interpolate", ["linear"], ["heatmap-density"],
+            0, "rgba(0,0,0,0)",
+            0.15, "rgba(130,95,25,0.30)",
+            0.45, "rgba(251,191,36,0.40)",
+            1, "rgba(255,240,180,0.50)",
           ],
         },
       });
