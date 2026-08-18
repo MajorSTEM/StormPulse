@@ -17,9 +17,15 @@ interface Props {
   onRefreshLive: () => void;
   onZipLookup: (zip: string) => void;
   zipResult: ZipLookupResult | null;
+  utilityFilter: UtilityFilter;
+  onUtilityFilterChange: (f: UtilityFilter) => void;
+  realistic: boolean;
+  onToggleRealistic: (on: boolean) => void;
   onClose: () => void;
   selectedEventId: string | null;
 }
+
+export type UtilityFilter = "all" | "NIPSCO" | "ComEd";
 
 export interface ZipLookupResult {
   zip: string;
@@ -38,7 +44,9 @@ type Tab = "live" | "events";
  */
 export default function OutagePanel({
   live, liveLoading, events, showLiveOnMap, onToggleLiveOnMap,
-  onSelectEvent, onRefreshLive, onZipLookup, zipResult, onClose, selectedEventId,
+  onSelectEvent, onRefreshLive, onZipLookup, zipResult,
+  utilityFilter, onUtilityFilterChange, realistic, onToggleRealistic,
+  onClose, selectedEventId,
 }: Props) {
   const [tab, setTab] = useState<Tab>("live");
   const [zipInput, setZipInput] = useState("");
@@ -50,7 +58,8 @@ export default function OutagePanel({
     outage_count?: number;
     customers_out?: number;
     top_cities?: { city: string; affected: number }[];
-    utilities?: { name: string; customers_out: number; outage_count: number }[];
+    utilities?: { name: string; customers_out: number; outage_count: number;
+                  customers_served?: number; served_approximate?: boolean }[];
     disclaimer?: string;
   } | undefined;
 
@@ -130,15 +139,30 @@ export default function OutagePanel({
           </div>
 
           {(meta?.utilities?.length ?? 0) > 1 && (
-            <div className="space-y-0.5">
-              {meta!.utilities!.map(u => (
-                <div key={u.name} className="flex items-center justify-between text-[11px] py-0.5 border-b border-gray-800">
-                  <span className="text-gray-300">{u.name}</span>
-                  <span className="text-yellow-300 tabular-nums">
-                    {u.customers_out.toLocaleString()} out · {u.outage_count.toLocaleString()} outages
-                  </span>
-                </div>
-              ))}
+            <div className="space-y-1">
+              {meta!.utilities!.map(u => {
+                const served = u.customers_served;
+                const pct = served ? (u.customers_out / served) * 100 : null;
+                return (
+                  <div key={u.name} className="py-1 border-b border-gray-800">
+                    <div className="flex items-center justify-between text-[11px]">
+                      <span className="text-gray-200 font-medium">{u.name}</span>
+                      {pct !== null && (
+                        <span className={`tabular-nums font-bold ${
+                          pct >= 5 ? "text-red-400" : pct >= 0.5 ? "text-yellow-300" : "text-green-400"
+                        }`}>
+                          {pct < 0.1 && pct > 0 ? "<0.1" : pct.toFixed(1)}% out
+                        </span>
+                      )}
+                    </div>
+                    <div className="text-[10px] text-gray-400 tabular-nums">
+                      {u.customers_out.toLocaleString()} of {u.served_approximate ? "~" : ""}
+                      {served ? served.toLocaleString() : "?"} customers without power
+                      · {u.outage_count.toLocaleString()} active outages
+                    </div>
+                  </div>
+                );
+              })}
             </div>
           )}
 
@@ -188,6 +212,39 @@ export default function OutagePanel({
               className="w-3.5 h-3.5 accent-yellow-500"
             />
             Show outages on map
+          </label>
+
+          {/* Utility filter */}
+          <div className="flex gap-1">
+            {(["all", "NIPSCO", "ComEd"] as UtilityFilter[]).map(f => (
+              <button
+                key={f}
+                onClick={() => onUtilityFilterChange(f)}
+                className={`flex-1 text-[10px] font-bold uppercase tracking-wider py-1 rounded border transition ${
+                  utilityFilter === f
+                    ? "border-yellow-500 bg-yellow-600 text-black"
+                    : "border-gray-700 text-gray-400 hover:text-gray-200 hover:border-yellow-700"
+                }`}
+              >
+                {f === "all" ? "Both" : f}
+              </button>
+            ))}
+          </div>
+
+          {/* Realistic (lights-out) view — dark basemap only */}
+          <label className="flex items-center gap-2 text-xs text-gray-200 border border-gray-700 rounded px-2 py-1.5 cursor-pointer hover:border-yellow-600">
+            <input
+              type="checkbox"
+              checked={realistic}
+              onChange={e => onToggleRealistic(e.target.checked)}
+              className="w-3.5 h-3.5 accent-yellow-500"
+            />
+            <span>
+              Realistic view
+              <span className="block text-[9px] text-gray-500">
+                Dark basemap: outages appear as lights-out zones instead of colored bubbles
+              </span>
+            </span>
           </label>
 
           {/* Per-city rollup */}

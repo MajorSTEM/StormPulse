@@ -21,6 +21,7 @@ interface Props {
   history?: GeoJSONFeatureCollection | null;
   outagesLive?: GeoJSONFeatureCollection | null;
   outageEvent?: GeoJSONFeatureCollection | null; // selected event: swath + gusts
+  realisticOutages?: boolean; // dark basemap: render outages as lights-out voids
   replayTarget?: GeoJSONFeature | null; // historical tornado to animate
   layers: LayerVisibility;
   onFeatureClick: (feature: SelectedFeature) => void;
@@ -162,9 +163,10 @@ const OUTAGE_GRADUATED_COLOR: maplibregl.ExpressionSpecification = [
 ];
 
 /** Dark basemap: blackout-hole styling. Satellite/street: graduated circles. */
-function styleOutagesForBasemap(map: maplibregl.Map, basemap: Basemap) {
+function styleOutagesForBasemap(map: maplibregl.Map, basemap: Basemap, realistic: boolean) {
   if (!map.getLayer("outages-live-circles")) return;
-  const dark = basemap === "dark";
+  // "Realistic view": lights-out voids, only meaningful on the dark basemap.
+  const dark = basemap === "dark" && realistic;
   map.setPaintProperty("outages-live-circles", "circle-color",
     dark ? "#000000" : OUTAGE_GRADUATED_COLOR);
   map.setPaintProperty("outages-live-circles", "circle-opacity", dark ? 0.92 : 0.65);
@@ -182,6 +184,7 @@ export default function Map({
   history = null,
   outagesLive = null,
   outageEvent = null,
+  realisticOutages = false,
   replayTarget = null,
   layers,
   onFeatureClick,
@@ -203,6 +206,7 @@ export default function Map({
   const historyRef = useRef(history);
   const outagesLiveRef = useRef(outagesLive);
   const outageEventRef = useRef(outageEvent);
+  const realisticOutagesRef = useRef(realisticOutages);
   const layersRef = useRef(layers);
   const onMapReadyRef = useRef(onMapReady);
   alertsRef.current = alerts;
@@ -211,6 +215,7 @@ export default function Map({
   historyRef.current = history;
   outagesLiveRef.current = outagesLive;
   outageEventRef.current = outageEvent;
+  realisticOutagesRef.current = realisticOutages;
   layersRef.current = layers;
   onMapReadyRef.current = onMapReady;
 
@@ -679,7 +684,7 @@ export default function Map({
       ["history-paths", "history-paths-hit", "history-points"].forEach(id =>
         map.setLayoutProperty(id, "visibility", vis(l.history)));
       map.setLayoutProperty("outages-live-circles", "visibility", vis(l.outages));
-      styleOutagesForBasemap(map, basemap);
+      styleOutagesForBasemap(map, basemap, realisticOutagesRef.current);
 
       // Click handlers
       ["corridors-fill", "alerts-fill", "lsr-circles", "history-paths-hit", "history-points",
@@ -889,7 +894,7 @@ export default function Map({
     const bg = basemap === "dark" ? "#0f172a" : basemap === "satellite" ? "#000000" : "#c8dce8";
     map.setPaintProperty("background", "background-color", bg);
     map.setLayoutProperty("night-lights", "visibility", basemap === "dark" ? "visible" : "none");
-    styleOutagesForBasemap(map, basemap);
+    styleOutagesForBasemap(map, basemap, realisticOutagesRef.current);
   }, [basemap]);
 
   // Update layer visibility and alert tier filter
@@ -927,8 +932,8 @@ export default function Map({
     ["history-paths", "history-paths-hit", "history-points"].forEach(l =>
       map.setLayoutProperty(l, "visibility", vis(layers.history)));
     map.setLayoutProperty("outages-live-circles", "visibility", vis(layers.outages));
-    styleOutagesForBasemap(map, basemap);
-  }, [layers, basemap]);
+    styleOutagesForBasemap(map, basemap, realisticOutages);
+  }, [layers, basemap, realisticOutages]);
 
   return (
     <div

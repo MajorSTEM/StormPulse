@@ -227,6 +227,10 @@ async def poll_live_outages() -> dict:
         "name": "NIPSCO (NiSource)",
         "customers_out": total_affected,
         "outage_count": len(features),
+        # NIPSCO's feed carries no served total; ~500k electric customers is
+        # the utility's published figure, so the share reads as approximate.
+        "customers_served": 500000,
+        "served_approximate": True,
     }]
     if comed:
         utilities.append({

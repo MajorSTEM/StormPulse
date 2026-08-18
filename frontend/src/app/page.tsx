@@ -22,7 +22,7 @@ import SourceHealthBar from "@/components/SourceHealthBar";
 import LastUpdatedTicker from "@/components/LastUpdatedTicker";
 import TimelineScrubber from "@/components/TimelineScrubber";
 import HistoryPanel from "@/components/HistoryPanel";
-import OutagePanel, { type ZipLookupResult } from "@/components/OutagePanel";
+import OutagePanel, { type ZipLookupResult, type UtilityFilter } from "@/components/OutagePanel";
 
 const Map = dynamic(() => import("@/components/Map"), {
   ssr: false,
@@ -70,6 +70,8 @@ function PageContent() {
   const [selectedOutageEvent, setSelectedOutageEvent] = useState<GeoJSONFeatureCollection | null>(null);
   const [selectedOutageEventId, setSelectedOutageEventId] = useState<string | null>(null);
   const [zipResult, setZipResult] = useState<ZipLookupResult | null>(null);
+  const [utilityFilter, setUtilityFilter] = useState<UtilityFilter>("all");
+  const [realisticOutages, setRealisticOutages] = useState(false);
   // Map legend starts collapsed so it never covers the layer controls
   const [legendOpen, setLegendOpen] = useState(false);
   useEffect(() => {
@@ -319,6 +321,16 @@ function PageContent() {
     flyToGeometry(feature?.geometry as { coordinates: unknown } | null);
   }, [corridors, flyToGeometry]);
 
+  const filteredOutagesLive = (() => {
+    if (!outagesLive || utilityFilter === "all") return outagesLive;
+    return {
+      ...outagesLive,
+      features: outagesLive.features.filter(
+        f => (f.properties as { utility?: string }).utility === utilityFilter
+      ),
+    };
+  })();
+
   const handleZipLookup = useCallback(async (zip: string) => {
     setOutagesLoading(true);
     try {
@@ -409,8 +421,9 @@ function PageContent() {
         lsrs={visibleLsrs}
         corridors={visibleCorridors}
         history={history}
-        outagesLive={layers.outages ? outagesLive : null}
+        outagesLive={layers.outages ? filteredOutagesLive : null}
         outageEvent={selectedOutageEvent}
+        realisticOutages={realisticOutages}
         replayTarget={replayTarget}
         layers={layers}
         onFeatureClick={(feature) => {
@@ -472,6 +485,10 @@ function PageContent() {
           onRefreshLive={loadLiveOutages}
           onZipLookup={handleZipLookup}
           zipResult={zipResult}
+          utilityFilter={utilityFilter}
+          onUtilityFilterChange={setUtilityFilter}
+          realistic={realisticOutages}
+          onToggleRealistic={setRealisticOutages}
           onClose={() => {
             setOutagesOpen(false);
             setSelectedOutageEvent(null);
