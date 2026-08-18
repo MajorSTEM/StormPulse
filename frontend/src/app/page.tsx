@@ -22,7 +22,7 @@ import SourceHealthBar from "@/components/SourceHealthBar";
 import LastUpdatedTicker from "@/components/LastUpdatedTicker";
 import TimelineScrubber from "@/components/TimelineScrubber";
 import HistoryPanel from "@/components/HistoryPanel";
-import OutagePanel from "@/components/OutagePanel";
+import OutagePanel, { type ZipLookupResult } from "@/components/OutagePanel";
 
 const Map = dynamic(() => import("@/components/Map"), {
   ssr: false,
@@ -69,6 +69,7 @@ function PageContent() {
   const [outageEvents, setOutageEvents] = useState<GeoJSONFeatureCollection | null>(null);
   const [selectedOutageEvent, setSelectedOutageEvent] = useState<GeoJSONFeatureCollection | null>(null);
   const [selectedOutageEventId, setSelectedOutageEventId] = useState<string | null>(null);
+  const [zipResult, setZipResult] = useState<ZipLookupResult | null>(null);
   // Map legend starts collapsed so it never covers the layer controls
   const [legendOpen, setLegendOpen] = useState(false);
   useEffect(() => {
@@ -318,6 +319,31 @@ function PageContent() {
     flyToGeometry(feature?.geometry as { coordinates: unknown } | null);
   }, [corridors, flyToGeometry]);
 
+  const handleZipLookup = useCallback(async (zip: string) => {
+    setOutagesLoading(true);
+    try {
+      const res = await fetchLiveOutages(zip);
+      if (!res.ok) return;
+      const data = await res.json();
+      setOutagesLive(data);
+      const lookup = (data.meta as { zip_lookup?: ZipLookupResult & { bbox?: number[] } }).zip_lookup;
+      if (lookup) {
+        setZipResult(lookup);
+        const bbox = (lookup as { bbox?: number[] }).bbox;
+        if (lookup.found && bbox && mapHandleRef.current) {
+          setLayers(prev => ({ ...prev, outages: true }));
+          mapHandleRef.current.flyToBounds(
+            [bbox[0], bbox[1], bbox[2], bbox[3]] as [number, number, number, number], 80
+          );
+        }
+      }
+    } catch (err) {
+      console.error("ZIP lookup failed:", err);
+    } finally {
+      setOutagesLoading(false);
+    }
+  }, []);
+
   const handleSelectOutageEvent = useCallback((feature: GeoJSONFeature) => {
     const id = (feature.properties as { id?: string }).id ?? null;
     setSelectedOutageEventId(id);
@@ -444,6 +470,8 @@ function PageContent() {
           onToggleLiveOnMap={show => setLayers(prev => ({ ...prev, outages: show }))}
           onSelectEvent={handleSelectOutageEvent}
           onRefreshLive={loadLiveOutages}
+          onZipLookup={handleZipLookup}
+          zipResult={zipResult}
           onClose={() => {
             setOutagesOpen(false);
             setSelectedOutageEvent(null);

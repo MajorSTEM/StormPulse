@@ -15,8 +15,18 @@ interface Props {
   onToggleLiveOnMap: (show: boolean) => void;
   onSelectEvent: (feature: GeoJSONFeature) => void;
   onRefreshLive: () => void;
+  onZipLookup: (zip: string) => void;
+  zipResult: ZipLookupResult | null;
   onClose: () => void;
   selectedEventId: string | null;
+}
+
+export interface ZipLookupResult {
+  zip: string;
+  found: boolean;
+  affected?: number;
+  cities?: string[];
+  note?: string;
 }
 
 type Tab = "live" | "events";
@@ -28,9 +38,10 @@ type Tab = "live" | "events";
  */
 export default function OutagePanel({
   live, liveLoading, events, showLiveOnMap, onToggleLiveOnMap,
-  onSelectEvent, onRefreshLive, onClose, selectedEventId,
+  onSelectEvent, onRefreshLive, onZipLookup, zipResult, onClose, selectedEventId,
 }: Props) {
   const [tab, setTab] = useState<Tab>("live");
+  const [zipInput, setZipInput] = useState("");
 
   const meta = live?.meta as unknown as {
     available?: boolean;
@@ -39,6 +50,7 @@ export default function OutagePanel({
     outage_count?: number;
     customers_out?: number;
     top_cities?: { city: string; affected: number }[];
+    utilities?: { name: string; customers_out: number; outage_count: number }[];
     disclaimer?: string;
   } | undefined;
 
@@ -115,6 +127,57 @@ export default function OutagePanel({
             >
               {liveLoading ? "…" : "↻ Refresh"}
             </button>
+          </div>
+
+          {(meta?.utilities?.length ?? 0) > 1 && (
+            <div className="space-y-0.5">
+              {meta!.utilities!.map(u => (
+                <div key={u.name} className="flex items-center justify-between text-[11px] py-0.5 border-b border-gray-800">
+                  <span className="text-gray-300">{u.name}</span>
+                  <span className="text-yellow-300 tabular-nums">
+                    {u.customers_out.toLocaleString()} out · {u.outage_count.toLocaleString()} outages
+                  </span>
+                </div>
+              ))}
+            </div>
+          )}
+
+          {/* ZIP lookup — aggregate data only; the ZIP is never stored */}
+          <div className="border border-gray-700 rounded px-2 py-1.5 space-y-1">
+            <div className="flex gap-1.5">
+              <input
+                type="text"
+                inputMode="numeric"
+                maxLength={5}
+                value={zipInput}
+                onChange={e => setZipInput(e.target.value.replace(/\D/g, ""))}
+                onKeyDown={e => { if (e.key === "Enter" && zipInput.length === 5) onZipLookup(zipInput); }}
+                placeholder="ZIP code…"
+                className="flex-1 bg-gray-800 border border-gray-600 rounded px-2 py-1 text-xs text-gray-200 focus:outline-none focus:border-yellow-500"
+              />
+              <button
+                onClick={() => zipInput.length === 5 && onZipLookup(zipInput)}
+                disabled={zipInput.length !== 5 || liveLoading}
+                className="text-[10px] font-bold uppercase tracking-wider bg-yellow-600 hover:bg-yellow-500 disabled:bg-gray-700 disabled:text-gray-500 text-black rounded px-2.5 transition"
+              >
+                Check
+              </button>
+            </div>
+            {zipResult && (
+              zipResult.found ? (
+                <div className="text-[11px] text-yellow-200">
+                  <span className="font-bold tabular-nums">{(zipResult.affected ?? 0).toLocaleString()}</span> customers
+                  out in {zipResult.zip} ({(zipResult.cities ?? []).join(", ")})
+                </div>
+              ) : (
+                <div className="text-[11px] text-green-300">
+                  {zipResult.zip}: no reported outages — area appears energized. (NIPSCO territory)
+                </div>
+              )
+            )}
+            <div className="text-[9px] text-gray-500">
+              ZIP is used only for this lookup — never stored. NIPSCO territory only.
+            </div>
           </div>
 
           <label className="flex items-center gap-2 text-xs text-gray-200 border border-gray-700 rounded px-2 py-1.5 cursor-pointer hover:border-yellow-600">
@@ -202,7 +265,7 @@ export default function OutagePanel({
       {/* Footer */}
       <div className="px-3 py-1.5 border-t border-gray-700 flex-shrink-0">
         <div className="text-[10px] text-gray-500">
-          Live: NIPSCO public feed · Events: curated + SPC wind reports
+          Live: NIPSCO + ComEd public feeds · Events: curated + SPC wind reports
         </div>
       </div>
     </div>

@@ -518,6 +518,24 @@ function OutageEventDetail({ props }: { props: OutageEventProperties }) {
         )}
       </div>
 
+      {props.illinois_impact && (
+        <div>
+          <div className="text-xs text-gray-400 uppercase tracking-wider mb-1">Illinois Impact ({props.illinois_impact.utility})</div>
+          <div className="text-sm font-bold text-red-400 tabular-nums">
+            {props.illinois_impact.customers_affected_aug11.toLocaleString()} customers out Aug 11
+          </div>
+          <div className="text-[10px] text-gray-400 mt-0.5">
+            ~{props.illinois_impact.customers_affected_event_total.toLocaleString()} across the Aug 11–12 rounds ·
+            gusts to {props.illinois_impact.peak_gust_mph} mph in ComEd territory
+          </div>
+          <div className="text-[10px] text-gray-300 mt-1">
+            Hardest-hit: {props.illinois_impact.hard_hit_communities.join(", ")}
+          </div>
+          <div className="text-[11px] text-gray-200 leading-relaxed mt-1">{props.illinois_impact.tornado_note}</div>
+          <div className="text-[10px] text-gray-400 mt-0.5">{props.illinois_impact.restoration_note}</div>
+        </div>
+      )}
+
       <div>
         <div className="text-xs text-gray-400 uppercase tracking-wider mb-1">Restoration Timeline</div>
         <div className="text-[11px] text-gray-200 space-y-0.5">

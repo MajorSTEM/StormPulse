@@ -194,6 +194,15 @@ export interface OutageEventProperties {
   followup: string;
   infrastructure_damage: string;
   sources: { label: string; url: string }[];
+  illinois_impact?: {
+    utility: string;
+    customers_affected_aug11: number;
+    customers_affected_event_total: number;
+    peak_gust_mph: number;
+    hard_hit_communities: string[];
+    tornado_note: string;
+    restoration_note: string;
+  };
   feature_type: "outage_event";
   _layer: "outage_event";
 }

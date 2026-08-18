@@ -51,8 +51,9 @@ export async function fetchTornadoHistory(q: HistoryQuery = {}): Promise<Respons
   });
 }
 
-export async function fetchLiveOutages(): Promise<Response> {
-  return fetch(`${API_V1}/outages/live`, {
+export async function fetchLiveOutages(zip?: string): Promise<Response> {
+  const params = zip ? `?zip=${encodeURIComponent(zip)}` : "";
+  return fetch(`${API_V1}/outages/live${params}`, {
     headers: AUTH_HEADERS,
     cache: "no-store",
   });
