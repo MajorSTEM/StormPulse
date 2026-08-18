@@ -26,6 +26,11 @@ def test_outage_event_archive_serves_storm_lucy(client):
     assert swaths[0]["geometry"]["type"] == "Polygon"
     assert props["sources"], "event must cite its sources"
 
+    il = props.get("illinois_impact")
+    assert il and il["customers_affected_aug11"] == 287000
+    assert "GLENWOOD" in il["hard_hit_communities"]
+    assert "LANSING" in il["hard_hit_communities"]
+
     gusts = [f for f in body["features"]
              if f["properties"].get("feature_type") == "gust_report"]
     assert len(gusts) > 100
@@ -36,6 +41,12 @@ def test_outage_event_archive_serves_storm_lucy(client):
 
 def test_live_outages_serves_snapshot_without_upstream_call(client):
     outages_live._snapshot = {
+        "utilities": [
+            {"name": "NIPSCO (NiSource)", "customers_out": 150, "outage_count": 2},
+            {"name": "ComEd (Exelon)", "customers_out": 40, "outage_count": 1,
+             "customers_served": 4121781},
+        ],
+        "zip_index": {"46402": {"affected": 100, "cities": ["GARY"]}},
         "as_of": "2026-08-17T12:00:00+00:00",
         "utility": "NIPSCO (NiSource)",
         "outage_count": 2,
@@ -64,5 +75,22 @@ def test_live_outages_serves_snapshot_without_upstream_call(client):
         assert body["meta"]["top_cities"][0]["city"] == "GARY"
         assert len(body["features"]) == 2
         assert "public outage map" in body["meta"]["disclaimer"]
+        assert len(body["meta"]["utilities"]) == 2
+        assert body["meta"]["utilities"][1]["name"] == "ComEd (Exelon)"
+
+        # ZIP lookup: found
+        hit = client.get("/api/v1/outages/live?zip=46402", headers=AUTH).json()
+        lookup = hit["meta"]["zip_lookup"]
+        assert lookup["found"] is True
+        assert lookup["affected"] == 100
+        assert lookup["cities"] == ["GARY"]
+        assert lookup["bbox"] is not None
+
+        # ZIP lookup: energized area
+        miss = client.get("/api/v1/outages/live?zip=99999", headers=AUTH).json()
+        assert miss["meta"]["zip_lookup"]["found"] is False
+
+        # ZIP validation
+        assert client.get("/api/v1/outages/live?zip=abc", headers=AUTH).status_code == 422
     finally:
         outages_live._snapshot = None

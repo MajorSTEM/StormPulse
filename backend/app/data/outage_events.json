@@ -7,9 +7,9 @@
    "event_type": "Derecho / severe wind outage event",
    "date": "2026-08-11",
    "event_window_utc": "2026-08-11 1200Z \u2192 2026-08-12 1730Z (SPC report span)",
-   "area": "Northern Indiana \u2014 nearly the entire NIPSCO electric service territory (plus derecho impacts in NE Illinois)",
+   "area": "Northern Indiana \u2014 nearly the entire NIPSCO electric service territory \u2014 plus ComEd's south region in northeast Illinois (Chicago south suburbs)",
    "customers_affected": 301000,
-   "customers_affected_note": "Official NIPSCO outage summary (updated Aug 13, 2026); media tallies during the event ran as high as ~313,000. Roughly 60% of NIPSCO's electric customer base.",
+   "customers_affected_note": "Official NIPSCO outage summary (updated Aug 13, 2026); media tallies during the event ran as high as ~313,000. Roughly 60% of NIPSCO's electric customer base. Illinois adds ~287,000 ComEd customers from the Aug 11 storms (~410,000 across the Aug 11\u201312 rounds) \u2014 see Illinois impact.",
    "largest_in_utility_history": true,
    "peak_gust_measured_mph": 99,
    "peak_gust_measured_at": "Gary Airport (Lake County, IN)",
@@ -54,6 +54,14 @@
     {
      "label": "SPC storm reports 2026-08-11 (wind data)",
      "url": "https://www.spc.noaa.gov/climo/reports/260811_rpts.html"
+    },
+    {
+     "label": "ComEd: 99% restored after Aug 11-12 storms (press release)",
+     "url": "https://finance.yahoo.com/energy/articles/comed-restores-power-99-customers-020800353.html"
+    },
+    {
+     "label": "CBS Chicago: ComEd restoration timeline",
+     "url": "https://www.cbsnews.com/chicago/news/comed-illinois-power-outages-repairs-severe-storms-august-2026/"
     }
    ],
    "swath_geojson": {
@@ -4894,7 +4902,29 @@
       "_layer": "outage_event"
      }
     }
-   ]
+   ],
+   "illinois_impact": {
+    "utility": "ComEd (Exelon)",
+    "customers_affected_aug11": 287000,
+    "customers_affected_event_total": 410000,
+    "peak_gust_mph": 96,
+    "hard_hit_communities": [
+     "GLENWOOD",
+     "LYNWOOD",
+     "LANSING",
+     "SOUTH HOLLAND",
+     "HOMEWOOD",
+     "FLOSSMOOR",
+     "CHICAGO HEIGHTS",
+     "FORD HEIGHTS",
+     "THORNTON",
+     "MOKENA",
+     "TINLEY PARK",
+     "JOLIET"
+    ],
+    "tornado_note": "NWS confirmed six tornadoes in the south and southwest suburbs on Aug 11, including an EF-1 that tracked through Homewood, Glenwood, and Thornton.",
+    "restoration_note": "ComEd restored ~99% of impacted customers by Aug 15\u201316 with 4,500+ personnel and mutual-assistance crews \u2014 one of its largest restoration efforts of the year."
+   }
   }
  ]
 }
