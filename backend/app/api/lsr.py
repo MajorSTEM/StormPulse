@@ -29,7 +29,8 @@ def _age_minutes(event_time: datetime | None) -> float:
 async def get_lsrs(
     hours: int = Query(48, ge=1, le=168),
     type_codes: Optional[str] = Query(None, description="Comma-separated type codes: T,W,H"),
-    state: Optional[str] = Query(None),
+    state: Optional[str] = Query(None, min_length=2, max_length=2,
+                                 description="Two-letter state code"),
     db: AsyncSession = Depends(get_db)
 ):
     """Get Local Storm Reports as GeoJSON FeatureCollection."""
@@ -42,7 +43,8 @@ async def get_lsrs(
         query = query.where(LSR.type_code.in_(codes))
 
     if state:
-        query = query.where(LSR.state.ilike(f"%{state}%"))
+        # Case-insensitive exact match - no user-controlled LIKE wildcards
+        query = query.where(LSR.state.ilike(state))
 
     query = query.order_by(LSR.event_time.desc())
 

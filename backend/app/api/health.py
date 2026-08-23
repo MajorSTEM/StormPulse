@@ -1,8 +1,21 @@
+import re
+
 from fastapi import APIRouter
 from datetime import datetime, timezone
 from app.ingestion.scheduler import ingestion_status, data_freshness
 
 router = APIRouter()
+
+# Hostnames, URLs, and credential-ish fragments must never reach the public
+# health endpoint - raw driver errors can name internal databases. Full
+# detail stays in the server logs.
+_INTERNALS = re.compile(r"//[^\s'\"]+|[\w.-]+\.[A-Za-z]{2,}(?::\d+)?|@[\w.:-]+")
+
+
+def _public_error(raw: str | None) -> str | None:
+    if not raw:
+        return None
+    return _INTERNALS.sub("[redacted]", str(raw))[:120]
 
 
 @router.get("/health")
@@ -31,7 +44,7 @@ async def get_health():
             "status": status.get("status", "pending"),
             "health": health,
             "last_success": last_success,
-            "last_error": status.get("last_error"),
+            "last_error": _public_error(status.get("last_error")),
             "lag_seconds": lag_seconds,
         })
 

@@ -7,6 +7,7 @@ and docs/NIST-800-53-MAPPING.md for the control mapping (IA-2, AC-3, SC-5,
 SC-8 adjuncts).
 """
 import logging
+import secrets as _secrets
 
 from fastapi import HTTPException, Request, Security
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
@@ -37,7 +38,7 @@ async def require_api_key(
     missing or invalid credentials. Never echoes the presented key back.
     """
     presented = credentials.credentials if credentials else request.headers.get("x-api-key")
-    client = settings.api_key_map().get(presented or "")
+    client = lookup_client(presented)
     if not client:
         raise HTTPException(
             status_code=401,
@@ -49,13 +50,34 @@ async def require_api_key(
 
 
 def _visitor_ip(request: Request) -> str:
-    # Behind Render's proxy the socket peer is the proxy itself; the visitor
-    # is the first hop in X-Forwarded-For. Spoofable, but the only stake here
-    # is rate-limit fairness on public read-only data.
+    """Best-available client IP for rate-limit bucketing.
+
+    Proxies APPEND to X-Forwarded-For, so with exactly one trusted proxy in
+    front of us (Render), the LAST entry is the address the proxy actually
+    saw. Earlier entries are client-supplied and trivially spoofable - using
+    the first entry would let an attacker mint a fresh rate-limit bucket per
+    request just by rotating a fake header.
+    """
     forwarded = request.headers.get("x-forwarded-for")
     if forwarded:
-        return forwarded.split(",")[0].strip()
+        return forwarded.split(",")[-1].strip()
     return get_remote_address(request)
+
+
+def lookup_client(presented: str | None) -> str | None:
+    """Map an API key to its client name in constant time.
+
+    Compares against every configured key with secrets.compare_digest and
+    never exits early, so response timing reveals nothing about how close a
+    guessed key was to a real one.
+    """
+    if not presented:
+        return None
+    match: str | None = None
+    for key, client in settings.api_key_map().items():
+        if _secrets.compare_digest(presented.encode(), key.encode()):
+            match = client
+    return match
 
 
 def rate_limit_key(request: Request) -> str:
@@ -69,7 +91,7 @@ def rate_limit_key(request: Request) -> str:
     auth = request.headers.get("authorization", "")
     presented = auth[7:].strip() if auth.lower().startswith("bearer ") else \
         request.headers.get("x-api-key", "")
-    client = settings.api_key_map().get(presented)
+    client = lookup_client(presented)
     if client and client != "public-demo":
         return f"client:{client}"
     return f"ip:{_visitor_ip(request)}"
