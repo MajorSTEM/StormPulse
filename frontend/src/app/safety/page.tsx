@@ -3,129 +3,152 @@ import type { Metadata } from "next";
 import { SAFETY_SECTIONS } from "@/lib/safetyContent";
 
 export const metadata: Metadata = {
-  title: "StormPulse — Outage & Storm Safety Guide",
+  title: "Storm & Outage Safety — a field guide for Northwest Indiana",
   description:
-    "How to stay safe during power outages: downed lines, generator safety, extension cords, weatherhead repairs, utility impersonation scams, and food safety.",
+    "Practical safety during power outages: downed lines, generators, extension cords, weatherhead repairs, utility impersonators, and keeping food and family safe.",
 };
 
+// The map app locks html/body overflow, so this page carries its own scroll
+// container (fixed inset-0 + overflow-y-auto).
 export default function SafetyPage() {
   return (
-    <main className="min-h-screen bg-gray-950 text-gray-200">
-      {/* Header */}
-      <header className="sticky top-0 z-20 bg-gray-900/95 backdrop-blur border-b border-gray-700">
-        <div className="max-w-4xl mx-auto px-4 py-3 flex items-center justify-between gap-3">
-          <div className="flex items-center gap-2 min-w-0">
-            <span className="text-lg">⛑</span>
-            <div className="min-w-0">
-              <h1 className="text-sm font-bold text-white leading-tight truncate">
-                Outage &amp; Storm Safety Guide
-              </h1>
-              <div className="text-[10px] text-gray-400">
-                StormPulse · sourced from CPSC, NFPA, FDA, and utility guidance
-              </div>
-            </div>
-          </div>
-          <Link
-            href="/"
-            className="flex-shrink-0 text-xs font-bold uppercase tracking-wider border border-orange-700 text-orange-300 hover:bg-orange-950/50 rounded px-3 py-1.5 transition"
-          >
-            ← Live Map
-          </Link>
-        </div>
-      </header>
-
-      {/* Emergency banner */}
-      <div className="bg-red-950/60 border-b border-red-800">
-        <div className="max-w-4xl mx-auto px-4 py-2 text-xs text-red-200">
-          <span className="font-bold text-red-300">Emergency or downed line?</span>{" "}
-          Call <span className="font-bold">911</span> first, then NIPSCO{" "}
-          <a href="tel:18004647726" className="underline font-bold">1-800-4NIPSCO</a>{" "}
-          or ComEd <a href="tel:18003347661" className="underline font-bold">1-800-334-7661</a>.
-          This page is general guidance — always follow emergency officials and your utility.
+    <div className="fixed inset-0 overflow-y-auto scroll-smooth bg-[#f6f3ec] text-[#211d18]">
+      {/* Slim sticky masthead — always a way back, from anywhere on the page */}
+      <div className="sticky top-0 z-20 bg-[#f6f3ec]/95 backdrop-blur-sm border-b border-[#d8d2c4]">
+        <div className="max-w-2xl mx-auto px-5 py-2.5 flex items-baseline justify-between gap-4 text-sm">
+          <span className="font-serif font-bold tracking-tight">Storm &amp; Outage Safety</span>
+          <span className="flex gap-5 text-[13px]">
+            <a href="#contents" className="underline underline-offset-2 decoration-[#b0aa9a] hover:decoration-[#211d18]">
+              Contents
+            </a>
+            <Link href="/" className="underline underline-offset-2 decoration-[#b0aa9a] hover:decoration-[#211d18]">
+              Live map
+            </Link>
+          </span>
         </div>
       </div>
 
-      <div className="max-w-4xl mx-auto px-4 py-6">
-        {/* Table of contents */}
-        <nav className="flex flex-wrap gap-2 mb-8">
-          {SAFETY_SECTIONS.map(section => (
-            <a
-              key={section.id}
-              href={`#${section.id}`}
-              className="text-xs border border-gray-700 hover:border-yellow-600 hover:text-yellow-200 rounded-full px-3 py-1.5 transition"
-            >
-              {section.icon} {section.title}
-            </a>
-          ))}
+      <article className="max-w-2xl mx-auto px-5 pb-20 font-serif leading-relaxed">
+        {/* Masthead */}
+        <header className="pt-10 pb-6 border-b-2 border-[#211d18]">
+          <p className="text-[11px] uppercase tracking-[0.18em] text-[#8a6a3a] font-sans font-semibold">
+            A StormPulse field guide
+          </p>
+          <h1 className="text-4xl font-bold tracking-tight mt-1.5 leading-tight">
+            Storm &amp; Outage Safety
+          </h1>
+          <p className="text-[13px] text-[#6d675c] mt-2 font-sans">
+            Northwest Indiana &amp; Chicagoland · updated August 2026
+          </p>
+        </header>
+
+        {/* Intro — a person wrote this, for a reason */}
+        <p className="mt-6 text-[17px]">
+          This guide was put together after the August 11 derecho knocked out power
+          to more than 300,000 homes across NIPSCO&rsquo;s territory — the largest
+          outage in the company&rsquo;s history. Most of what hurts people in the days
+          after a storm isn&rsquo;t the storm. It&rsquo;s the generator in the garage, the
+          extension cord that was never meant to run a refrigerator, the line across
+          the alley that looks dead. Everything below comes from CPSC, NFPA, FDA,
+          and utility safety guidance; none of it is folklore.
+        </p>
+
+        {/* Emergency notice — plain and unmissable, not a designed "banner" */}
+        <div className="mt-6 border-l-4 border-[#a2422e] pl-4 py-1">
+          <p className="text-[15px]">
+            <strong>If a line is down or someone is hurt:</strong> call{" "}
+            <a href="tel:911" className="font-bold underline underline-offset-2">911</a>{" "}
+            first. Then the utility — NIPSCO{" "}
+            <a href="tel:18004647726" className="underline underline-offset-2 whitespace-nowrap">1-800-4NIPSCO</a>,
+            ComEd{" "}
+            <a href="tel:18003347661" className="underline underline-offset-2 whitespace-nowrap">1-800-334-7661</a>.
+            This page is general guidance; emergency officials outrank it.
+          </p>
+        </div>
+
+        {/* Contents */}
+        <nav id="contents" className="mt-10 scroll-mt-14">
+          <h2 className="text-[11px] uppercase tracking-[0.18em] text-[#6d675c] font-sans font-semibold border-b border-[#d8d2c4] pb-1.5">
+            In this guide
+          </h2>
+          <ol className="mt-3 space-y-1.5 text-[16px]">
+            {SAFETY_SECTIONS.map((section, i) => (
+              <li key={section.id} className="flex gap-3">
+                <span className="text-[#8a6a3a] tabular-nums w-4 text-right flex-shrink-0">{i + 1}.</span>
+                <a
+                  href={`#${section.id}`}
+                  className="underline underline-offset-2 decoration-[#b0aa9a] hover:decoration-[#211d18]"
+                >
+                  {section.title}
+                </a>
+              </li>
+            ))}
+          </ol>
         </nav>
 
         {/* Sections */}
-        <div className="space-y-10">
-          {SAFETY_SECTIONS.map(section => (
-            <section key={section.id} id={section.id} className="scroll-mt-20">
-              <div className="border-b border-gray-700 pb-2 mb-4">
-                <h2 className="text-lg font-bold text-yellow-200">
-                  {section.icon} {section.title}
-                </h2>
-                <p className="text-xs text-gray-400 mt-0.5">{section.tagline}</p>
-              </div>
+        {SAFETY_SECTIONS.map((section, i) => (
+          <section key={section.id} id={section.id} className="mt-12 scroll-mt-14">
+            <div className="flex items-baseline justify-between gap-4 border-b border-[#d8d2c4] pb-2">
+              <h2 className="text-2xl font-bold tracking-tight">
+                <span className="text-[#8a6a3a]">{i + 1}.</span> {section.title}
+              </h2>
+              <a
+                href="#contents"
+                className="text-[12px] font-sans text-[#6d675c] underline underline-offset-2 decoration-[#b0aa9a] hover:decoration-[#211d18] whitespace-nowrap"
+              >
+                ↑ contents
+              </a>
+            </div>
+            <p className="mt-2 text-[15px] italic text-[#6d675c]">{section.tagline}</p>
 
-              <div className="space-y-3">
-                {section.items.map((item, i) =>
-                  item.myth ? (
-                    <div
-                      key={i}
-                      className="rounded-lg border border-gray-700 bg-gray-900/60 p-3 text-sm leading-relaxed"
-                    >
-                      <div>
-                        <span className="text-red-400 font-bold uppercase text-xs tracking-wider">
-                          Myth
-                        </span>{" "}
-                        <span className="text-gray-300 italic">{item.myth}</span>
-                      </div>
-                      <div className="mt-1.5">
-                        <span className="text-green-400 font-bold uppercase text-xs tracking-wider">
-                          Fact
-                        </span>{" "}
-                        <span className="text-gray-100">{item.fact}</span>
-                      </div>
-                    </div>
-                  ) : item.critical ? (
-                    <div
-                      key={i}
-                      className="rounded-lg border border-red-800 bg-red-950/40 p-3 text-sm leading-relaxed"
-                    >
-                      <span className="text-red-400 font-bold">⚠ CRITICAL:</span>{" "}
-                      <span className="text-red-100">{item.fact}</span>
-                    </div>
-                  ) : (
-                    <div key={i} className="flex gap-2 text-sm leading-relaxed px-1">
-                      <span className="text-yellow-400 flex-shrink-0">•</span>
-                      <span className="text-gray-200">{item.fact}</span>
-                    </div>
-                  )
-                )}
-              </div>
-            </section>
-          ))}
-        </div>
+            <div className="mt-4 space-y-4 text-[16px]">
+              {section.items.map((item, j) =>
+                item.myth ? (
+                  <div key={j}>
+                    <p>
+                      <strong className="text-[#a2422e]">&ldquo;{item.myth}&rdquo;</strong>
+                    </p>
+                    <p className="mt-1 pl-4 border-l-2 border-[#d8d2c4]">
+                      {item.fact}
+                    </p>
+                  </div>
+                ) : item.critical ? (
+                  <div key={j} className="border-l-4 border-[#a2422e] pl-4 py-0.5">
+                    <p>
+                      <strong>Don&rsquo;t skip this — </strong>
+                      {item.fact}
+                    </p>
+                  </div>
+                ) : (
+                  <p key={j}>{item.fact}</p>
+                )
+              )}
+            </div>
+          </section>
+        ))}
 
-        {/* Footer */}
-        <footer className="mt-12 pt-4 border-t border-gray-700 text-[11px] text-gray-500 leading-relaxed">
-          <p>
-            Compiled from public safety guidance by the U.S. Consumer Product Safety
-            Commission (CPSC), National Fire Protection Association (NFPA), FDA/USDA
-            food-safety programs, the Electrical Safety Foundation (ESFI), and
-            NIPSCO/ComEd customer safety materials. StormPulse is not affiliated with
-            NOAA, NWS, FEMA, NIPSCO, or ComEd.
+        {/* Closing */}
+        <footer className="mt-14 pt-5 border-t-2 border-[#211d18]">
+          <p className="text-[15px]">
+            Check on the neighbors you don&rsquo;t hear from. The people most at risk in
+            a long outage — the elderly, anyone on powered medical equipment — are
+            usually the quietest about it.
           </p>
-          <p className="mt-2">
-            <Link href="/" className="text-orange-400 hover:text-orange-300 underline">
+          <p className="mt-4 text-[13px] text-[#6d675c] font-sans leading-relaxed">
+            Compiled from public guidance by the U.S. Consumer Product Safety
+            Commission, the National Fire Protection Association, FDA/USDA
+            food-safety programs, the Electrical Safety Foundation, and
+            NIPSCO/ComEd customer safety materials. StormPulse is an independent
+            project, not affiliated with NOAA, the NWS, FEMA, NIPSCO, or ComEd.
+          </p>
+          <p className="mt-4 text-[15px]">
+            <Link href="/" className="underline underline-offset-2 decoration-[#b0aa9a] hover:decoration-[#211d18]">
               ← Back to the live storm &amp; outage map
             </Link>
           </p>
         </footer>
-      </div>
-    </main>
+      </article>
+    </div>
   );
 }
