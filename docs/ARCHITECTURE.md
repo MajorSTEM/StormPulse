@@ -1,87 +1,114 @@
-# StormPulse V2 — Architecture
+# StormPulse — Architecture & Component Communication
 
-Current architecture of the deployed StormPulse V2 platform. A Visio diagram
-of this data flow exists in the capstone submission package; this document is
-the maintained textual equivalent and matches the implemented code.
+How every piece talks to every other piece, and where to look when something
+breaks. Kept current as of August 2026 (V2 + Historian + prediction + outage
+platform + safety guide). A Visio diagram of the original V2 data flow exists
+in the capstone package; this document is the maintained source of truth.
 
-## Data flow
+## The big picture
 
 ```
-  NWS Alerts API                SPC Storm Reports (ArcGIS/CSV feeds)
-  api.weather.gov               www.spc.noaa.gov/climo/reports
-        │                                   │
-        └────────────┬──────────────────────┘
-                     ▼
-        APScheduler ingestion cycle  (every INGEST_INTERVAL_SECONDS, default 5 min)
-        backend/app/ingestion/{nws_alerts,nws_lsr}.py
-                     │  tier assignment via app/scoring/confidence.py
-                     ▼
-        Corridor Engine v2  (backend/app/corridor/engine.py)
-        temporal chaining → motion estimation → outlier rejection
-        → oriented polygons + confidence bands → weighted confidence scoring
-                     │
-                     ▼
-        Database (SQLAlchemy async)
-        PostgreSQL in production · SQLite for local/dev/tests
-        tables: alerts · lsrs · corridors · ingestion_state
-        = durable cache of last-known-good data (CP-10)
-                     │
-                     ▼
-        Hardened REST API  (FastAPI, backend/app/main.py)
-        /api/v1/{alerts,lsr,corridors}  → bearer-token auth (401 without key)
-        /api/v1/health                  → public liveness/freshness probe
-        per-client rate limiting (429) · security headers · sanitized errors
-        stale:true meta + T3 disclaimers in every relevant payload
-                     │
-                     ▼
-        Next.js 14 frontend  (MapLibre GL + Tailwind)
-        map layers: alerts · LSRs · corridors (+tier labels) · confidence bands
-        staleness banner · provenance panel with T1/T2/T3 badges
-                     │
-                     ▼
-        NexAlert Response users (and public demo consumers)
+ UPSTREAM (public, unauthenticated)          BACKEND (FastAPI, Render)                FRONTEND (Next.js, Render)
+ ─────────────────────────────────          ─────────────────────────────            ──────────────────────────
+ api.weather.gov  (NWS alerts) ──┐
+ spc.noaa.gov     (storm reports)├─▶ APScheduler jobs ─▶ PostgreSQL ─▶ /api/v1/* ─▶ fetch() in lib/api.ts ─▶ React state ─▶ MapLibre layers
+ services.dat.noaa.gov (surveys) │    (scheduler.py)     (Supabase)     (auth +        (bearer demo key)      (page.tsx)     (Map.tsx)
+ spc.noaa.gov/wcm (1950-2024 db) ┘                                      rate limit)
+ nipsco.com/nisource-api ────────┐
+ kubra.io (ComEd StormCenter) ───┴─▶ outage poll ─▶ in-memory snapshot ─▶ /api/v1/outages/live ─▶ OutagePanel + outage layers
+ gibs.earthdata.nasa.gov (night tiles) ─────────────────────────────────────────────────────────▶ Map.tsx raster layer (browser-direct)
 ```
 
-## Components
+Three transport rules to remember:
+1. **The browser talks only to the backend API and public tile servers** —
+   never to NWS/NIPSCO/Kubra directly (except map tiles: OSM, ESRI, NASA).
+2. **The backend talks to upstreams only inside scheduled jobs** — never
+   during a user request (single exception: the outage cold-boot warmup).
+3. **The database is the buffer between them.** Ingestion writes; API reads.
+   If every upstream dies, the API keeps serving the last good data with
+   `stale: true` — that is the cache-fallback contingency, not an accident.
 
-| Component | Technology | Location |
-|-----------|-----------|----------|
-| Ingestion | Python, APScheduler, httpx | `backend/app/ingestion/` |
-| Scoring (T1/T2/T3 + confidence strength) | Pure Python module | `backend/app/scoring/confidence.py` |
-| Corridor Engine v2 | Shapely geometry, circular statistics | `backend/app/corridor/engine.py` |
-| Persistence | SQLAlchemy 2 async; PostgreSQL (prod, `asyncpg`) / SQLite (dev/test, `aiosqlite`) | `backend/app/database.py`, `backend/app/models/` |
-| API layer | FastAPI, slowapi rate limiting | `backend/app/main.py`, `backend/app/api/`, `backend/app/security.py` |
-| Frontend | Next.js 14, TypeScript, MapLibre GL, Tailwind | `frontend/` |
-| Hosting | Render free tier (backend web service + frontend web service + Postgres) | `docs/DEPLOYMENT.md` |
+## Backend components and who calls them
 
-## Key architectural decisions
+### 1. The scheduler is the heartbeat — `app/ingestion/scheduler.py`
+Everything periodic starts here. `main.py` registers three jobs at boot:
 
-**The database is the contingency cache.** Ingestion writes last-known-good
-data; the API always serves from the DB, so an upstream NWS/SPC outage
-degrades to "cached data + `stale: true` + UI banner" instead of an error
-(NIST CP-2/CP-10). Ingestion outcomes persist in `ingestion_state` so a
-restarted instance reports honest freshness immediately.
+| Job | Cadence | What it does |
+|---|---|---|
+| `run_ingestion_cycle` | 5 min | NWS alerts → `alerts` table; SPC reports → `lsrs` table; then Corridor Engine v2 rebuilds `corridors`; then persists per-source status to `ingestion_state` |
+| `run_outage_poll` | 5 min | NIPSCO + ComEd live outages → **in-memory snapshot** (no DB) |
+| `run_history_load` | 24 h | One-time SPC 1950–2024 bulk load (skips when populated) + refresh of 2025-present NWS DAT survey tracks |
 
-**Tier assignment is centralized.** No tier string is hardcoded anywhere in
-ingestion or the engine; every object's T1/T2/T3 tier comes from the weighted
-model in `app/scoring/confidence.py` (methodology and validation:
-`docs/CONFIDENCE_SCORING.md`).
+Every job wraps each step in try/except and records the outcome in the
+module-level `ingestion_status` dict. **That dict is the nervous system**:
+`/api/v1/health` reads it, the SCADA chips in the top bar render it, and
+`data_freshness()` derives the `stale` flag on every data payload from it.
 
-**The API surface is versioned and closed.** All routes live under `/api/v1`;
-adding `/api/v2` later cannot break existing consumers. The API is
-GET-only — ingestion and corridor generation are unreachable over HTTP.
+### 2. Ingestion writes, the engine derives — `app/ingestion/`, `app/corridor/`
+- `nws_alerts.py`, `nws_lsr.py` — parse upstream feeds defensively (per-row
+  try/except, coordinate checks, timeouts, page caps) and upsert rows.
+  Tier assignment is delegated to `app/scoring/confidence.py` — **no tier
+  string is hardcoded anywhere else**.
+- `corridor/engine.py` — pure derivation: reads `lsrs` + `alerts`, chains
+  reports by storm-physics constraints, fits motion, writes `corridors`.
+- `corridor/prediction.py` — pure math, no I/O: the corridors API calls it at
+  serialization time to build the forward cone from stored motion data.
+- `tornado_history.py` — SPC bulk CSV + DAT ArcGIS pagination → `tornado_history`.
+- `outages_nipsco.py` / `outages_comed.py` / `outages_live.py` — the two
+  fetchers return plain dicts; the orchestrator merges them into the
+  singleton snapshot under a lock. NIPSCO failing fails the poll (visible in
+  health); ComEd failing only logs. The snapshot is **replaced wholesale**
+  each poll — that is why restored areas vanish without delete logic.
 
-**Trust boundaries.** (1) Upstream NOAA feeds are untrusted input: parsed
-defensively, size- and time-bounded. (2) API clients are authenticated and
-rate-limited per client. (3) The browser frontend holds only the published
-read-only demo credential; real client keys are provisioned server-side via
-environment configuration.
+### 3. The API layer is read-only glue — `app/api/`, `app/security.py`
+Routers never compute anything heavy: they query one table (or read the
+outage snapshot), serialize explicitly field-by-field, attach freshness
+meta, and return. Auth (`require_api_key`, constant-time), per-client/IP
+rate limiting (slowapi), and security headers are applied in `main.py` /
+`security.py` — routers stay clean of it.
 
-## Security architecture summary
+### 4. The database — Supabase Postgres
+Tables: `alerts`, `lsrs`, `corridors`, `tornado_history`, `ingestion_state`.
+Startup runs idempotent `CREATE TABLE` / `ADD COLUMN IF NOT EXISTS`
+migrations and **tolerates a dead DB**: it boots degraded, reports through
+health, and each ingestion cycle retries `init_db()` until it heals.
 
-- AuthN: bearer API keys, validated server-side (`IA-2`); 401 + `WWW-Authenticate` otherwise.
-- Rate limiting: per-client buckets, 429 + `Retry-After` (`SC-5`).
-- Transport: TLS at the platform edge, HSTS, SSL-required Postgres (`SC-8/SC-13`).
-- Headers: nosniff, X-Frame-Options DENY, deny-all CSP on API routes.
-- Errors: sanitized 500s; details only in server logs (`SI-11`).
-- Full mapping: `docs/NIST-800-53-MAPPING.md`; API review: `docs/OWASP_API_CHECKLIST.md`.
+## Frontend components and who owns what
+
+- `lib/api.ts` — the only place that knows the API base URL and demo key.
+  Every fetch goes through here.
+- `app/page.tsx` — the state owner. Polls alerts/LSRs/corridors every 2 min,
+  outages every 2 min while visible; owns all cross-cutting state
+  (dismissed/acked feeds, layer toggles, basemap, selected features, zip
+  results) and passes plain props down.
+- `components/Map.tsx` — the render sink. Receives FeatureCollections as
+  props, pushes them into MapLibre sources; layer styling/visibility
+  reacts to `layers`, `basemap`, `realisticOutages`. Emits `onFeatureClick`
+  back up. Never fetches.
+- Panels (`IncidentSidebar`, `OutagePanel`, `HistoryPanel`,
+  `ProvenancePanel`, `LayerControls`, `SourceHealthBar`) — presentational;
+  they receive data + callbacks from page.tsx and never fetch on their own
+  (exception: `SourceHealthBar` polls `/health` itself every 60 s).
+- `/safety` — fully static; talks to nothing.
+
+## When something breaks — where to look
+
+| Symptom | First place to look | Likely story |
+|---|---|---|
+| Map loads, no data anywhere | Top-bar chips / `/api/v1/health` | Backend down or DB unreachable (boots degraded; `last_error` per source, full detail in Render logs) |
+| Red STALE banner | `health.freshness` + Render logs for `run_ingestion_cycle` | Upstream NWS/SPC outage or ingestion exception; API is serving cache by design |
+| One source chip DEGRADED/STALE, rest GOOD | That source's `last_error` in health | Single upstream feed changed/failed — check its module in `app/ingestion/` |
+| Outage console empty / "feed unreachable" | Render logs for `Live outages:` lines | NIPSCO changed the `nisource-api` path (re-point `OUTAGE_FEED_URL` env) or blocked the UA |
+| ComEd shows but no ComEd dots / vice-versa | Logs: `ComEd feed unavailable` warning | Kubra rotated its data-path scheme — `outages_comed.py` is the only file involved |
+| 401s in browser console | `NEXT_PUBLIC_API_KEY` (frontend build) vs `API_KEYS` (backend env) | Key mismatch after env change — both must share the demo key |
+| 429s for many users | `security.py` rate limiting | Either real abuse or the proxy stopped appending X-Forwarded-For |
+| Corridors missing but LSRs present | Logs: `Corridor Engine v2:` line | Engine exception or genuinely no chains met thresholds (not a bug) |
+| Historian empty for 2025+ | Logs: `Tornado history (DAT):` | DAT ArcGIS service change — `tornado_history.py:load_recent_tornadoes` |
+| Night basemap grey | Browser console CORS/tile errors | NASA GIBS hiccup — purely cosmetic, data layers unaffected |
+| House-icon page (`/safety`) broken | It's static — only a frontend build/deploy issue | Check Render frontend deploy logs |
+
+**Golden debugging path:** top-bar chips → `/api/v1/health` (which source,
+what sanitized error) → Render backend logs (full detail) → the one
+ingestion module that owns that source. Data problems are almost always in
+exactly one fetcher; rendering problems are almost always in `Map.tsx` prop
+wiring; auth/rate problems live in `security.py` + env vars.
