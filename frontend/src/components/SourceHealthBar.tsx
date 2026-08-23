@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import { fetchHealth } from "@/lib/api";
 import type { HealthStatus } from "@/lib/types";
 
@@ -129,6 +130,14 @@ export default function SourceHealthBar({ historianOpen, onToggleHistorian, outa
               <span>Outages</span>
             </button>
           )}
+          <Link
+            href="/safety"
+            className="flex items-center gap-1 border rounded px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider transition border-emerald-700 text-emerald-300 hover:bg-emerald-950/40"
+            title="Outage & storm safety guide"
+          >
+            <span>⛑</span>
+            <span>Safety</span>
+          </Link>
           {onToggleHistorian && (
             <button
               onClick={onToggleHistorian}
