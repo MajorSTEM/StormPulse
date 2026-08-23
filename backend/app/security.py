@@ -48,19 +48,31 @@ async def require_api_key(
     return client
 
 
+def _visitor_ip(request: Request) -> str:
+    # Behind Render's proxy the socket peer is the proxy itself; the visitor
+    # is the first hop in X-Forwarded-For. Spoofable, but the only stake here
+    # is rate-limit fairness on public read-only data.
+    forwarded = request.headers.get("x-forwarded-for")
+    if forwarded:
+        return forwarded.split(",")[0].strip()
+    return get_remote_address(request)
+
+
 def rate_limit_key(request: Request) -> str:
     """
     Per-client rate-limit bucket: authenticated requests are keyed by client
     name (one bucket per issued key, however many IPs they call from);
-    unauthenticated requests fall back to source IP.
+    unauthenticated requests fall back to source IP. The published demo
+    credential is shared by every public map visitor, so it buckets per IP —
+    one busy visitor must never exhaust the map for a whole community.
     """
     auth = request.headers.get("authorization", "")
     presented = auth[7:].strip() if auth.lower().startswith("bearer ") else \
         request.headers.get("x-api-key", "")
     client = settings.api_key_map().get(presented)
-    if client:
+    if client and client != "public-demo":
         return f"client:{client}"
-    return f"ip:{get_remote_address(request)}"
+    return f"ip:{_visitor_ip(request)}"
 
 
 limiter = Limiter(key_func=rate_limit_key, default_limits=[settings.rate_limit])
