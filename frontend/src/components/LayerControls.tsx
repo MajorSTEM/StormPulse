@@ -3,7 +3,7 @@
 import { useState } from "react";
 import type { LayerVisibility } from "@/lib/types";
 
-type Basemap = "dark" | "satellite" | "street";
+type Basemap = "dark" | "night" | "satellite" | "street";
 
 interface Props {
   layers: LayerVisibility;
@@ -90,7 +90,7 @@ export default function LayerControls({ layers, onToggle, hours, onHoursChange, 
           <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Basemap</span>
         </div>
         <div className="px-3 py-2 border-b border-gray-700 flex gap-1">
-          {(["dark", "satellite", "street"] as Basemap[]).map(b => (
+          {(["dark", "night", "satellite", "street"] as Basemap[]).map(b => (
             <button
               key={b}
               onClick={() => onBasemapChange(b)}
@@ -100,7 +100,7 @@ export default function LayerControls({ layers, onToggle, hours, onHoursChange, 
                   : "bg-gray-800 text-gray-400 hover:text-white hover:bg-gray-700"
               }`}
             >
-              {b === "dark" ? "Dark" : b === "satellite" ? "Satellite" : "Street"}
+              {b === "dark" ? "Dark" : b === "night" ? "Night" : b === "satellite" ? "Satellite" : "Street"}
             </button>
           ))}
         </div>

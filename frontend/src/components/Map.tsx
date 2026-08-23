@@ -35,7 +35,7 @@ interface Props {
 
 const EMPTY_FC = { type: "FeatureCollection", features: [] } as GeoJSON.FeatureCollection;
 
-type Basemap = "dark" | "satellite" | "street";
+type Basemap = "dark" | "night" | "satellite" | "street";
 
 const INITIAL_STYLE = {
   version: 8 as const,
@@ -162,11 +162,11 @@ const OUTAGE_GRADUATED_COLOR: maplibregl.ExpressionSpecification = [
   "#facc15", 50, "#fb923c", 500, "#ef4444", 5000, "#b91c1c",
 ];
 
-/** Dark basemap: blackout-hole styling. Satellite/street: graduated circles. */
+/** Night basemap + realistic: blackout voids. Otherwise: graduated circles. */
 function styleOutagesForBasemap(map: maplibregl.Map, basemap: Basemap, realistic: boolean) {
   if (!map.getLayer("outages-live-circles")) return;
-  // "Realistic view": lights-out voids, only meaningful on the dark basemap.
-  const dark = basemap === "dark" && realistic;
+  // "Realistic view": lights-out voids, only meaningful on the NASA night map.
+  const dark = basemap === "night" && realistic;
   map.setPaintProperty("outages-live-circles", "circle-color",
     dark ? "#000000" : OUTAGE_GRADUATED_COLOR);
   map.setPaintProperty("outages-live-circles", "circle-opacity", dark ? 0.92 : 0.65);
@@ -193,7 +193,7 @@ export default function Map({
   onMoveEnd,
   onMapReady,
   scrubTime = null,
-  basemap = "dark",
+  basemap = "night",
 }: Props) {
   const mapContainerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<maplibregl.Map | null>(null);
@@ -888,12 +888,16 @@ export default function Map({
   useEffect(() => {
     const map = mapRef.current;
     if (!map || !loadedRef.current) return;
-    (["dark", "street", "satellite"] as Basemap[]).forEach(b => {
-      map.setLayoutProperty(`basemap-${b}`, "visibility", b === basemap ? "visible" : "none");
-    });
-    const bg = basemap === "dark" ? "#0f172a" : basemap === "satellite" ? "#000000" : "#c8dce8";
+    // "night" reuses the dim dark raster underneath the NASA lights overlay
+    map.setLayoutProperty("basemap-dark", "visibility",
+      basemap === "dark" || basemap === "night" ? "visible" : "none");
+    map.setLayoutProperty("basemap-street", "visibility", basemap === "street" ? "visible" : "none");
+    map.setLayoutProperty("basemap-satellite", "visibility", basemap === "satellite" ? "visible" : "none");
+    map.setLayoutProperty("night-lights", "visibility", basemap === "night" ? "visible" : "none");
+    const bg = basemap === "night" ? "#05060a"
+      : basemap === "dark" ? "#0f172a"
+      : basemap === "satellite" ? "#000000" : "#c8dce8";
     map.setPaintProperty("background", "background-color", bg);
-    map.setLayoutProperty("night-lights", "visibility", basemap === "dark" ? "visible" : "none");
     styleOutagesForBasemap(map, basemap, realisticOutagesRef.current);
   }, [basemap]);
 

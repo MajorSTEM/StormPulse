@@ -241,7 +241,7 @@ export default function OutagePanel({
             <span>
               Realistic view
               <span className="block text-[9px] text-gray-500">
-                Dark basemap: outages appear as lights-out zones instead of colored bubbles
+                Night basemap: outages appear as lights-out zones instead of colored bubbles
               </span>
             </span>
           </label>

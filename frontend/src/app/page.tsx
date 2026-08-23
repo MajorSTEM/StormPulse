@@ -51,7 +51,7 @@ function PageContent() {
   const [layersOpen, setLayersOpen] = useState(false);
   const [activeAlertId, setActiveAlertId] = useState<string | null>(null);
   const [scrubTime, setScrubTime] = useState<number | null>(null);
-  const [basemap, setBasemap] = useState<"dark" | "satellite" | "street">("dark");
+  const [basemap, setBasemap] = useState<"dark" | "night" | "satellite" | "street">("night");
   // Historian (SPC tornado archive) + storm replay
   const [historyOpen, setHistoryOpen] = useState(false);
   const [history, setHistory] = useState<GeoJSONFeatureCollection | null>(null);

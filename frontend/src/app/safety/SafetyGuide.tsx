@@ -53,6 +53,12 @@ const QUIZ: QuizItem[] = [
     sectionId: "scams", sectionLabel: "Scams",
   },
   {
+    statement: "During a declared emergency, Indiana gas stations can legally charge whatever the market will bear.",
+    isMyth: true,
+    explain: "Indiana law (IC 4-6-9.1) restricts unconscionable fuel pricing during a declared emergency. Photograph the sign and your receipt, then report it to the Attorney General: indianaconsumer.com or 1-800-382-5516.",
+    sectionId: "gouging", sectionLabel: "Price gouging",
+  },
+  {
     statement: "A full, unopened freezer keeps food safe for about 48 hours without power.",
     isMyth: false,
     explain: "About 48 hours full, 24 half-full — if the door stays shut. The fridge only buys you ~4 hours.",
@@ -161,6 +167,7 @@ const STAT_PULLS: Record<string, { big: string; small: string }> = {
   lines: { big: "35 ft", small: "minimum distance from any downed line — silent lines included" },
   cords: { big: "14 AWG", small: "or lower (thicker) for any cord feeding a fridge, sump pump, or heater" },
   scams: { big: "$0", small: "what a real utility worker will ever collect at your door" },
+  gouging: { big: "IC 4-6-9.1", small: "the Indiana law that makes emergency fuel gouging reportable, not just outrageous" },
 };
 
 // ── Collapsible section cards (progressive disclosure) ───────────────────────
