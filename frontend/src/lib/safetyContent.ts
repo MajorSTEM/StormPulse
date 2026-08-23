@@ -12,6 +12,8 @@ export interface SafetySection {
   icon: string;
   title: string;
   tagline: string;
+  headline: string;   // curiosity-gap card headline
+  hook: string;       // one-line tease shown before expanding
   items: SafetyItem[];
 }
 
@@ -21,6 +23,8 @@ export const SAFETY_SECTIONS: SafetySection[] = [
     icon: "⚡",
     title: "Downed Power Lines",
     tagline: "Every line is live until the utility says otherwise.",
+    headline: "The line that looks dead",
+    hook: "Silent, still, and lethal — and the ground around it can be electrified too.",
     items: [
       { critical: true, fact: "Treat EVERY downed line as live and deadly — even ones that look dead, insulated, or like harmless cable/phone wire. Stay at least 35 feet away and keep others away." },
       { critical: true, fact: "If a line falls on your car: STAY INSIDE and call 911. Only if fire forces you out — jump clear so you never touch the car and ground at the same time, land with feet together, and shuffle away in small steps." },
@@ -37,6 +41,8 @@ export const SAFETY_SECTIONS: SafetySection[] = [
     icon: "🔥",
     title: "Generators: Facts & Myths",
     tagline: "Carbon monoxide from generators kills more people after storms than many storms do.",
+    headline: "The garage-door mistake",
+    hook: "The deadliest generator myths sound completely reasonable. That’s why they kill.",
     items: [
       { critical: true, fact: "Run generators OUTSIDE ONLY, at least 20 feet from the house, exhaust pointed away from every window, door, and vent. Carbon monoxide is the #1 generator killer." },
       { myth: "Running a generator in the garage is fine if the door is open.",
@@ -56,6 +62,8 @@ export const SAFETY_SECTIONS: SafetySection[] = [
     icon: "🔌",
     title: "Extension Cords: Proper Use",
     tagline: "Lower gauge number = thicker wire = safer under load.",
+    headline: "The cord that starts fires",
+    hook: "A number printed on the jacket decides whether your fridge runs — or your hallway burns.",
     items: [
       { critical: true, fact: "Use 14 AWG extension cords or lower (12 AWG, 10 AWG) for generators and heavy loads. Thin 16–18 AWG 'lamp cords' overheat and start fires under appliance loads." },
       { myth: "Any cord that reaches and fits the plug will do the job.",
@@ -73,6 +81,8 @@ export const SAFETY_SECTIONS: SafetySection[] = [
     icon: "🏠",
     title: "Weatherhead & Getting Reconnected",
     tagline: "The #1 reason a house stays dark after the whole street comes back.",
+    headline: "Why your house stays dark after the street comes back",
+    hook: "One piece of equipment on your roof is yours to fix — not the utility’s.",
     items: [
       { critical: true, fact: "If your weatherhead (the mast/pipe where the power line attaches to your house), meter base, or service mast was damaged or torn off, a LICENSED ELECTRICIAN must repair it BEFORE NIPSCO can reconnect you. That equipment belongs to the homeowner, not the utility." },
       { fact: "Crews restoring your block will skip a home with a damaged weatherhead — get the repair scheduled early, because electricians book up fast after a storm." },
@@ -85,6 +95,8 @@ export const SAFETY_SECTIONS: SafetySection[] = [
     icon: "🕵️",
     title: "Utility Impersonators & Storm Scams",
     tagline: "Scammers follow storms. Verify before you open the door or pay.",
+    headline: "The knock on the door",
+    hook: "How to spot a fake lineworker in ten seconds — and the payment demand that’s always a scam.",
     items: [
       { critical: true, fact: "Real NIPSCO employees carry company photo ID and will show it without being offended. If anyone claiming to be NIPSCO can't or won't, close the door and call 1-800-4NIPSCO to verify — legitimate workers will wait." },
       { myth: "The utility might demand immediate payment during restoration to keep my power on.",
@@ -100,6 +112,8 @@ export const SAFETY_SECTIONS: SafetySection[] = [
     icon: "🧊",
     title: "Food, Home & Health",
     tagline: "The quiet dangers of a long outage.",
+    headline: "The coin in the freezer",
+    hook: "Fridge windows, a trick with a frozen cup, and the neighbors nobody checks on.",
     items: [
       { fact: "Keep fridge and freezer doors CLOSED: an unopened fridge keeps food safe ~4 hours; a full freezer ~48 hours (24 if half-full). After that, perishables held above 40°F for 2+ hours should go. When in doubt, throw it out." },
       { fact: "Lesser-known trick: keep a cup of frozen water with a coin on top in the freezer. If you return from an evacuation to find the coin sunk in the cup, food thawed and refroze while you were gone — don't trust it." },
